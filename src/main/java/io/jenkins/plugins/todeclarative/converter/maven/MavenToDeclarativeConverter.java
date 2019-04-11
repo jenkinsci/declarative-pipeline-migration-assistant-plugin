@@ -69,7 +69,6 @@ public class MavenToDeclarativeConverter
         mavenModuleSet.getReporters();
     }
 
-
     public ModelASTStage toWithMvn( ConverterRequest converterRequest)
     {
         MavenModuleSet mavenModuleSet = (MavenModuleSet) converterRequest.getJob();
@@ -104,7 +103,6 @@ public class MavenToDeclarativeConverter
         stepArgs.setArguments( args );
         withMvn.setArgs( stepArgs );
 
-
         ModelASTStep sh = new ModelASTStep( null);
         sh.setName( "sh" );
         withMvn.getChildren().add( sh );
@@ -119,9 +117,6 @@ public class MavenToDeclarativeConverter
         return stage;
     }
 
-
-
-
     public ModelASTStage toSh(ConverterRequest converterRequest)
     {
         return null;
@@ -132,7 +127,6 @@ public class MavenToDeclarativeConverter
     {
         return job instanceof MavenModuleSet;
     }
-
 
     public BuilderConverter findBuilderConverter(Builder builder)
     {

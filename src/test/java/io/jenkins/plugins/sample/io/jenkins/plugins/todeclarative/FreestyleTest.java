@@ -4,10 +4,12 @@ import com.coravy.hudson.plugins.github.GithubProjectProperty;
 import hudson.maven.MavenModuleSet;
 import hudson.model.FreeStyleProject;
 import hudson.model.Slave;
+import hudson.tasks.LogRotator;
 import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.freestyle.FreestyleToDeclarativeConverter;
 import io.jenkins.plugins.todeclarative.converter.maven.MavenToDeclarativeConverter;
+import jenkins.model.BuildDiscarderProperty;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
@@ -32,12 +34,17 @@ public class FreestyleTest
         FreeStyleProject p = j.createFreeStyleProject( projectName );
         p.addProperty( new GithubProjectProperty( "http://github.com/beer/paleale") );
 
-        FreestyleToDeclarativeConverter converter = Jenkins.getInstance()
+        //int daysToKeep, int numToKeep, int artifactDaysToKeep, int artifactNumToKeep
+        LogRotator logRotator = new LogRotator(1, 2,3, 4);
+        BuildDiscarderProperty buildDiscarderProperty = new BuildDiscarderProperty( logRotator );
+        p.addProperty( buildDiscarderProperty );
+
+        FreestyleToDeclarativeConverter converter = Jenkins.get()
             .getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
 
         Assert.assertTrue( converter.canConvert( p ) );
 
-        ConverterRequest request = new ConverterRequest().job( p );
+        ConverterRequest request = new ConverterRequest().job( p ).createdProjectName( "foo-beer" );
         ConverterResult converterResult = new ConverterResult()
             .modelASTPipelineDef( new ModelASTPipelineDef(null));
 
@@ -45,6 +52,8 @@ public class FreestyleTest
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
 
         System.out.println( groovy );
+
+        System.out.println( converterResult.getJob().getProperties() );
 
 
     }

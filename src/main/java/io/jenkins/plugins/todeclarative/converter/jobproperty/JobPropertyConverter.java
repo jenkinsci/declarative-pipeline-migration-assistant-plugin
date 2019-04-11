@@ -1,20 +1,25 @@
 package io.jenkins.plugins.todeclarative.converter.jobproperty;
 
-import hudson.model.FreeStyleProject;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
-import hudson.tasks.Builder;
 import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.ConverterResult;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 
 public interface JobPropertyConverter
 {
-    ModelASTStage convert( ConverterRequest request, ConverterResult converterResult,
+    /**
+     *
+     * @param request
+     * @param converterResult
+     * @param jobPropertyDescriptor
+     * @param jobProperty
+     * @return <code>true</code> if the method has converted the property
+     */
+    boolean doConvert( ConverterRequest request, ConverterResult converterResult,
                            JobPropertyDescriptor jobPropertyDescriptor,
-                           JobProperty<? super FreeStyleProject> jobProperty );
+                           JobProperty jobProperty );
 
     boolean canConvert( JobPropertyDescriptor jobPropertyDescriptor,
-                        JobProperty<? super FreeStyleProject> jobProperty );
+                        JobProperty jobProperty );
 
 }

@@ -1,26 +1,36 @@
 package io.jenkins.plugins.todeclarative.converter.jobproperty;
 
-import hudson.model.FreeStyleProject;
+import hudson.Extension;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
 import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.ConverterResult;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 
+import java.io.IOException;
+
+@Extension
 public class GithubJobPropertyConverter implements JobPropertyConverter
 {
     @Override
-    public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult,
+    public boolean doConvert( ConverterRequest request, ConverterResult converterResult,
                                   JobPropertyDescriptor jobPropertyDescriptor,
-                                  JobProperty<? super FreeStyleProject> jobProperty )
+                                  JobProperty jobProperty )
     {
-        return null;
+        try
+        {
+            converterResult.getJob().addProperty( jobProperty );
+        }
+        catch ( IOException e )
+        {
+            e.printStackTrace();
+        }
+        return true;
     }
 
     @Override
     public boolean canConvert( JobPropertyDescriptor jobPropertyDescriptor,
-                               JobProperty<? super FreeStyleProject> jobProperty )
+                               JobProperty jobProperty )
     {
-        return false;
+        return jobProperty instanceof com.coravy.hudson.plugins.github.GithubProjectProperty;
     }
 }

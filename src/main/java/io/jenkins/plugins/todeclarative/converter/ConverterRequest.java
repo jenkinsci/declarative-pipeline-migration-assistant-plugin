@@ -7,6 +7,10 @@ public class ConverterRequest {
 
     private boolean useWithMvn;
 
+    private boolean createProject;
+
+    private String createdProjectName;
+
     public ConverterRequest()
     {
         //no op
@@ -41,6 +45,40 @@ public class ConverterRequest {
     public ConverterRequest useWithMvn( boolean useWithMvn )
     {
         this.useWithMvn = useWithMvn;
+        return this;
+    }
+
+    public boolean isCreateProject()
+    {
+        return createProject;
+    }
+
+    public void setCreateProject( boolean createProject )
+    {
+        this.createProject = createProject;
+    }
+
+    public ConverterRequest createProject( boolean createProject )
+    {
+        this.createProject = createProject;
+        return this;
+    }
+
+    public String getCreatedProjectName()
+    {
+        return createdProjectName;
+    }
+
+    public void setCreatedProjectName( String createdProjectName )
+    {
+        this.createProject = true;
+        this.createdProjectName = createdProjectName;
+    }
+
+    public ConverterRequest createdProjectName( String createdProjectName )
+    {
+        this.createProject = true;
+        this.createdProjectName = createdProjectName;
         return this;
     }
 }
