@@ -1,0 +1,23 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:f="/lib/form">
+  <j:set var="instance" value="${it}"/>
+  <j:set var="descriptor" value="${instance.descriptor}"/>
+  <l:layout title="${it.displayName}">
+    <l:main-panel>
+      <f:form name="convert" action="convert" method="post">
+        <h1>${it.displayName}</h1>
+        <f:section title="${%Section.Title}">
+          <f:entry title="Only Generate Jenkinsfile" field="jenkinsFileOnly">
+            <f:checkbox name="jenkinsFileOnly" field="jenkinsFileOnly" default="true"/>
+          </f:entry>
+          <f:entry title="${%Field.NewName}" field="newName">
+            <f:textbox name="newName" field="newName"/>
+          </f:entry>
+          <f:block>
+            <f:submit name="Submit" value="${%Button.Submit}"/>
+          </f:block>
+        </f:section>
+      </f:form>
+    </l:main-panel>
+  </l:layout>
+</j:jelly>
