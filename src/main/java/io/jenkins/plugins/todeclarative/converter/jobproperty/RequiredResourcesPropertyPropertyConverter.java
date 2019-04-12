@@ -6,6 +6,7 @@ import hudson.model.JobPropertyDescriptor;
 import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.ConverterResult;
 import jenkins.model.BuildDiscarderProperty;
+import org.apache.commons.lang3.StringUtils;
 import org.jenkins.plugins.lockableresources.RequiredResourcesProperty;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTMethodArg;
@@ -16,8 +17,12 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 import org.jenkinsci.plugins.pipeline.modeldefinition.validator.ModelValidator;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static io.jenkins.plugins.todeclarative.converter.ModelASTUtils.buildKeyPairArg;
 
 @Extension
 public class RequiredResourcesPropertyPropertyConverter
@@ -29,24 +34,23 @@ public class RequiredResourcesPropertyPropertyConverter
                                   JobProperty jobProperty )
     {
 
-        BuildDiscarderProperty buildDiscarderProperty = (BuildDiscarderProperty) jobProperty;
-        //options {
-        //    buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '30'))
-        //  daysToKeepStr,  numToKeepStr,  artifactDaysToKeepStr,  artifactNumToKeepStr
-        //}
+        RequiredResourcesProperty requiredResourcesProperty = (RequiredResourcesProperty) jobProperty;
+
+        //lock(label: 'label', resource: 'resource')
         ModelASTOption option = new ModelASTOption( this );
-        option.setName( "buildDiscarder" );
-        ModelASTOption logRotator = new ModelASTOption( this);
-        logRotator.setName( "logRotator" );
+        option.setName( "lock" );
 
-        Map<ModelASTKey, ModelASTValue> args = new HashMap<>();
-        ModelASTKey key = new ModelASTKey(this);
-        key.setKey( "withMvnKey" );
-        ModelASTValue value = ModelASTValue.fromConstant( "withMvnArgs", this);
-        args.put( key, value);
-        logRotator.getArgs().add( args.values().iterator().next() );
+        List<ModelASTMethodArg> lockArgs = new ArrayList<>();
 
-        option.getArgs().add( logRotator );
+        if( StringUtils.isNotBlank(requiredResourcesProperty.getLabelName())){
+            lockArgs.add( buildKeyPairArg("label", requiredResourcesProperty.getLabelName()));
+        }
+
+        if( StringUtils.isNotBlank(requiredResourcesProperty.getResourceNames())){
+            lockArgs.add( buildKeyPairArg("resource", requiredResourcesProperty.getResourceNames()));
+        }
+
+        option.setArgs( lockArgs );
 
         ModelASTPipelineDef modelASTPipelineDef = converterResult.getModelASTPipelineDef();
         if(modelASTPipelineDef.getOptions()==null){

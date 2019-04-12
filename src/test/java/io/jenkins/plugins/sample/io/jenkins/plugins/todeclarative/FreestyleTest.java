@@ -11,12 +11,15 @@ import io.jenkins.plugins.todeclarative.converter.freestyle.FreestyleToDeclarati
 import io.jenkins.plugins.todeclarative.converter.maven.MavenToDeclarativeConverter;
 import jenkins.model.BuildDiscarderProperty;
 import jenkins.model.Jenkins;
+import org.jenkins.plugins.lockableresources.RequiredResourcesProperty;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+
+import javax.annotation.CheckForNull;
 
 public class FreestyleTest
 {
@@ -39,6 +42,9 @@ public class FreestyleTest
         BuildDiscarderProperty buildDiscarderProperty = new BuildDiscarderProperty( logRotator );
         p.addProperty( buildDiscarderProperty );
 
+        RequiredResourcesProperty requiredResourcesProperty =
+            new RequiredResourcesProperty( "beer", null, null, "labelName", null);
+        p.addProperty( requiredResourcesProperty );
         FreestyleToDeclarativeConverter converter = Jenkins.get()
             .getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
 

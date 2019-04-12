@@ -9,19 +9,15 @@ import io.jenkins.plugins.todeclarative.converter.ConverterResult;
 import jenkins.model.BuildDiscarder;
 import jenkins.model.BuildDiscarderProperty;
 import org.apache.commons.lang3.StringUtils;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKeyValueOrMethodCallPair;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTMethodArg;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTNamedArgumentList;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOption;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOptions;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import static io.jenkins.plugins.todeclarative.converter.ModelASTUtils.buildKeyPairArg;
 
 @Extension
 public class BuildDiscarderPropertyConverter
@@ -34,10 +30,6 @@ public class BuildDiscarderPropertyConverter
     {
 
         BuildDiscarderProperty buildDiscarderProperty = (BuildDiscarderProperty) jobProperty;
-        //options {
-        //    buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '30'))
-        // args String daysToKeepStr, String numToKeepStr, String artifactDaysToKeepStr, String artifactNumToKeepStr
-        //}
 
         if(buildDiscarderProperty.getStrategy()==null){
             // nothing to do
@@ -60,6 +52,11 @@ public class BuildDiscarderPropertyConverter
         option.getArgs().add( logRotatorOption );
 
         List<ModelASTMethodArg> rotatorArgs = new ArrayList<>();
+
+        //options {
+        //    buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '30'))
+        // args String daysToKeepStr, String numToKeepStr, String artifactDaysToKeepStr, String artifactNumToKeepStr
+        //}
 
         if( StringUtils.isNotBlank(logRotator.getArtifactDaysToKeepStr())){
             rotatorArgs.add( buildKeyPairArg("artifactDaysToKeepStr",  logRotator.getArtifactDaysToKeepStr()));
@@ -85,14 +82,7 @@ public class BuildDiscarderPropertyConverter
     }
 
 
-    private ModelASTKeyValueOrMethodCallPair buildKeyPairArg(String key, String value){
-        ModelASTKey astKey = new ModelASTKey(this);
-        astKey.setKey(key);
-        ModelASTKeyValueOrMethodCallPair keyPairArg = new ModelASTKeyValueOrMethodCallPair(this);
-        keyPairArg.setKey( astKey );
-        keyPairArg.setValue( ModelASTValue.fromConstant(value, this) );
-        return keyPairArg;
-    }
+
 
     @Override
     public boolean canConvert( JobPropertyDescriptor jobPropertyDescriptor, JobProperty jobProperty )
