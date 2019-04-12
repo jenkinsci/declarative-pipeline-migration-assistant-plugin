@@ -5,27 +5,20 @@ import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
 import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.ConverterResult;
-import jenkins.model.BuildDiscarderProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkins.plugins.lockableresources.RequiredResourcesProperty;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTMethodArg;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOption;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOptions;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
-import org.jenkinsci.plugins.pipeline.modeldefinition.validator.ModelValidator;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static io.jenkins.plugins.todeclarative.converter.ModelASTUtils.buildKeyPairArg;
 
 @Extension
-public class RequiredResourcesPropertyPropertyConverter
+public class RequiredResourcesPropertyConverter
     implements JobPropertyConverter
 {
     @Override
