@@ -1,4 +1,4 @@
-package io.jenkins.plugins.sample.io.jenkins.plugins.todeclarative;
+package io.jenkins.plugins.todeclarative.converter;
 
 import hudson.ExtensionList;
 import hudson.maven.MavenModuleSet;

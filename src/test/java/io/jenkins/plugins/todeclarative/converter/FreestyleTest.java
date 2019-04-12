@@ -1,4 +1,4 @@
-package io.jenkins.plugins.sample.io.jenkins.plugins.todeclarative;
+package io.jenkins.plugins.todeclarative.converter;
 
 import com.coravy.hudson.plugins.github.GithubProjectProperty;
 import hudson.model.BooleanParameterDefinition;
