@@ -55,7 +55,7 @@ public class ToDeclarativeAction
     @Override
     public String getIconFileName()
     {
-        return null;
+        return "foo";
     }
 
     @CheckForNull
@@ -69,7 +69,7 @@ public class ToDeclarativeAction
     @Override
     public String getUrlName()
     {
-        return "todesclarative";
+        return "todeclarative";
     }
 
     @Override
