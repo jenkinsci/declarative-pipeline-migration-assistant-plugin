@@ -18,7 +18,9 @@ public class GithubJobPropertyConverter implements JobPropertyConverter
     {
         try
         {
-            converterResult.getJob().addProperty( jobProperty );
+            if(request.isCreateProject()) {
+                converterResult.getJob().addProperty( jobProperty );
+            }
         }
         catch ( IOException e )
         {

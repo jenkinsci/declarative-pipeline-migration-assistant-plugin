@@ -8,7 +8,7 @@
         <h1>${it.displayName}</h1>
         <f:section title="${%Section.Title}">
           <f:entry title="Only Generate Jenkinsfile" field="jenkinsFileOnly">
-            <f:checkbox name="jenkinsFileOnly" field="jenkinsFileOnly" default="true"/>
+            <f:checkbox name="jenkinsFileOnly" field="jenkinsFileOnly" default="false"/>
           </f:entry>
           <f:entry title="${%Field.NewName}" field="newName">
             <f:textbox name="newName" field="newName"/>
