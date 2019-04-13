@@ -17,6 +17,7 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTNamedArgumentL
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTSingleArgument;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStages;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTreeStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
@@ -40,6 +41,10 @@ public class MavenToDeclarativeConverter
         MavenModuleSet mavenModuleSet = (MavenModuleSet) request.getJob();
 
         ModelASTPipelineDef pipelineDef = converterResult.getModelASTPipelineDef();
+        // NPE free
+        if(pipelineDef.getStages()==null){
+            pipelineDef.setStages( new ModelASTStages( this ) );
+        }
         // pre builders first
 
         Iterator<Builder> builderIterator = mavenModuleSet.getPrebuilders().iterator();
