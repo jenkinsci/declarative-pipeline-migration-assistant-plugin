@@ -2,7 +2,11 @@ package io.jenkins.plugins.todeclarative.converter;
 
 import hudson.model.Job;
 
-public class ConverterRequest {
+import java.util.HashMap;
+import java.util.Map;
+
+public class ConverterRequest
+{
     private Job job;
 
     private boolean useWithMvn;
@@ -10,6 +14,13 @@ public class ConverterRequest {
     private boolean createProject;
 
     private String createdProjectName;
+
+    /**
+     * Map to store some values related to the current conversion
+     * if you use that please add the key name as a constant
+     * or key name must contains a class name
+     */
+    private Map<String, Object> context = new HashMap<>();
 
     public ConverterRequest()
     {
@@ -80,5 +91,19 @@ public class ConverterRequest {
         this.createProject = true;
         this.createdProjectName = createdProjectName;
         return this;
+    }
+
+    public int getInt( String key )
+    {
+        if ( !context.containsKey( key ) )
+        {
+            context.put( key, 0 );
+        }
+        return (int) context.get( key );
+    }
+
+    public void setInt( String key, int value )
+    {
+        context.put( key, value );
     }
 }

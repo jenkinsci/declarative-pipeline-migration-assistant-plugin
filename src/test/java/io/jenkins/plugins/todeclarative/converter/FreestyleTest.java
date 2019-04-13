@@ -107,6 +107,8 @@ public class FreestyleTest
 
 
         p.getBuildersList().add( new Shell( "pwd" ) );
+        p.getBuildersList().add( new Shell( "ls -lrt" ) );
+        p.getBuildersList().add( new Shell( "echo $str" ) );
 
         FreestyleToDeclarativeConverter converter = Jenkins.get()
             .getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
