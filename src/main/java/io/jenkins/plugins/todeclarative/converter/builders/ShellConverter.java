@@ -5,9 +5,9 @@ import hudson.tasks.Builder;
 import hudson.tasks.Shell;
 import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTScriptBlock;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTSingleArgument;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 
 import java.util.Arrays;
@@ -18,6 +18,7 @@ public class ShellConverter
     implements BuilderConverter
 {
     public static final String SHELL_NUMBER_KEY = ShellConverter.class.getName() + ".shell.number";
+
     @Override
     public ModelASTStage convert( ConverterRequest request, Builder builder )
     {
@@ -29,13 +30,14 @@ public class ShellConverter
         request.setInt( SHELL_NUMBER_KEY, ++shellNumber );
         ModelASTBranch branch = new ModelASTBranch( this );
         stage.setBranches( Arrays.asList( branch ) );
-        ModelASTScriptBlock modelASTScriptBlock = new ModelASTScriptBlock( this );
-        branch.setSteps( Arrays.asList( modelASTScriptBlock ) );
+        ModelASTStep step = new ModelASTStep( this );
         ModelASTSingleArgument singleArgument = new ModelASTSingleArgument( this );
         // TODO olamy escape shell command?? not sure as might be done when running it
-        singleArgument.setValue(
-            ModelASTValue.fromConstant( "sh \"" + ( (Shell) builder ).getCommand() + "\"", this ) );
-        modelASTScriptBlock.setArgs( singleArgument );
+        singleArgument.setValue( ModelASTValue.fromConstant( ( (Shell) builder ).getCommand(), this ) );
+        step.setArgs( singleArgument );
+        step.setName( "sh" );
+        branch.setSteps( Arrays.asList( step ) );
+
         return stage;
     }
 

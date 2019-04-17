@@ -1,6 +1,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:f="/lib/form">
-  
+
   <l:layout title="${it.displayName}">
     <l:main-panel>
       <f:form name="convert" action="convert" method="post">
