@@ -6,6 +6,9 @@ import hudson.model.Job;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
 import hudson.model.Label;
+import hudson.plugins.git.GitSCM;
+import hudson.plugins.git.UserRemoteConfig;
+import hudson.scm.SCM;
 import hudson.tasks.Builder;
 import io.jenkins.plugins.todeclarative.converter.ConverterException;
 import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
@@ -14,20 +17,22 @@ import io.jenkins.plugins.todeclarative.converter.ToDeclarativeConverter;
 import io.jenkins.plugins.todeclarative.converter.builders.BuilderConverter;
 import io.jenkins.plugins.todeclarative.converter.jobproperty.JobPropertyConverter;
 import jenkins.model.Jenkins;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTAgent;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTNamedArgumentList;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStages;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
-import org.jenkinsci.plugins.workflow.cps.CpsFlowExecution;
-import org.jenkinsci.plugins.workflow.flow.FlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -70,6 +75,11 @@ public class FreestyleToDeclarativeConverter implements ToDeclarativeConverter
                 converterResult.getModelASTPipelineDef().setAgent( agent );
             }
 
+            SCM scm = freeStyleProject.getScm();
+            if(scm != null){
+                convertScm( converterRequest, converterResult, scm);
+            }
+
             convertJobProperties(converterRequest, converterResult, freeStyleProject.getProperties());
 
             convertBuilders( converterRequest, converterResult, freeStyleProject.getBuilders());
@@ -77,9 +87,6 @@ public class FreestyleToDeclarativeConverter implements ToDeclarativeConverter
             if(converterRequest.isCreateProject()) {
 
                 String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
-                //groovy = StringUtils.removeStart( groovy, "pipeline {" );
-                //groovy = StringUtils.removeEnd( groovy, "}" );
-
                 // FIXME make sandbox configurable
                 ((WorkflowJob)converterResult.getJob()).setDefinition(new CpsFlowDefinition( groovy, true ));
                 converterResult.getJob().save();
@@ -91,6 +98,62 @@ public class FreestyleToDeclarativeConverter implements ToDeclarativeConverter
             throw new ConverterException( e.getMessage(), e);
         }
 
+    }
+
+    protected void convertScm( ConverterRequest converterRequest, ConverterResult converterResult, SCM scm ) {
+        //ATM we only handle git
+        // TODO generate warning
+        if(!(scm instanceof GitSCM)){
+            return;
+        }
+        List<UserRemoteConfig> repoList = ( (GitSCM) scm ).getUserRemoteConfigs();
+        if(repoList.isEmpty()){
+            return;
+        }
+        ModelASTStage stage = new ModelASTStage( this );
+        stage.setName( "Checkout Scm" );
+        //git url: "", branch: '',changelog: '', credentialsId: '', pool: ''
+        List<ModelASTStep> steps = new ArrayList<>();
+        for(UserRemoteConfig userRemoteConfig : repoList)
+        {
+            ModelASTStep git = new ModelASTStep( null );
+            git.setName( "git" );
+
+            Map<ModelASTKey, ModelASTValue> args = new HashMap<>();
+
+            { // url
+                ModelASTKey url = new ModelASTKey( this );
+                url.setKey( "url" );
+                ModelASTValue urlValue = ModelASTValue.fromConstant( userRemoteConfig.getUrl(), this );
+                args.put( url, urlValue );
+            }
+
+            if(StringUtils.isNotBlank( userRemoteConfig.getRefspec() )) {
+                ModelASTKey branch = new ModelASTKey( this );
+                branch.setKey( "branch" );
+                ModelASTValue branchValue = ModelASTValue.fromConstant( userRemoteConfig.getRefspec(), this );
+                args.put( branch, branchValue );
+            }
+
+            if(StringUtils.isNotBlank( userRemoteConfig.getCredentialsId() )) {
+                ModelASTKey credentialsId = new ModelASTKey( this );
+                credentialsId.setKey( "credentialsId" );
+                ModelASTValue credentialsIdValue = ModelASTValue.fromConstant( userRemoteConfig.getCredentialsId(), this );
+                args.put( credentialsId, credentialsIdValue );
+            }
+
+            ModelASTNamedArgumentList stepArgs = new ModelASTNamedArgumentList( null);
+            stepArgs.setArguments( args );
+            git.setArgs( stepArgs );
+            steps.add( git );
+        }
+        if(converterResult.getModelASTPipelineDef().getStages()==null){
+            converterResult.getModelASTPipelineDef().setStages( new ModelASTStages( this ) );
+        }
+        ModelASTBranch branch = new ModelASTBranch( this );
+        branch.setSteps(steps);
+        stage.setBranches( Arrays.asList( branch ) );
+        converterResult.getModelASTPipelineDef().getStages().getStages().add( stage );
     }
 
     protected void convertBuilders(ConverterRequest converterRequest, ConverterResult converterResult, List<Builder> builders) {

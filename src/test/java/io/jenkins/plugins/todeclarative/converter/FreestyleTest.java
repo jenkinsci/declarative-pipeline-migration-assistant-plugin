@@ -1,6 +1,7 @@
 package io.jenkins.plugins.todeclarative.converter;
 
 import com.coravy.hudson.plugins.github.GithubProjectProperty;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.model.BooleanParameterDefinition;
 import hudson.model.ChoiceParameterDefinition;
 import hudson.model.FreeStyleProject;
@@ -9,6 +10,12 @@ import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Result;
 import hudson.model.Slave;
 import hudson.model.StringParameterDefinition;
+import hudson.plugins.git.BranchSpec;
+import hudson.plugins.git.GitSCM;
+import hudson.plugins.git.SubmoduleConfig;
+import hudson.plugins.git.UserRemoteConfig;
+import hudson.plugins.git.browser.GitRepositoryBrowser;
+import hudson.plugins.git.extensions.GitSCMExtension;
 import hudson.tasks.LogRotator;
 import hudson.tasks.Shell;
 import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
@@ -26,6 +33,8 @@ import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class FreestyleTest
@@ -42,7 +51,20 @@ public class FreestyleTest
 
         String projectName = Long.toString( System.currentTimeMillis() );
         FreeStyleProject p = j.createFreeStyleProject( projectName );
-        p.addProperty( new GithubProjectProperty( "http://github.com/beer/paleale") );
+        p.addProperty( new GithubProjectProperty( "https://github.com/olamy/foo") );
+
+
+
+        List<UserRemoteConfig> repoList = new ArrayList<>();
+        repoList.add(new UserRemoteConfig("https://github.com/olamy/foo.git", null,
+                                          "master", null));
+        repoList.add(new UserRemoteConfig("https://github.com/olamy/bar.git", null,
+                                          "patch-1", "credsId"));
+
+
+        GitSCM gitSCM = new GitSCM( repoList, null, false, Collections.emptyList(),
+                                    null,null,Collections.emptyList() );
+        p.setScm( gitSCM );
 
         //int daysToKeep, int numToKeep, int artifactDaysToKeep, int artifactNumToKeep
         LogRotator logRotator = new LogRotator(1, 2,3, 4);
