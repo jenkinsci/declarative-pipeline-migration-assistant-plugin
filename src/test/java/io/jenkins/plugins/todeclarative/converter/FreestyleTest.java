@@ -18,11 +18,14 @@ import hudson.plugins.git.browser.GitRepositoryBrowser;
 import hudson.plugins.git.extensions.GitSCMExtension;
 import hudson.tasks.LogRotator;
 import hudson.tasks.Shell;
+import hudson.triggers.SCMTrigger;
+import hudson.triggers.TimerTrigger;
 import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.freestyle.FreestyleToDeclarativeConverter;
 import jenkins.model.BuildDiscarderProperty;
 import jenkins.model.Jenkins;
+import jenkins.triggers.ReverseBuildTrigger;
 import org.jenkins.plugins.lockableresources.RequiredResourcesProperty;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
@@ -53,36 +56,74 @@ public class FreestyleTest
         FreeStyleProject p = j.createFreeStyleProject( projectName );
         p.addProperty( new GithubProjectProperty( "https://github.com/olamy/foo") );
 
+        { // git
+            List<UserRemoteConfig> repoList = new ArrayList<>();
+            repoList.add(new UserRemoteConfig("https://github.com/olamy/foo.git", null,
+                                              "master", null));
+            repoList.add(new UserRemoteConfig("https://github.com/olamy/bar.git", null,
+                                              "patch-1", "credsId"));
+            GitSCM gitSCM = new GitSCM( repoList, null, false,
+                                        Collections.emptyList(), null, null, Collections.emptyList() );
+            p.setScm( gitSCM );
+        }
 
+        {
+            //int daysToKeep, int numToKeep, int artifactDaysToKeep, int artifactNumToKeep
+            LogRotator logRotator = new LogRotator( 1, 2, 3, 4 );
+            BuildDiscarderProperty buildDiscarderProperty = new BuildDiscarderProperty( logRotator );
+            p.addProperty( buildDiscarderProperty );
+        }
 
-        List<UserRemoteConfig> repoList = new ArrayList<>();
-        repoList.add(new UserRemoteConfig("https://github.com/olamy/foo.git", null,
-                                          "master", null));
-        repoList.add(new UserRemoteConfig("https://github.com/olamy/bar.git", null,
-                                          "patch-1", "credsId"));
+        {
+            RequiredResourcesProperty requiredResourcesProperty =
+                new RequiredResourcesProperty( "beer", null, null, "labelName", null );
+            p.addProperty( requiredResourcesProperty );
+        }
 
+        {
+            List<ParameterDefinition> parametersDefinitions = new ArrayList<>();
+            parametersDefinitions.add( new StringParameterDefinition( "str", "defaultValue", "description str", true ) );
+            // List<String> toGroovy needs to be fixed
+            //parametersDefinitions.add( new ChoiceParameterDefinition( "choice", new String[]{"choice1","choice2"}, "description choice" ) );
+            parametersDefinitions.add( new BooleanParameterDefinition( "nameboolean", true, "boolean description" ) );
+            ParametersDefinitionProperty parametersDefinitionProperty =
+                new ParametersDefinitionProperty( parametersDefinitions );
+            p.addProperty( parametersDefinitionProperty );
+        }
 
-        GitSCM gitSCM = new GitSCM( repoList, null, false, Collections.emptyList(),
-                                    null,null,Collections.emptyList() );
-        p.setScm( gitSCM );
+//  <triggers>
+//    <jenkins.triggers.ReverseBuildTrigger>
+//      <spec></spec>
+//      <upstreamProjects>pipeline, </upstreamProjects>
+//      <threshold>
+//        <name>FAILURE</name>
+//        <ordinal>2</ordinal>
+//        <color>RED</color>
+//        <completeBuild>true</completeBuild>
+//      </threshold>
+//    </jenkins.triggers.ReverseBuildTrigger>
+//    <hudson.triggers.TimerTrigger>
+//      <spec>45 9-16/2 * * 1-5</spec>
+//    </hudson.triggers.TimerTrigger>
+//    <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.29.2">
+//      <spec></spec>
+//    </com.cloudbees.jenkins.GitHubPushTrigger>
+//    <hudson.triggers.SCMTrigger>
+//      <spec>45 9-16/2 * * 1-5</spec>
+//      <ignorePostCommitHooks>true</ignorePostCommitHooks>
+//    </hudson.triggers.SCMTrigger>
+//  </triggers>
 
-        //int daysToKeep, int numToKeep, int artifactDaysToKeep, int artifactNumToKeep
-        LogRotator logRotator = new LogRotator(1, 2,3, 4);
-        BuildDiscarderProperty buildDiscarderProperty = new BuildDiscarderProperty( logRotator );
-        p.addProperty( buildDiscarderProperty );
+        {
+            ReverseBuildTrigger reverseBuildTrigger = new ReverseBuildTrigger( "pipeline" );
+            reverseBuildTrigger.setThreshold( Result.UNSTABLE );
+            p.addTrigger( reverseBuildTrigger );
 
-        RequiredResourcesProperty requiredResourcesProperty =
-            new RequiredResourcesProperty( "beer", null, null, "labelName", null);
-        p.addProperty( requiredResourcesProperty );
-
-        List<ParameterDefinition> parametersDefinitions = new ArrayList<>();
-        parametersDefinitions.add( new StringParameterDefinition( "str", "defaultValue", "description str", true ) );
-        // List<String> toGroovy needs to be fixed
-        //parametersDefinitions.add( new ChoiceParameterDefinition( "choice", new String[]{"choice1","choice2"}, "description choice" ) );
-        parametersDefinitions.add( new BooleanParameterDefinition("nameboolean", true, "boolean description") );
-        ParametersDefinitionProperty parametersDefinitionProperty = new ParametersDefinitionProperty(parametersDefinitions);
-        p.addProperty( parametersDefinitionProperty );
-
+            p.addTrigger(new TimerTrigger( "45 9-16/2 * * 1-5" ));
+            SCMTrigger scmTrigger = new SCMTrigger("45 9-16/2 * * 1-5");
+            scmTrigger.setIgnorePostCommitHooks( true );
+            p.addTrigger( scmTrigger );
+        }
 
         p.getBuildersList().add( new Shell( "pwd" ) );
 
@@ -98,7 +139,14 @@ public class FreestyleTest
         converter.convert( request, converterResult);
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
 
-        System.out.println( groovy );
+        System.out.println(groovy);
+
+        Assert.assertTrue(groovy.contains("branch: 'master'"));
+        Assert.assertTrue(groovy.contains("url: 'https://github.com/olamy/foo.git'"));
+
+        Assert.assertTrue(groovy.contains("credentialsId: 'credsId'"));
+
+        Assert.assertEquals( 3, ((WorkflowJob)converterResult.getJob()).getTriggers().size() );
 
         System.out.println( converterResult.getJob().getProperties() );
 
