@@ -1,6 +1,7 @@
 package io.jenkins.plugins.todeclarative.converter;
 
 import hudson.model.Job;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTreeStep;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +15,8 @@ public class ConverterRequest
     private boolean createProject;
 
     private String createdProjectName;
+
+    private ModelASTTreeStep withCredentials;
 
     /**
      * Map to store some values related to the current conversion
@@ -105,5 +108,15 @@ public class ConverterRequest
     public void setInt( String key, int value )
     {
         context.put( key, value );
+    }
+
+    public ModelASTTreeStep getWithCredentials()
+    {
+        return withCredentials;
+    }
+
+    public void setWithCredentials( ModelASTTreeStep withCredentials )
+    {
+        this.withCredentials = withCredentials;
     }
 }

@@ -36,7 +36,17 @@ public class ShellConverter
         singleArgument.setValue( ModelASTValue.fromConstant( ( (Shell) builder ).getCommand(), this ) );
         step.setArgs( singleArgument );
         step.setName( "sh" );
-        branch.setSteps( Arrays.asList( step ) );
+
+        if(request.getWithCredentials()!=null)
+        {
+            // FIXME make a deep clone of WithCredentials to not using same instance all the time!!
+            request.getWithCredentials().getChildren().add( step );
+            branch.getSteps().add( request.getWithCredentials() );
+        } else {
+            branch.setSteps( Arrays.asList( step ) );
+        }
+
+
 
         return stage;
     }

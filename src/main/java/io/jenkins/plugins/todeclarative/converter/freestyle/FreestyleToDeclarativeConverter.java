@@ -9,12 +9,14 @@ import hudson.model.Label;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.UserRemoteConfig;
 import hudson.scm.SCM;
+import hudson.tasks.BuildWrapper;
 import hudson.tasks.Builder;
 import io.jenkins.plugins.todeclarative.converter.ConverterException;
 import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.ToDeclarativeConverter;
 import io.jenkins.plugins.todeclarative.converter.builders.BuilderConverter;
+import io.jenkins.plugins.todeclarative.converter.buildwrapper.BuildWrapperConverter;
 import io.jenkins.plugins.todeclarative.converter.jobproperty.JobPropertyConverter;
 import io.jenkins.plugins.todeclarative.converter.scm.ScmConverter;
 import jenkins.model.Jenkins;
@@ -60,32 +62,42 @@ public class FreestyleToDeclarativeConverter implements ToDeclarativeConverter
                     workflowJob.setTriggers( new ArrayList<>(freeStyleProject.getTriggers().values()));
                 }
             }
-            Label label = freeStyleProject.getAssignedLabel();
-            if ( label!=null){
-                ModelASTAgent agent = new ModelASTAgent( this );
-                ModelASTKey agentKey = new ModelASTKey( this );
-                agentKey.setKey( "'" + label.getName() + "'" );
 
-                agent.setAgentType( agentKey );
-                converterResult.getModelASTPipelineDef().setAgent( agent );
-            } else {
-                ModelASTAgent agent = new ModelASTAgent( this );
-                ModelASTKey agentKey = new ModelASTKey( this );
-                agentKey.setKey( "any" );
+            convertBuildWrappers( converterRequest, converterResult, freeStyleProject.getBuildWrappersList() );
 
-                agent.setAgentType( agentKey );
-                converterResult.getModelASTPipelineDef().setAgent( agent );
+            { // label
+                Label label = freeStyleProject.getAssignedLabel();
+                if ( label != null )
+                {
+                    ModelASTAgent agent = new ModelASTAgent( this );
+                    ModelASTKey agentKey = new ModelASTKey( this );
+                    agentKey.setKey( "'" + label.getName() + "'" );
+
+                    agent.setAgentType( agentKey );
+                    converterResult.getModelASTPipelineDef().setAgent( agent );
+                }
+                else
+                {
+                    ModelASTAgent agent = new ModelASTAgent( this );
+                    ModelASTKey agentKey = new ModelASTKey( this );
+                    agentKey.setKey( "any" );
+
+                    agent.setAgentType( agentKey );
+                    converterResult.getModelASTPipelineDef().setAgent( agent );
+                }
             }
-
-            SCM scm = freeStyleProject.getScm();
-            if(scm != null){
-                convertScm( converterRequest, converterResult, scm);
+            
+            { // scm
+                SCM scm = freeStyleProject.getScm();
+                if ( scm != null )
+                {
+                    convertScm( converterRequest, converterResult, scm );
+                }
             }
-
             convertJobProperties(converterRequest, converterResult, freeStyleProject.getProperties());
 
             convertBuilders( converterRequest, converterResult, freeStyleProject.getBuilders());
-
+            
             if(converterRequest.isCreateProject()) {
 
                 String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
@@ -100,6 +112,22 @@ public class FreestyleToDeclarativeConverter implements ToDeclarativeConverter
             throw new ConverterException( e.getMessage(), e);
         }
     }
+
+    protected void convertBuildWrappers(ConverterRequest converterRequest, ConverterResult converterResult, List<BuildWrapper> wrappers) {
+        ModelASTStages stages = converterResult.getModelASTPipelineDef().getStages();
+        if(stages==null){
+            stages = new ModelASTStages( this );
+            converterResult.getModelASTPipelineDef().setStages( stages );
+        }
+        for(BuildWrapper wrapper:wrappers){
+            findBuildWrapperConverter(wrapper).stream().forEach( buildWrapperConverterConverter -> {
+                ModelASTStage stage = buildWrapperConverterConverter.convert( converterRequest, wrapper );
+                if(stage!=null){
+                    converterResult.getModelASTPipelineDef().getStages().getStages().add( stage );
+                }
+            } );
+        }
+    }    
 
     protected void convertScm( ConverterRequest converterRequest, ConverterResult converterResult, SCM scm ) {
         List<ScmConverter> converters = Jenkins.get().getExtensionList( ScmConverter.class );
@@ -169,6 +197,14 @@ public class FreestyleToDeclarativeConverter implements ToDeclarativeConverter
             .filter( converter -> converter.canConvert( builder ) )
             .collect(Collectors.toList());
     }
+
+    protected List<BuildWrapperConverter> findBuildWrapperConverter( BuildWrapper wrapper) {
+
+        List<BuildWrapperConverter> converters = Jenkins.get().getExtensionList( BuildWrapperConverter.class );
+        return converters.stream()
+            .filter( converter -> converter.canConvert( wrapper ) )
+            .collect(Collectors.toList());
+    }    
 
     @Override
     public boolean canConvert( Job job )

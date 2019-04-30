@@ -1,32 +1,30 @@
 package io.jenkins.plugins.todeclarative.converter;
 
+import com.cloudbees.plugins.credentials.CredentialsProvider;
+import com.cloudbees.plugins.credentials.CredentialsScope;
+import com.cloudbees.plugins.credentials.domains.Domain;
+import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import com.coravy.hudson.plugins.github.GithubProjectProperty;
-import edu.umd.cs.findbugs.annotations.CheckForNull;
 import hudson.model.BooleanParameterDefinition;
-import hudson.model.ChoiceParameterDefinition;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Result;
 import hudson.model.Slave;
 import hudson.model.StringParameterDefinition;
-import hudson.plugins.git.BranchSpec;
 import hudson.plugins.git.GitSCM;
-import hudson.plugins.git.SubmoduleConfig;
 import hudson.plugins.git.UserRemoteConfig;
-import hudson.plugins.git.browser.GitRepositoryBrowser;
-import hudson.plugins.git.extensions.GitSCMExtension;
 import hudson.tasks.LogRotator;
 import hudson.tasks.Shell;
 import hudson.triggers.SCMTrigger;
 import hudson.triggers.TimerTrigger;
-import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
-import io.jenkins.plugins.todeclarative.converter.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.freestyle.FreestyleToDeclarativeConverter;
 import jenkins.model.BuildDiscarderProperty;
 import jenkins.model.Jenkins;
 import jenkins.triggers.ReverseBuildTrigger;
 import org.jenkins.plugins.lockableresources.RequiredResourcesProperty;
+import org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper;
+import org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
@@ -36,7 +34,7 @@ import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -90,30 +88,6 @@ public class FreestyleTest
                 new ParametersDefinitionProperty( parametersDefinitions );
             p.addProperty( parametersDefinitionProperty );
         }
-
-//  <triggers>
-//    <jenkins.triggers.ReverseBuildTrigger>
-//      <spec></spec>
-//      <upstreamProjects>pipeline, </upstreamProjects>
-//      <threshold>
-//        <name>FAILURE</name>
-//        <ordinal>2</ordinal>
-//        <color>RED</color>
-//        <completeBuild>true</completeBuild>
-//      </threshold>
-//    </jenkins.triggers.ReverseBuildTrigger>
-//    <hudson.triggers.TimerTrigger>
-//      <spec>45 9-16/2 * * 1-5</spec>
-//    </hudson.triggers.TimerTrigger>
-//    <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.29.2">
-//      <spec></spec>
-//    </com.cloudbees.jenkins.GitHubPushTrigger>
-//    <hudson.triggers.SCMTrigger>
-//      <spec>45 9-16/2 * * 1-5</spec>
-//      <ignorePostCommitHooks>true</ignorePostCommitHooks>
-//    </hudson.triggers.SCMTrigger>
-//  </triggers>
-
         {
             ReverseBuildTrigger reverseBuildTrigger = new ReverseBuildTrigger( "pipeline" );
             reverseBuildTrigger.setThreshold( Result.UNSTABLE );
@@ -126,6 +100,21 @@ public class FreestyleTest
         }
 
         p.getBuildersList().add( new Shell( "pwd" ) );
+
+
+        String username = "bob";
+        String password = "s3cr3t";
+        UsernamePasswordCredentialsImpl
+            c = new UsernamePasswordCredentialsImpl( CredentialsScope.GLOBAL, null, "sample", username, password);
+        CredentialsProvider.lookupStores( j ).iterator().next().addCredentials( Domain.global(), c);
+
+
+        UsernamePasswordMultiBinding usernamePasswordMultiBinding =
+            new UsernamePasswordMultiBinding( "theuser", "thepassword", c.getId() );
+        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper(Arrays.asList(usernamePasswordMultiBinding));
+
+        p.getBuildWrappersList().add( secretBuildWrapper );
+
 
         FreestyleToDeclarativeConverter converter = Jenkins.get()
             .getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
@@ -179,6 +168,19 @@ public class FreestyleTest
         p.getBuildersList().add( new Shell( "pwd" ) );
         p.getBuildersList().add( new Shell( "ls -lrt" ) );
         p.getBuildersList().add( new Shell( "echo $str" ) );
+
+        String username = "bob";
+        String password = "s3cr3t";
+        UsernamePasswordCredentialsImpl
+            c = new UsernamePasswordCredentialsImpl( CredentialsScope.GLOBAL, null, "sample", username, password);
+        CredentialsProvider.lookupStores( j ).iterator().next().addCredentials( Domain.global(), c);
+
+
+        UsernamePasswordMultiBinding usernamePasswordMultiBinding =
+            new UsernamePasswordMultiBinding( "theuser", "thepassword", c.getId() );
+        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper(Arrays.asList(usernamePasswordMultiBinding));
+
+        p.getBuildWrappersList().add( secretBuildWrapper );
 
         FreestyleToDeclarativeConverter converter = Jenkins.get()
             .getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
