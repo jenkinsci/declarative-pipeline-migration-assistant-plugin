@@ -15,8 +15,10 @@ import hudson.model.StringParameterDefinition;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.UserRemoteConfig;
 import hudson.tasks.ArtifactArchiver;
+import hudson.tasks.BuildTrigger;
 import hudson.tasks.LogRotator;
 import hudson.tasks.Shell;
+import hudson.tasks.test.AggregatedTestResultPublisher;
 import hudson.triggers.SCMTrigger;
 import hudson.triggers.TimerTrigger;
 import io.jenkins.plugins.todeclarative.converter.freestyle.FreestyleToDeclarativeConverter;
@@ -124,6 +126,15 @@ public class FreestyleTest
         artifactArchiver.setFingerprint( true );
         artifactArchiver.setOnlyIfSuccessful( true );
         p.getPublishersList().add( artifactArchiver );
+
+        p.getPublishersList().add( new AggregatedTestResultPublisher("foo", true) );
+
+        p.getPublishersList().add( new BuildTrigger( "foo,bar", Result.SUCCESS ) );
+        p.getPublishersList().add( new BuildTrigger( "beer", Result.SUCCESS ) );
+
+        j.createFreeStyleProject( "foo" );
+        j.createFreeStyleProject( "bar" );
+        j.createFreeStyleProject( "beer" );
 
         FreestyleToDeclarativeConverter converter = Jenkins.get()
             .getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );

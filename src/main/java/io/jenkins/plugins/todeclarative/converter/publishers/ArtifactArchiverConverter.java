@@ -33,8 +33,11 @@ public class ArtifactArchiverConverter implements PublisherConverter
         } else {
             buildCondition = ModelASTUtils.buildOrFindBuildCondition( result.getModelASTPipelineDef(), "always" );
         }
-        ModelASTBranch branch = new ModelASTBranch( this );
-        buildCondition.setBranch( branch );
+        ModelASTBranch branch = buildCondition.getBranch();
+        if(branch==null){
+            branch =new ModelASTBranch( this );
+            buildCondition.setBranch( branch );
+        }
 
         // archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
         ModelASTStep archiveArtifacts = new ModelASTStep( this );
