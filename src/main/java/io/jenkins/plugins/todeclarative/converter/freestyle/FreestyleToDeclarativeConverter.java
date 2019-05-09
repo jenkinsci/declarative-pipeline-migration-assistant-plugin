@@ -11,6 +11,7 @@ import hudson.plugins.git.UserRemoteConfig;
 import hudson.scm.SCM;
 import hudson.tasks.BuildWrapper;
 import hudson.tasks.Builder;
+import hudson.tasks.Publisher;
 import io.jenkins.plugins.todeclarative.converter.ConverterException;
 import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.ConverterResult;
@@ -18,6 +19,7 @@ import io.jenkins.plugins.todeclarative.converter.ToDeclarativeConverter;
 import io.jenkins.plugins.todeclarative.converter.builders.BuilderConverter;
 import io.jenkins.plugins.todeclarative.converter.buildwrapper.BuildWrapperConverter;
 import io.jenkins.plugins.todeclarative.converter.jobproperty.JobPropertyConverter;
+import io.jenkins.plugins.todeclarative.converter.publishers.PublisherConverter;
 import io.jenkins.plugins.todeclarative.converter.scm.ScmConverter;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang3.StringUtils;
@@ -97,6 +99,8 @@ public class FreestyleToDeclarativeConverter implements ToDeclarativeConverter
             convertJobProperties(converterRequest, converterResult, freeStyleProject.getProperties());
 
             convertBuilders( converterRequest, converterResult, freeStyleProject.getBuilders());
+
+            convertPublishers( converterRequest, converterResult, freeStyleProject.getPublishersList() );
             
             if(converterRequest.isCreateProject()) {
 
@@ -127,7 +131,32 @@ public class FreestyleToDeclarativeConverter implements ToDeclarativeConverter
                 }
             } );
         }
-    }    
+    }
+
+    protected void convertPublishers( ConverterRequest converterRequest, ConverterResult converterResult, List<Publisher> publishers ) {
+        if(publishers==null||publishers.isEmpty()){
+            return;
+        }
+        List<PublisherConverter> converters = Jenkins.get().getExtensionList( PublisherConverter.class );
+        if(converters==null||converters.isEmpty()){
+            return;
+        }
+        ModelASTStages stages = converterResult.getModelASTPipelineDef().getStages();
+        if(stages==null){
+            stages = new ModelASTStages( this );
+            converterResult.getModelASTPipelineDef().setStages( stages );
+        }
+        for(Publisher publisher : publishers)
+        {
+            converters.stream().filter( converter -> converter.canConvert( publisher ) )
+                .forEach( converter -> {
+                    ModelASTStage stage = converter.convert( converterRequest, converterResult, publisher );
+                    if(stage!=null){
+                        converterResult.getModelASTPipelineDef().getStages().getStages().add( stage );
+                    }
+                });
+        }
+    }
 
     protected void convertScm( ConverterRequest converterRequest, ConverterResult converterResult, SCM scm ) {
         List<ScmConverter> converters = Jenkins.get().getExtensionList( ScmConverter.class );

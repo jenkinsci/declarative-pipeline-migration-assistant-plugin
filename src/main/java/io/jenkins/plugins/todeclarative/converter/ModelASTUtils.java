@@ -1,10 +1,14 @@
 package io.jenkins.plugins.todeclarative.converter;
 
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildCondition;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKeyValueOrMethodCallPair;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPostBuild;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ModelASTUtils
 {
@@ -22,9 +26,22 @@ public class ModelASTUtils
         return keyPairArg;
     }
 
-    public static ModelASTKeyValueOrMethodCallPair buildKeyPairArg( String key, List<String> value){
-        // FIXME
-        return null;
+    public static ModelASTBuildCondition buildOrFindBuildCondition( ModelASTPipelineDef modelASTPipelineDef, String condition) {
+        ModelASTPostBuild postBuild = modelASTPipelineDef.getPostBuild();
+        if(postBuild==null){
+            postBuild = new ModelASTPostBuild( modelASTPipelineDef );
+            modelASTPipelineDef.setPostBuild( postBuild );
+        }
+        Optional<ModelASTBuildCondition> optional = postBuild.getConditions().stream()
+             .filter( modelASTBuildCondition -> modelASTBuildCondition.getCondition().equals( condition ) )
+             .findFirst();
+        if(optional.isPresent()){
+            return optional.get();
+        }
+        ModelASTBuildCondition modelASTBuildCondition = new ModelASTBuildCondition( modelASTPipelineDef );
+        modelASTBuildCondition.setCondition( condition );
+        postBuild.getConditions().add( modelASTBuildCondition );
+        return modelASTBuildCondition;
     }
 
 //

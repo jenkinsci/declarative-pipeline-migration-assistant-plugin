@@ -8,6 +8,7 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTSingleArgument;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTreeStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 
 import java.util.Arrays;
@@ -37,11 +38,12 @@ public class ShellConverter
         step.setArgs( singleArgument );
         step.setName( "sh" );
 
-        if(request.getWithCredentials()!=null)
+        if(request.getWithCredentials().get()!=null)
         {
             // FIXME make a deep clone of WithCredentials to not using same instance all the time!!
-            request.getWithCredentials().getChildren().add( step );
-            branch.getSteps().add( request.getWithCredentials() );
+            ModelASTTreeStep treeStep = request.getWithCredentials().get();
+            treeStep.getChildren().add( step );
+            branch.getSteps().add(treeStep);
         } else {
             branch.setSteps( Arrays.asList( step ) );
         }

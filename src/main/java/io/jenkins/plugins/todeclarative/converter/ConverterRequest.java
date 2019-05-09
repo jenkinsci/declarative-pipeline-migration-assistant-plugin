@@ -5,6 +5,7 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTreeStep;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class ConverterRequest
 {
@@ -16,7 +17,7 @@ public class ConverterRequest
 
     private String createdProjectName;
 
-    private ModelASTTreeStep withCredentials;
+    private Supplier<ModelASTTreeStep> withCredentials;
 
     /**
      * Map to store some values related to the current conversion
@@ -110,12 +111,12 @@ public class ConverterRequest
         context.put( key, value );
     }
 
-    public ModelASTTreeStep getWithCredentials()
+    public Supplier<ModelASTTreeStep> getWithCredentials()
     {
-        return withCredentials;
+        return withCredentials == null ? ()-> null : withCredentials;
     }
 
-    public void setWithCredentials( ModelASTTreeStep withCredentials )
+    public void setWithCredentials( Supplier<ModelASTTreeStep> withCredentials )
     {
         this.withCredentials = withCredentials;
     }

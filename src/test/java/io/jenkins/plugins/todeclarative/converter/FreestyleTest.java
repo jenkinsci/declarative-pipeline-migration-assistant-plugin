@@ -14,6 +14,7 @@ import hudson.model.Slave;
 import hudson.model.StringParameterDefinition;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.UserRemoteConfig;
+import hudson.tasks.ArtifactArchiver;
 import hudson.tasks.LogRotator;
 import hudson.tasks.Shell;
 import hudson.triggers.SCMTrigger;
@@ -100,6 +101,7 @@ public class FreestyleTest
         }
 
         p.getBuildersList().add( new Shell( "pwd" ) );
+        p.getBuildersList().add( new Shell( "ls -lrt" ) );
 
 
         String username = "bob";
@@ -115,6 +117,13 @@ public class FreestyleTest
 
         p.getBuildWrappersList().add( secretBuildWrapper );
 
+        ArtifactArchiver artifactArchiver = new ArtifactArchiver( "**/target/**.jar"  );
+        artifactArchiver.setAllowEmptyArchive( true );
+        artifactArchiver.setExcludes( "**pom**" );
+        artifactArchiver.setCaseSensitive( true );
+        artifactArchiver.setFingerprint( true );
+        artifactArchiver.setOnlyIfSuccessful( true );
+        p.getPublishersList().add( artifactArchiver );
 
         FreestyleToDeclarativeConverter converter = Jenkins.get()
             .getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );

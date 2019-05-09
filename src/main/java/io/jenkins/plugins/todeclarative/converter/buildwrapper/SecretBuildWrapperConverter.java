@@ -4,22 +4,16 @@ import hudson.Extension;
 import hudson.tasks.BuildWrapper;
 import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
 import org.jenkinsci.Symbol;
-import org.jenkinsci.plugins.credentialsbinding.Binding;
 import org.jenkinsci.plugins.credentialsbinding.MultiBinding;
 import org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper;
 import org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTNamedArgumentList;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTSingleArgument;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTreeStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Extension
 public class SecretBuildWrapperConverter
@@ -34,8 +28,15 @@ public class SecretBuildWrapperConverter
             return null;
         }
 
+        request.setWithCredentials( ()-> build( request, secretBuildWrapper ) );
+        return null;
+    }
+
+    protected ModelASTTreeStep build( ConverterRequest request, SecretBuildWrapper secretBuildWrapper )
+    {
+
         ModelASTTreeStep withCredentials = new ModelASTTreeStep( this );
-        request.setWithCredentials( withCredentials );
+
         withCredentials.setName( "withCredentials" );
         ModelASTSingleArgument singleArgument = new ModelASTSingleArgument( null);
         withCredentials.setArgs( singleArgument );
@@ -64,11 +65,11 @@ public class SecretBuildWrapperConverter
 
                         //ModelASTValue{value=${[usernameColonPassword(credentialsId: 'mylogin', variable: 'USERPASS')]}, isLiteral=false}
                         singleArgument.setValue( ModelASTValue.fromGString( gstring.toString(), this ) );
+                        return withCredentials;
 
-
-                     default:
-                         // FIXME warning in result
-                         System.out.println( "ignore symbol:" +  symbol );
+                    default:
+                        // FIXME warning in result
+                        System.out.println( "ignore symbol:" +  symbol );
 
                 }
             }
@@ -76,6 +77,9 @@ public class SecretBuildWrapperConverter
 
         return null;
     }
+
+
+
 
     @Override
     public boolean canConvert( BuildWrapper wrapper )
