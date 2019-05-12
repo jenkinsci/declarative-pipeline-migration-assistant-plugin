@@ -5,6 +5,8 @@ import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.domains.Domain;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import com.coravy.hudson.plugins.github.GithubProjectProperty;
+import htmlpublisher.HtmlPublisher;
+import htmlpublisher.HtmlPublisherTarget;
 import hudson.model.BooleanParameterDefinition;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParameterDefinition;
@@ -18,6 +20,7 @@ import hudson.tasks.ArtifactArchiver;
 import hudson.tasks.BuildTrigger;
 import hudson.tasks.LogRotator;
 import hudson.tasks.Shell;
+import hudson.tasks.junit.JUnitResultArchiver;
 import hudson.tasks.test.AggregatedTestResultPublisher;
 import hudson.triggers.SCMTrigger;
 import hudson.triggers.TimerTrigger;
@@ -105,36 +108,48 @@ public class FreestyleTest
         p.getBuildersList().add( new Shell( "pwd" ) );
         p.getBuildersList().add( new Shell( "ls -lrt" ) );
 
+        {
+            String username = "bob";
+            String password = "s3cr3t";
+            UsernamePasswordCredentialsImpl c =
+                new UsernamePasswordCredentialsImpl( CredentialsScope.GLOBAL, null, "sample", username, password );
+            CredentialsProvider.lookupStores( j ).iterator().next().addCredentials( Domain.global(), c );
 
-        String username = "bob";
-        String password = "s3cr3t";
-        UsernamePasswordCredentialsImpl
-            c = new UsernamePasswordCredentialsImpl( CredentialsScope.GLOBAL, null, "sample", username, password);
-        CredentialsProvider.lookupStores( j ).iterator().next().addCredentials( Domain.global(), c);
+            UsernamePasswordMultiBinding usernamePasswordMultiBinding =
+                new UsernamePasswordMultiBinding( "theuser", "thepassword", c.getId() );
+            SecretBuildWrapper secretBuildWrapper =
+                new SecretBuildWrapper( Arrays.asList( usernamePasswordMultiBinding ) );
 
+            p.getBuildWrappersList().add( secretBuildWrapper );
+        }
 
-        UsernamePasswordMultiBinding usernamePasswordMultiBinding =
-            new UsernamePasswordMultiBinding( "theuser", "thepassword", c.getId() );
-        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper(Arrays.asList(usernamePasswordMultiBinding));
-
-        p.getBuildWrappersList().add( secretBuildWrapper );
-
-        ArtifactArchiver artifactArchiver = new ArtifactArchiver( "**/target/**.jar"  );
-        artifactArchiver.setAllowEmptyArchive( true );
-        artifactArchiver.setExcludes( "**pom**" );
-        artifactArchiver.setCaseSensitive( true );
-        artifactArchiver.setFingerprint( true );
-        artifactArchiver.setOnlyIfSuccessful( true );
-        p.getPublishersList().add( artifactArchiver );
-
+        {
+            ArtifactArchiver artifactArchiver = new ArtifactArchiver( "**/target/**.jar" );
+            artifactArchiver.setAllowEmptyArchive( true );
+            artifactArchiver.setExcludes( "**pom**" );
+            artifactArchiver.setCaseSensitive( true );
+            artifactArchiver.setFingerprint( true );
+            artifactArchiver.setOnlyIfSuccessful( true );
+            p.getPublishersList().add( artifactArchiver );
+        }
         p.getPublishersList().add( new AggregatedTestResultPublisher("foo", true) );
 
-        p.getPublishersList().add( new BuildTrigger( "foo,bar", Result.SUCCESS ) );
-        p.getPublishersList().add( new BuildTrigger( "beer", Result.SUCCESS ) );
+        {
+            p.getPublishersList().add( new BuildTrigger( "foo,bar", Result.SUCCESS ) );
+            p.getPublishersList().add( new BuildTrigger( "beer", Result.SUCCESS ) );
 
-        j.createFreeStyleProject( "foo" );
-        j.createFreeStyleProject( "bar" );
-        j.createFreeStyleProject( "beer" );
+            j.createFreeStyleProject( "foo" );
+            j.createFreeStyleProject( "bar" );
+            j.createFreeStyleProject( "beer" );
+        }
+
+        {
+            HtmlPublisherTarget htmlPublisherTarget = new HtmlPublisherTarget("reportName", "reportDir", "reportFiles", /*keepAll*/true,
+            /*alwaysLinkToLastBuild*/true, /*allowMissing*/true);
+            p.getPublishersList().add( new HtmlPublisher( Arrays.asList( htmlPublisherTarget ) ));
+        }
+
+        p.getPublishersList().add( new JUnitResultArchiver( "paths" ) );
 
         FreestyleToDeclarativeConverter converter = Jenkins.get()
             .getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
@@ -189,18 +204,30 @@ public class FreestyleTest
         p.getBuildersList().add( new Shell( "ls -lrt" ) );
         p.getBuildersList().add( new Shell( "echo $str" ) );
 
-        String username = "bob";
-        String password = "s3cr3t";
-        UsernamePasswordCredentialsImpl
-            c = new UsernamePasswordCredentialsImpl( CredentialsScope.GLOBAL, null, "sample", username, password);
-        CredentialsProvider.lookupStores( j ).iterator().next().addCredentials( Domain.global(), c);
+        {
+            String username = "bob";
+            String password = "s3cr3t";
+            UsernamePasswordCredentialsImpl c =
+                new UsernamePasswordCredentialsImpl( CredentialsScope.GLOBAL, null, "sample", username, password );
+            CredentialsProvider.lookupStores( j ).iterator().next().addCredentials( Domain.global(), c );
 
+            UsernamePasswordMultiBinding usernamePasswordMultiBinding =
+                new UsernamePasswordMultiBinding( "theuser", "thepassword", c.getId() );
+            SecretBuildWrapper secretBuildWrapper =
+                new SecretBuildWrapper( Arrays.asList( usernamePasswordMultiBinding ) );
 
-        UsernamePasswordMultiBinding usernamePasswordMultiBinding =
-            new UsernamePasswordMultiBinding( "theuser", "thepassword", c.getId() );
-        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper(Arrays.asList(usernamePasswordMultiBinding));
+            p.getBuildWrappersList().add( secretBuildWrapper );
+        }
 
-        p.getBuildWrappersList().add( secretBuildWrapper );
+        {
+            HtmlPublisherTarget htmlPublisherTarget = new HtmlPublisherTarget("reportName", "reportDir", "reportFiles", /*keepAll*/true,
+                /*alwaysLinkToLastBuild*/true, /*allowMissing*/true);
+            p.getPublishersList().add( new HtmlPublisher( Arrays.asList( htmlPublisherTarget ) ));
+        }
+
+        j.createFreeStyleProject( "foo" );
+        p.getPublishersList().add( new AggregatedTestResultPublisher("foo", true) );
+
 
         FreestyleToDeclarativeConverter converter = Jenkins.get()
             .getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );

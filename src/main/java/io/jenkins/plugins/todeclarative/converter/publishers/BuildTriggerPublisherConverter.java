@@ -1,6 +1,8 @@
 package io.jenkins.plugins.todeclarative.converter.publishers;
 
 import hudson.Extension;
+import hudson.model.AbstractProject;
+import hudson.model.FreeStyleProject;
 import hudson.tasks.BuildTrigger;
 import hudson.tasks.Publisher;
 import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
@@ -29,7 +31,7 @@ public class BuildTriggerPublisherConverter
         //buildTrigger.getThreshold()
         ModelASTBuildCondition buildCondition =
             ModelASTUtils.buildOrFindBuildCondition( result.getModelASTPipelineDef(), "always" );
-        buildTrigger.getChildProjects().forEach( abstractProject -> {
+        buildTrigger.getChildJobs((AbstractProject<?, ?>) request.getJob()).forEach( abstractProject -> {
             ModelASTBranch branch = buildCondition.getBranch();
             if(branch==null){
                 branch =new ModelASTBranch( this );
