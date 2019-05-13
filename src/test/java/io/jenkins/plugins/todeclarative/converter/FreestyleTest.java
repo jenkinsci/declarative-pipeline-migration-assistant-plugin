@@ -19,6 +19,7 @@ import hudson.plugins.git.UserRemoteConfig;
 import hudson.tasks.ArtifactArchiver;
 import hudson.tasks.BuildTrigger;
 import hudson.tasks.LogRotator;
+import hudson.tasks.Mailer;
 import hudson.tasks.Shell;
 import hudson.tasks.junit.JUnitResultArchiver;
 import hudson.tasks.test.AggregatedTestResultPublisher;
@@ -149,7 +150,11 @@ public class FreestyleTest
             p.getPublishersList().add( new HtmlPublisher( Arrays.asList( htmlPublisherTarget ) ));
         }
 
-        p.getPublishersList().add( new JUnitResultArchiver( "paths" ) );
+        {
+            p.getPublishersList().add( new Mailer( "foo@beer.com", //
+                /* notifyEveryUnstableBuild */ true, //
+                /* sendToIndividuals*/ true ));
+        }
 
         FreestyleToDeclarativeConverter converter = Jenkins.get()
             .getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
