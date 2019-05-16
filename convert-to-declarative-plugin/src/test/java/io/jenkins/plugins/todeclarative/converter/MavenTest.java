@@ -1,33 +1,17 @@
 package io.jenkins.plugins.todeclarative.converter;
 
-import hudson.ExtensionList;
 import hudson.maven.MavenModuleSet;
 import hudson.model.Slave;
-import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
-import io.jenkins.plugins.todeclarative.converter.ConverterResult;
-import io.jenkins.plugins.todeclarative.converter.ToDeclarativeConverter;
+import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
+import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.maven.MavenToDeclarativeConverter;
 import jenkins.model.Jenkins;
-import jenkins.model.Nodes;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTAgent;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTNamedArgumentList;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTSingleArgument;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStages;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTreeStep;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MavenTest
 {

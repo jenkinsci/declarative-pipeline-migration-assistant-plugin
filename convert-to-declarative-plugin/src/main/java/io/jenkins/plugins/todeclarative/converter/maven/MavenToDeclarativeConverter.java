@@ -5,10 +5,10 @@ import hudson.maven.MavenModuleSet;
 import hudson.model.Job;
 import hudson.model.Label;
 import hudson.tasks.Builder;
-import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
-import io.jenkins.plugins.todeclarative.converter.ConverterResult;
-import io.jenkins.plugins.todeclarative.converter.ToDeclarativeConverter;
-import io.jenkins.plugins.todeclarative.converter.builders.BuilderConverter;
+import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
+import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
+import io.jenkins.plugins.todeclarative.converter.api.ToDeclarativeConverter;
+import io.jenkins.plugins.todeclarative.converter.api.builder.BuilderConverter;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTAgent;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
@@ -45,7 +45,7 @@ public class MavenToDeclarativeConverter
         if(pipelineDef.getStages()==null){
             pipelineDef.setStages( new ModelASTStages( this ) );
         }
-        // pre builders first
+        // pre builder first
 
         Iterator<Builder> builderIterator = mavenModuleSet.getPrebuilders().iterator();
         while(builderIterator.hasNext())

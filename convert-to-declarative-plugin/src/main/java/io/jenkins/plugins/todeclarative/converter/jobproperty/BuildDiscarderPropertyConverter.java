@@ -4,8 +4,9 @@ import hudson.Extension;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
 import hudson.tasks.LogRotator;
-import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
-import io.jenkins.plugins.todeclarative.converter.ConverterResult;
+import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
+import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
+import io.jenkins.plugins.todeclarative.converter.api.jobproperty.JobPropertyConverter;
 import jenkins.model.BuildDiscarder;
 import jenkins.model.BuildDiscarderProperty;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +18,7 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.jenkins.plugins.todeclarative.converter.ModelASTUtils.buildKeyPairArg;
+import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.buildKeyPairArg;
 
 @Extension
 public class BuildDiscarderPropertyConverter

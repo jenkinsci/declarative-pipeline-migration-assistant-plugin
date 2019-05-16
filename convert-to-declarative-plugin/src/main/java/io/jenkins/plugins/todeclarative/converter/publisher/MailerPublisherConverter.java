@@ -1,12 +1,12 @@
-package io.jenkins.plugins.todeclarative.converter.publishers;
+package io.jenkins.plugins.todeclarative.converter.publisher;
 
 import hudson.Extension;
 import hudson.tasks.Mailer;
 import hudson.tasks.Publisher;
-import hudson.tasks.junit.JUnitResultArchiver;
-import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
-import io.jenkins.plugins.todeclarative.converter.ConverterResult;
-import io.jenkins.plugins.todeclarative.converter.ModelASTUtils;
+import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
+import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
+import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
+import io.jenkins.plugins.todeclarative.converter.api.publisher.PublisherConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildCondition;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;

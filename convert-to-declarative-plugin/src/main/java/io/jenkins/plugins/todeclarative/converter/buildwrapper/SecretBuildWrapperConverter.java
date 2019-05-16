@@ -2,7 +2,8 @@ package io.jenkins.plugins.todeclarative.converter.buildwrapper;
 
 import hudson.Extension;
 import hudson.tasks.BuildWrapper;
-import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
+import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
+import io.jenkins.plugins.todeclarative.converter.api.buildwrapper.BuildWrapperConverter;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.credentialsbinding.MultiBinding;
 import org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper;

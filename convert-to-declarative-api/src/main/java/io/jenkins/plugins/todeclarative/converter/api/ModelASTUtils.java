@@ -1,4 +1,4 @@
-package io.jenkins.plugins.todeclarative.converter;
+package io.jenkins.plugins.todeclarative.converter.api;
 
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildCondition;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
@@ -7,7 +7,6 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPostBuild;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 
-import java.util.List;
 import java.util.Optional;
 
 public class ModelASTUtils

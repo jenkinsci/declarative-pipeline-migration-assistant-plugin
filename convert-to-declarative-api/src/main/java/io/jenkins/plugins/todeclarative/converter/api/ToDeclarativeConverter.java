@@ -1,4 +1,4 @@
-package io.jenkins.plugins.todeclarative.converter;
+package io.jenkins.plugins.todeclarative.converter.api;
 
 import hudson.model.Job;
 

@@ -8,23 +8,18 @@ import hudson.model.JobPropertyDescriptor;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.StringParameterDefinition;
-import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
-import io.jenkins.plugins.todeclarative.converter.ConverterResult;
-import io.jenkins.plugins.todeclarative.converter.ModelASTUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.jenkins.plugins.lockableresources.RequiredResourcesProperty;
+import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
+import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
+import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
+import io.jenkins.plugins.todeclarative.converter.api.jobproperty.JobPropertyConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildParameter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildParameters;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTMethodArg;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOption;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOptions;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static io.jenkins.plugins.todeclarative.converter.ModelASTUtils.buildKeyPairArg;
 
 @Extension
 public class ParameterPropertyConverter

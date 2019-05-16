@@ -1,7 +1,7 @@
-package io.jenkins.plugins.todeclarative.converter.buildwrapper;
+package io.jenkins.plugins.todeclarative.converter.api.buildwrapper;
 
 import hudson.tasks.BuildWrapper;
-import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
+import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 
 public interface BuildWrapperConverter

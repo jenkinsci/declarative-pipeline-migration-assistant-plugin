@@ -1,9 +1,9 @@
-package io.jenkins.plugins.todeclarative.converter.jobproperty;
+package io.jenkins.plugins.todeclarative.converter.api.jobproperty;
 
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
-import io.jenkins.plugins.todeclarative.converter.ConverterRequest;
-import io.jenkins.plugins.todeclarative.converter.ConverterResult;
+import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
+import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 
 public interface JobPropertyConverter
 {
