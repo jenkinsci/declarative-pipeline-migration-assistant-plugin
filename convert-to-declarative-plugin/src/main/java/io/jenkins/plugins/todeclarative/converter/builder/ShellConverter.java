@@ -4,6 +4,7 @@ import hudson.Extension;
 import hudson.tasks.Builder;
 import hudson.tasks.Shell;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
+import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.builder.BuilderConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTSingleArgument;
@@ -22,7 +23,7 @@ public class ShellConverter
     public static final String SHELL_NUMBER_KEY = ShellConverter.class.getName() + ".shell.number";
 
     @Override
-    public ModelASTStage convert( ConverterRequest request, Builder builder )
+    public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, Builder builder )
     {
         Shell shell = (Shell) builder;
         shell.getCommand();

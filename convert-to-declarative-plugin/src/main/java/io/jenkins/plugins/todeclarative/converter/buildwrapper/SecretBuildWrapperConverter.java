@@ -3,6 +3,7 @@ package io.jenkins.plugins.todeclarative.converter.buildwrapper;
 import hudson.Extension;
 import hudson.tasks.BuildWrapper;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
+import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.buildwrapper.BuildWrapperConverter;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.credentialsbinding.MultiBinding;
@@ -21,7 +22,7 @@ public class SecretBuildWrapperConverter
     implements BuildWrapperConverter
 {
     @Override
-    public ModelASTStage convert( ConverterRequest request, BuildWrapper wrapper )
+    public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, BuildWrapper wrapper )
     {
         SecretBuildWrapper secretBuildWrapper = SecretBuildWrapper.class.cast( wrapper );
         if ( secretBuildWrapper.getBindings() == null || secretBuildWrapper.getBindings().isEmpty() )

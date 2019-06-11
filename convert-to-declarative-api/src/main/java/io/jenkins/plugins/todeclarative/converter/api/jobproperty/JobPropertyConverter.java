@@ -2,6 +2,7 @@ package io.jenkins.plugins.todeclarative.converter.api.jobproperty;
 
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
+import io.jenkins.plugins.todeclarative.converter.api.ConverterException;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 

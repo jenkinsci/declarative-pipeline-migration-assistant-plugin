@@ -5,6 +5,7 @@ import hudson.maven.MavenModuleSet;
 import hudson.model.Job;
 import hudson.model.Label;
 import hudson.tasks.Builder;
+import io.jenkins.plugins.todeclarative.converter.api.ConverterException;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.ToDeclarativeConverter;
@@ -32,6 +33,7 @@ public class MavenToDeclarativeConverter
 {
 
     public void convert( ConverterRequest request , ConverterResult converterResult)
+        throws ConverterException
     {
         if(! (request.getJob() instanceof MavenModuleSet))
         {
@@ -54,7 +56,7 @@ public class MavenToDeclarativeConverter
             BuilderConverter converter = findBuilderConverter( builder );
             if(converter!=null)
             {
-                pipelineDef.getStages().getStages().add(converter.convert( request, builder ));
+                pipelineDef.getStages().getStages().add(converter.convert( request, converterResult, builder ));
             } else {
                 // TODO save some warnings
             }

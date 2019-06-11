@@ -9,6 +9,7 @@ import htmlpublisher.HtmlPublisher;
 import htmlpublisher.HtmlPublisherTarget;
 import hudson.model.BooleanParameterDefinition;
 import hudson.model.FreeStyleProject;
+import hudson.model.JDK;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Result;
@@ -20,6 +21,7 @@ import hudson.tasks.ArtifactArchiver;
 import hudson.tasks.BuildTrigger;
 import hudson.tasks.LogRotator;
 import hudson.tasks.Mailer;
+import hudson.tasks.Maven;
 import hudson.tasks.Shell;
 import hudson.tasks.test.AggregatedTestResultPublisher;
 import hudson.triggers.SCMTrigger;
@@ -29,8 +31,12 @@ import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.freestyle.FreestyleToDeclarativeConverter;
 import jenkins.model.BuildDiscarderProperty;
 import jenkins.model.Jenkins;
+import jenkins.mvn.GlobalSettingsProvider;
 import jenkins.triggers.ReverseBuildTrigger;
+import org.apache.commons.io.IOUtils;
 import org.jenkins.plugins.lockableresources.RequiredResourcesProperty;
+import org.jenkinsci.plugins.configfiles.GlobalConfigFiles;
+import org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig;
 import org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper;
 import org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
@@ -39,7 +45,9 @@ import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
+import org.jvnet.hudson.test.ExtractResourceSCM;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.ToolInstallations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -297,6 +305,73 @@ public class FreestyleTest
 
         System.out.println( groovy );
 
+
+    }
+
+    @Test
+    public void freestyle_conversion_maven_build_then_run_project() throws Exception {
+
+        Slave slave = j.createOnlineSlave();
+        slave.setLabelString( "FOO_AGENT" );
+
+        String projectName = Long.toString( System.currentTimeMillis() );
+        FreeStyleProject p = j.createFreeStyleProject( projectName );
+        p.addProperty( new GithubProjectProperty( "https://github.com/olamy/foo") );
+
+        //int daysToKeep, int numToKeep, int artifactDaysToKeep, int artifactNumToKeep
+        LogRotator logRotator = new LogRotator(1, 2,3, 4);
+        BuildDiscarderProperty buildDiscarderProperty = new BuildDiscarderProperty( logRotator );
+        p.addProperty( buildDiscarderProperty );
+
+        List<ParameterDefinition> parametersDefinitions = new ArrayList<>();
+        parametersDefinitions.add(new StringParameterDefinition( "str", "defaultValue", "description str", true ) );
+        // List<String> toGroovy needs to be fixed
+        //parametersDefinitions.add( new ChoiceParameterDefinition( "choice", new String[]{"choice1","choice2"}, "description choice" ) );
+        parametersDefinitions.add( new BooleanParameterDefinition("nameboolean", true, "boolean description") );
+        ParametersDefinitionProperty parametersDefinitionProperty = new ParametersDefinitionProperty(parametersDefinitions);
+        p.addProperty( parametersDefinitionProperty );
+
+        // should work everywhere.... at least I hope
+        p.setJDK( new JDK( "thejdk", System.getenv( "JAVA_HOME" )));
+
+        p.setScm(new ExtractResourceSCM(Thread.currentThread().getContextClassLoader().getResource( "maven3-project.zip" )));
+
+
+        GlobalConfigFiles store = j.getInstance().getExtensionList(GlobalConfigFiles.class)
+            .get( GlobalConfigFiles.class);
+
+        String content = IOUtils.toString(Thread.currentThread().getContextClassLoader().getResource( "global-maven-settings.xml" ));
+        GlobalMavenSettingsConfig globalMavenSettingsConfig =
+            new GlobalMavenSettingsConfig( "global-maven-settings-id", "global-maven-settings-name", "comment", content );
+        store.save(globalMavenSettingsConfig);
+
+        Maven.MavenInstallation mavenInstallation = ToolInstallations.configureMaven35();
+
+        Maven maven = new Maven( "clean verify",mavenInstallation.getName() /*maven name*/, "pom.xml", "" /*properties*/,
+                                 null /*jvmOptions*/, false /*usePrivateRepository*/,
+                                 null /*SettingsProvider settings*/,/*GlobalSettingsProvider*/null);
+
+        //GlobalMavenSettingsConfig.GlobalMavenSettingsConfigProvider.
+        p.getBuildersList().add(maven);
+
+
+        FreestyleToDeclarativeConverter converter = Jenkins.get()
+            .getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
+
+        Assert.assertTrue( converter.canConvert( p ) );
+
+        ConverterRequest request = new ConverterRequest().job( p ).createProject( true ).createdProjectName( "foo-blabla" );
+        ConverterResult converterResult = new ConverterResult()
+            .modelASTPipelineDef( new ModelASTPipelineDef(null));
+
+        converter.convert( request, converterResult);
+        String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
+
+        System.out.println( groovy );
+
+        WorkflowRun run =( (WorkflowJob)converterResult.getJob()).scheduleBuild2( 0).get();
+        j.waitForCompletion( run );
+        j.assertBuildStatus( Result.SUCCESS, run);
 
     }
 
