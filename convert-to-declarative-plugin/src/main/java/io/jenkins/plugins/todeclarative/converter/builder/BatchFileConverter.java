@@ -1,8 +1,8 @@
 package io.jenkins.plugins.todeclarative.converter.builder;
 
 import hudson.Extension;
+import hudson.tasks.BatchFile;
 import hudson.tasks.Builder;
-import hudson.tasks.Shell;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.builder.BuilderConverter;
@@ -17,27 +17,27 @@ import java.util.Arrays;
 
 
 @Extension
-public class ShellConverter
+public class BatchFileConverter
     implements BuilderConverter
 {
-    public static final String SHELL_NUMBER_KEY = ShellConverter.class.getName() + ".shell.number";
+    public static final String BATCH_NUMBER_KEY = BatchFileConverter.class.getName() + ".shell.number";
 
     @Override
     public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, Builder builder )
     {
-        Shell shell = (Shell) builder;
+        BatchFile batchFile = (BatchFile) builder;
         ModelASTStage stage = new ModelASTStage( this );
-        int shellNumber = request.getInt( SHELL_NUMBER_KEY );
-        stage.setName( "Shell script " + shellNumber );
-        request.setInt( SHELL_NUMBER_KEY, ++shellNumber );
+        int shellNumber = request.getInt( BATCH_NUMBER_KEY );
+        stage.setName( "Batch script " + shellNumber );
+        request.setInt( BATCH_NUMBER_KEY, ++shellNumber );
         ModelASTBranch branch = new ModelASTBranch( this );
         stage.setBranches( Arrays.asList( branch ) );
         ModelASTStep step = new ModelASTStep( this );
         ModelASTSingleArgument singleArgument = new ModelASTSingleArgument( this );
-        // TODO olamy escape shell command?? not sure as might be done when running it
-        singleArgument.setValue( ModelASTValue.fromConstant( shell.getCommand(), this ) );
+        // TODO olamy escape command?? not sure as might be done when running it
+        singleArgument.setValue( ModelASTValue.fromConstant( batchFile.getCommand(), this ) );
         step.setArgs( singleArgument );
-        step.setName( "sh" );
+        step.setName( "bat" );
 
         if(request.getWithCredentials().get()!=null)
         {
@@ -57,6 +57,6 @@ public class ShellConverter
     @Override
     public boolean canConvert( Builder builder )
     {
-        return builder.getClass().isAssignableFrom( Shell.class );
+        return builder.getClass().isAssignableFrom( BatchFile.class );
     }
 }

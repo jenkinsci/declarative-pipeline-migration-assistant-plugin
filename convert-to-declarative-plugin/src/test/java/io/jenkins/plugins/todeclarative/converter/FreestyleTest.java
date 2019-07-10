@@ -18,6 +18,7 @@ import hudson.model.StringParameterDefinition;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.UserRemoteConfig;
 import hudson.tasks.ArtifactArchiver;
+import hudson.tasks.BatchFile;
 import hudson.tasks.BuildTrigger;
 import hudson.tasks.LogRotator;
 import hudson.tasks.Mailer;
@@ -117,6 +118,9 @@ public class FreestyleTest
 
         p.getBuildersList().add( new Shell( "pwd" ) );
         p.getBuildersList().add( new Shell( "ls -lrt" ) );
+
+        // manage unstableReturn value
+        p.getBuildersList().add( new BatchFile( "cmd" ) );
 
         {
             String username = "bob";
