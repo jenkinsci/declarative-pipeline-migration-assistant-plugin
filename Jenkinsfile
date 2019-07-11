@@ -11,7 +11,6 @@ pipeline {
                         withMaven(
                               maven: 'maven3.6.1',
                               publisherStrategy: 'EXPLICIT',
-                              globalMavenSettingsConfig: 'maven-settings-nexus-internal',
                               mavenOpts: '-Xms8g -Xmx8g',
                               options: [junitPublisher(disabled: false)],
                               mavenLocalRepo: ".repository") {
@@ -28,7 +27,6 @@ pipeline {
                         withMaven(
                               maven: 'maven3.6.1',
                               publisherStrategy: 'EXPLICIT',
-                              globalMavenSettingsConfig: 'maven-settings-nexus-internal',
                               mavenOpts: '-Xms8g -Xmx8g',
                               options: [junitPublisher(disabled: false)],
                               mavenLocalRepo: ".repository") {
