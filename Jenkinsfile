@@ -11,7 +11,6 @@ pipeline {
                         withMaven(
                               maven: 'maven3.6.1',
                               publisherStrategy: 'EXPLICIT',
-                              mavenOpts: '-Xms8g -Xmx8g',
                               options: [junitPublisher(disabled: false)],
                               mavenLocalRepo: ".repository") {
                             sh "mvn -V -B clean install -e -Dmaven.test.failure.ignore=true"
@@ -27,7 +26,6 @@ pipeline {
                         withMaven(
                               maven: 'maven3.6.1',
                               publisherStrategy: 'EXPLICIT',
-                              mavenOpts: '-Xms8g -Xmx8g',
                               options: [junitPublisher(disabled: false)],
                               mavenLocalRepo: ".repository") {
                             sh "mvn -V -B clean install -e -Dmaven.test.failure.ignore=true"
