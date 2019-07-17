@@ -7,6 +7,7 @@ import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import com.coravy.hudson.plugins.github.GithubProjectProperty;
 import htmlpublisher.HtmlPublisher;
 import htmlpublisher.HtmlPublisherTarget;
+import hudson.Functions;
 import hudson.model.BooleanParameterDefinition;
 import hudson.model.FreeStyleProject;
 import hudson.model.JDK;
@@ -218,9 +219,14 @@ public class FreestyleTest
         p.addProperty( parametersDefinitionProperty );
 
 
-        p.getBuildersList().add( new Shell( "pwd" ) );
-        p.getBuildersList().add( new Shell( "ls -lrt" ) );
-        p.getBuildersList().add( new Shell( "echo $str" ) );
+        if( Functions.isWindows()) {
+            p.getBuildersList().add( new BatchFile( "cmd" ) );
+        } else {
+            p.getBuildersList().add( new Shell( "pwd" ) );
+            p.getBuildersList().add( new Shell( "ls -lrt" ) );
+            p.getBuildersList().add( new Shell( "echo $str" ) );
+        }
+
 
         {
             String username = "bob";
