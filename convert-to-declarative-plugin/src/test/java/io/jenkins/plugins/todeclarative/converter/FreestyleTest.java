@@ -16,6 +16,10 @@ import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Result;
 import hudson.model.Slave;
 import hudson.model.StringParameterDefinition;
+import hudson.plugins.build_timeout.BuildTimeOutStrategy;
+import hudson.plugins.build_timeout.BuildTimeoutWrapper;
+import hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy;
+import hudson.plugins.build_timeout.operations.FailOperation;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.UserRemoteConfig;
 import hudson.tasks.ArtifactArchiver;
@@ -94,6 +98,11 @@ public class FreestyleTest
             RequiredResourcesProperty requiredResourcesProperty =
                 new RequiredResourcesProperty( "beer", null, null, "labelName", null );
             p.addProperty( requiredResourcesProperty );
+        }
+
+        {
+            BuildTimeoutWrapper buildTimeoutWrapper = new BuildTimeoutWrapper( new AbsoluteTimeOutStrategy("180"), Collections.singletonList( new FailOperation() ), "FOO");
+            p.getBuildWrappersList().add( buildTimeoutWrapper );
         }
 
         {
@@ -241,6 +250,11 @@ public class FreestyleTest
                 new SecretBuildWrapper( Arrays.asList( usernamePasswordMultiBinding ) );
 
             p.getBuildWrappersList().add( secretBuildWrapper );
+        }
+
+        {
+            BuildTimeoutWrapper buildTimeoutWrapper = new BuildTimeoutWrapper( new AbsoluteTimeOutStrategy("180"), Collections.singletonList( new FailOperation() ), "FOO");
+            p.getBuildWrappersList().add( buildTimeoutWrapper );
         }
 
         {
