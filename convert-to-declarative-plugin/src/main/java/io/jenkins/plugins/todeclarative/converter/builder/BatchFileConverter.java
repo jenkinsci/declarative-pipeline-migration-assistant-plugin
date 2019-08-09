@@ -14,10 +14,13 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTreeStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.function.Supplier;
 
 
 @Extension
 public class BatchFileConverter
+    extends AbstractBuilderConverter
     implements BuilderConverter
 {
     public static final String BATCH_NUMBER_KEY = BatchFileConverter.class.getName() + ".shell.number";
@@ -38,19 +41,7 @@ public class BatchFileConverter
         singleArgument.setValue( ModelASTValue.fromConstant( batchFile.getCommand(), this ) );
         step.setArgs( singleArgument );
         step.setName( "bat" );
-
-        if(request.getWithCredentials().get()!=null)
-        {
-            // FIXME make a deep clone of WithCredentials to not using same instance all the time!!
-            ModelASTTreeStep treeStep = request.getWithCredentials().get();
-            treeStep.getChildren().add( step );
-            branch.getSteps().add(treeStep);
-        } else {
-            branch.setSteps( Arrays.asList( step ) );
-        }
-
-
-
+        wrapBranch(converterResult, step, branch);
         return stage;
     }
 

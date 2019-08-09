@@ -14,10 +14,13 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTreeStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.function.Supplier;
 
 
 @Extension
 public class ShellConverter
+    extends AbstractBuilderConverter
     implements BuilderConverter
 {
     public static final String SHELL_NUMBER_KEY = ShellConverter.class.getName() + ".shell.number";
@@ -38,18 +41,7 @@ public class ShellConverter
         singleArgument.setValue( ModelASTValue.fromConstant( shell.getCommand(), this ) );
         step.setArgs( singleArgument );
         step.setName( "sh" );
-
-        if(request.getWithCredentials().get()!=null)
-        {
-            // FIXME make a deep clone of WithCredentials to not using same instance all the time!!
-            ModelASTTreeStep treeStep = request.getWithCredentials().get();
-            treeStep.getChildren().add( step );
-            branch.getSteps().add(treeStep);
-        } else {
-            branch.setSteps( Arrays.asList( step ) );
-        }
-
-
+        wrapBranch(converterResult, step, branch);
 
         return stage;
     }

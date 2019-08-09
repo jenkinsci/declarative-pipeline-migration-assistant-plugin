@@ -16,7 +16,6 @@ import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Result;
 import hudson.model.Slave;
 import hudson.model.StringParameterDefinition;
-import hudson.plugins.build_timeout.BuildTimeOutStrategy;
 import hudson.plugins.build_timeout.BuildTimeoutWrapper;
 import hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy;
 import hudson.plugins.build_timeout.operations.FailOperation;
@@ -37,12 +36,15 @@ import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.freestyle.FreestyleToDeclarativeConverter;
 import jenkins.model.BuildDiscarderProperty;
 import jenkins.model.Jenkins;
-import jenkins.mvn.GlobalSettingsProvider;
 import jenkins.triggers.ReverseBuildTrigger;
 import org.apache.commons.io.IOUtils;
 import org.jenkins.plugins.lockableresources.RequiredResourcesProperty;
+import org.jenkinsci.lib.configprovider.ConfigProvider;
 import org.jenkinsci.plugins.configfiles.GlobalConfigFiles;
+import org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper;
+import org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile;
 import org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig;
+import org.jenkinsci.plugins.configfiles.properties.PropertiesConfig;
 import org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper;
 import org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
@@ -147,6 +149,13 @@ public class FreestyleTest
             p.getBuildWrappersList().add( secretBuildWrapper );
         }
 
+        // ConfigFileBuildWrapper
+        {
+            ManagedFile managedFile1 = new ManagedFile( "id1", "myfile1.txt", "MYFILE1");
+            ManagedFile managedFile2 = new ManagedFile( "id2", "myfile2.txt", "MYFILE2");
+            p.getBuildWrappersList().add( new ConfigFileBuildWrapper(Arrays.asList(managedFile1,managedFile2)));
+        }
+
         {
             ArtifactArchiver artifactArchiver = new ArtifactArchiver( "**/target/**.jar" );
             artifactArchiver.setAllowEmptyArchive( true );
@@ -234,6 +243,7 @@ public class FreestyleTest
             p.getBuildersList().add( new Shell( "pwd" ) );
             p.getBuildersList().add( new Shell( "ls -lrt" ) );
             p.getBuildersList().add( new Shell( "echo $str" ) );
+            p.getBuildersList().add( new Shell( "cat myfile1.txt" ) );
         }
 
 
@@ -256,6 +266,18 @@ public class FreestyleTest
             BuildTimeoutWrapper buildTimeoutWrapper = new BuildTimeoutWrapper( new AbsoluteTimeOutStrategy("180"), Collections.singletonList( new FailOperation() ), "FOO");
             p.getBuildWrappersList().add( buildTimeoutWrapper );
         }
+
+        // ConfigFileBuildWrapper
+        {
+            GlobalConfigFiles globalConfigFiles = GlobalConfigFiles.get();
+            ConfigProvider configProvider = ConfigProvider.getByIdOrNull( PropertiesConfig.class.getName() );
+            globalConfigFiles.save(configProvider.newConfig( "id1", "the id1", "id1 comment", "foo=bar_id1" ));
+            globalConfigFiles.save(configProvider.newConfig( "id2", "the id2", "id2 comment", "foo=bar_id2" ));
+            ManagedFile managedFile1 = new ManagedFile( "id1", "myfile1.txt", "MYFILE1");
+            ManagedFile managedFile2 = new ManagedFile( "id2", "myfile2.txt", "MYFILE2");
+            p.getBuildWrappersList().add( new ConfigFileBuildWrapper(Arrays.asList(managedFile1,managedFile2)));
+        }
+
 
         {
             HtmlPublisherTarget htmlPublisherTarget = new HtmlPublisherTarget("reportName", "reportDir", "reportFiles", /*keepAll*/true,

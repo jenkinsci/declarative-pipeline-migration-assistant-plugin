@@ -17,8 +17,6 @@ public class ConverterRequest
 
     private String createdProjectName;
 
-    private Supplier<ModelASTTreeStep> withCredentials;
-
     /**
      * Map to store some values related to the current conversion
      * if you use that please add the key name as a constant
@@ -111,13 +109,4 @@ public class ConverterRequest
         context.put( key, value );
     }
 
-    public Supplier<ModelASTTreeStep> getWithCredentials()
-    {
-        return withCredentials == null ? ()-> null : withCredentials;
-    }
-
-    public void setWithCredentials( Supplier<ModelASTTreeStep> withCredentials )
-    {
-        this.withCredentials = withCredentials;
-    }
 }

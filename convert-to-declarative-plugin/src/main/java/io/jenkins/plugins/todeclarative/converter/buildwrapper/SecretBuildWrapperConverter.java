@@ -30,7 +30,7 @@ public class SecretBuildWrapperConverter
             return null;
         }
 
-        request.setWithCredentials( ()-> build( request, secretBuildWrapper ) );
+        converterResult.addWrappingTreeStep( () -> build( request, secretBuildWrapper ) );
         return null;
     }
 

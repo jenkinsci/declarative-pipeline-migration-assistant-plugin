@@ -30,7 +30,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins.convert-to-declarative</groupId>
       <artifactId>convert-to-declarative-api</artifactId>
-
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
@@ -142,9 +141,13 @@
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>config-file-provider</artifactId>
+      <version>3.6</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>mailer</artifactId>
       <version>1.22</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -184,12 +187,6 @@
       <groupId>org.jenkins-ci.main</groupId>
       <artifactId>jenkins-test-harness-tools</artifactId>
       <version>2.2</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>config-file-provider</artifactId>
-      <version>3.6</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

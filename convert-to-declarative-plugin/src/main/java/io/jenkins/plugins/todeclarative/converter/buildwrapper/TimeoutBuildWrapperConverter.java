@@ -67,14 +67,6 @@ public class TimeoutBuildWrapperConverter
         return null;
     }
 
-    protected ModelASTTreeStep build( ConverterRequest request, SecretBuildWrapper secretBuildWrapper )
-    {
-        return null;
-    }
-
-
-
-
     @Override
     public boolean canConvert( BuildWrapper wrapper )
     {
