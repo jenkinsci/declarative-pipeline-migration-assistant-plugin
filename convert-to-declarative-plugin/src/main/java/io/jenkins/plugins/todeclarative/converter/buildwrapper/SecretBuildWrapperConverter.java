@@ -13,6 +13,8 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTSingleArgument
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTreeStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +23,9 @@ import java.util.List;
 public class SecretBuildWrapperConverter
     implements BuildWrapperConverter
 {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger( SecretBuildWrapperConverter.class );
+
     @Override
     public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, BuildWrapper wrapper )
     {
@@ -30,11 +35,11 @@ public class SecretBuildWrapperConverter
             return null;
         }
 
-        converterResult.addWrappingTreeStep( () -> build( request, secretBuildWrapper ) );
+        converterResult.addWrappingTreeStep( () -> build( request, secretBuildWrapper, converterResult) );
         return null;
     }
 
-    protected ModelASTTreeStep build( ConverterRequest request, SecretBuildWrapper secretBuildWrapper )
+    private ModelASTTreeStep build( ConverterRequest request, SecretBuildWrapper secretBuildWrapper, ConverterResult converterResult )
     {
 
         ModelASTTreeStep withCredentials = new ModelASTTreeStep( this );
@@ -65,13 +70,13 @@ public class SecretBuildWrapperConverter
                         gstring.append( credentialId );
                         gstring.append( "')]" );
 
-                        //ModelASTValue{value=${[usernameColonPassword(credentialsId: 'mylogin', variable: 'USERPASS')]}, isLiteral=false}
                         singleArgument.setValue( ModelASTValue.fromGString( gstring.toString(), this ) );
                         return withCredentials;
 
                     default:
-                        // FIXME warning in result
-                        System.out.println( "ignore symbol:" +  symbol );
+                        LOGGER.warn( "credential binding, ignore symbol: {}",  symbol );
+                        converterResult.addWarning( new ConverterResult.Warning( "Cannot convert credential binding: '" + symbol + "'",
+                                                                                 secretBuildWrapper.getClass().getName()) );
 
                 }
             }

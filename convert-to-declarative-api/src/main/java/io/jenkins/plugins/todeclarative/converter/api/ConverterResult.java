@@ -14,6 +14,8 @@ public class ConverterResult
 
     private List<Supplier<ModelASTTreeStep>> wrappingTreeSteps = new ArrayList<>( );
 
+    private List<Warning> warnings = new ArrayList<>( );
+
     private Job job;
 
     public ConverterResult()
@@ -59,5 +61,62 @@ public class ConverterResult
     public List<Supplier<ModelASTTreeStep>> getWrappingTreeSteps()
     {
         return wrappingTreeSteps;
+    }
+
+    public List<Warning> getWarnings()
+    {
+        return warnings;
+    }
+
+    public void setWarnings( List<Warning> warnings )
+    {
+        this.warnings = warnings;
+    }
+
+    public void addWarning( Warning warning )
+    {
+        this.warnings.add( warning );
+    }
+
+    public static class Warning {
+        private String message;
+        private String pluginClassName;
+
+        public Warning()
+        {
+            // nop
+        }
+
+        public Warning( String message, String pluginClassName )
+        {
+            this.message = message;
+            this.pluginClassName = pluginClassName;
+        }
+
+        public String getMessage()
+        {
+            return message;
+        }
+
+        public void setMessage( String message )
+        {
+            this.message = message;
+        }
+
+        public String getPluginClassName()
+        {
+            return pluginClassName;
+        }
+
+        public void setPluginClassName( String pluginClassName )
+        {
+            this.pluginClassName = pluginClassName;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Warning{" + "message='" + message + '\'' + ", pluginClassName='" + pluginClassName + '\'' + '}';
+        }
     }
 }
