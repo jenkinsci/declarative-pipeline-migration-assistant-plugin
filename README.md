@@ -20,7 +20,7 @@ public class ShellConverter implements BuilderConverter
     @Override
     public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, Builder builder )
     {
-       return the stage corresponding to the conversion 
+       return the stage corresponding to the conversion or modify the model
     }
 
     @Override
