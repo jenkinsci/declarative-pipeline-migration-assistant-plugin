@@ -1,6 +1,7 @@
 package io.jenkins.plugins.todeclarative.converter.maven;
 
 import hudson.Extension;
+import hudson.ExtensionList;
 import hudson.maven.MavenModuleSet;
 import hudson.model.Job;
 import hudson.model.Label;
@@ -10,7 +11,6 @@ import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.ToDeclarativeConverter;
 import io.jenkins.plugins.todeclarative.converter.api.builder.BuilderConverter;
-import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTAgent;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
@@ -137,12 +137,7 @@ public class MavenToDeclarativeConverter
 
     public BuilderConverter findBuilderConverter(Builder builder)
     {
-        Iterator<BuilderConverter> builderConverterIterator =
-            Jenkins.getInstance().getExtensionList( BuilderConverter.class ).iterator();
-
-        while ( builderConverterIterator.hasNext() )
-        {
-            BuilderConverter converter = builderConverterIterator.next();
+        for (BuilderConverter converter : ExtensionList.lookup( BuilderConverter.class )) {
             if(converter.canConvert( builder )){
                 return converter;
             }

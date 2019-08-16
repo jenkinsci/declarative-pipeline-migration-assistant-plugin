@@ -10,12 +10,9 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTSingleArgument;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTreeStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.function.Supplier;
 
 
 @Extension

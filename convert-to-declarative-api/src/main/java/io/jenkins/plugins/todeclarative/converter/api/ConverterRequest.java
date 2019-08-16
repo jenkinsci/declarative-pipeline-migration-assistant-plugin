@@ -1,11 +1,9 @@
 package io.jenkins.plugins.todeclarative.converter.api;
 
 import hudson.model.Job;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTreeStep;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * Contains data needed for converting a {@link Job} to a declarative pipeline

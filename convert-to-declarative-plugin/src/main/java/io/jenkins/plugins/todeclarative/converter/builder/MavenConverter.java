@@ -1,12 +1,10 @@
 package io.jenkins.plugins.todeclarative.converter.builder;
 
 import hudson.Extension;
-import hudson.model.AbstractProject;
 import hudson.model.FreeStyleProject;
 import hudson.model.JDK;
 import hudson.tasks.Builder;
 import hudson.tasks.Maven;
-import hudson.tasks.Shell;
 import hudson.util.ArgumentListBuilder;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
@@ -19,11 +17,9 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTSingleArgument
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTools;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTreeStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 
 import java.util.Arrays;
-import java.util.stream.StreamSupport;
 
 @Extension
 public class MavenConverter implements BuilderConverter
