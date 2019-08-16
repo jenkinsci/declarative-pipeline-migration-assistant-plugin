@@ -8,24 +8,15 @@ import hudson.tasks.BuildWrapper;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.buildwrapper.BuildWrapperConverter;
-import org.apache.commons.lang3.StringUtils;
-import org.jenkinsci.Symbol;
-import org.jenkinsci.plugins.credentialsbinding.MultiBinding;
-import org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper;
-import org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTMethodArg;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOption;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOptions;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTSingleArgument;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTreeStep;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.buildKeyPairArg;

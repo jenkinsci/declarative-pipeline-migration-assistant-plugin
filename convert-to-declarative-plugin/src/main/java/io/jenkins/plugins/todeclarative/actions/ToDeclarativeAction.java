@@ -81,6 +81,7 @@ public class ToDeclarativeAction
     @Override
     public String getIconFileName()
     {
+        // TODO: Use real icon.
         return "foo";
     }
 
