@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+/**
+ * Contains data needed for converting a {@link Job} to a declarative pipeline
+ */
 public class ConverterRequest
 {
     private Job job;

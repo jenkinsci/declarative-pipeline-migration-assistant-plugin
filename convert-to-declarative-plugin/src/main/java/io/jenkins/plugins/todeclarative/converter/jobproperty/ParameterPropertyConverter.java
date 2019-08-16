@@ -26,15 +26,15 @@ public class ParameterPropertyConverter
     implements JobPropertyConverter
 {
     @Override
-    public boolean doConvert( ConverterRequest request, ConverterResult converterResult, //
-                                  JobPropertyDescriptor jobPropertyDescriptor, //
-                                  JobProperty jobProperty )
+    public void convert( ConverterRequest request, ConverterResult converterResult, //
+                         JobPropertyDescriptor jobPropertyDescriptor, //
+                         JobProperty jobProperty )
     {
 
         ParametersDefinitionProperty parametersDefinitionProperty = (ParametersDefinitionProperty)jobProperty;
 
         if(parametersDefinitionProperty.getParameterDefinitions().isEmpty()){
-            return true;
+            return;
         }
 
         try
@@ -62,8 +62,6 @@ public class ParameterPropertyConverter
                     model.getParameters().getParameters().add(parameter);
                 }
             } );
-
-        return true;
     }
 
     protected ModelASTBuildParameter build( ParameterDefinition parameterDefinition ){

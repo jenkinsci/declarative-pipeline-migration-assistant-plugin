@@ -9,6 +9,9 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 
 import java.util.Optional;
 
+/**
+ * Some util methods to work with Declarative Model
+ */
 public class ModelASTUtils
 {
     private ModelASTUtils()
@@ -43,22 +46,4 @@ public class ModelASTUtils
         return modelASTBuildCondition;
     }
 
-//
-//    public static class StringList extends ModelASTValue {
-//
-//        public StringList(Object sourceLocation, List<String> v) {
-//            super(sourceLocation,v);
-//        }
-//        @Override
-//        public String toGroovy()
-//        {
-//            return null;
-//        }
-//
-//        @Override
-//        public boolean isLiteral()
-//        {
-//            return true;
-//        }
-//    }
 }

@@ -215,8 +215,8 @@ public class FreestyleToDeclarativeConverter
             if ( !converters.isEmpty() )
             {
                 converters.stream().forEach(
-                    jobPropertyConverter -> jobPropertyConverter.doConvert( converterRequest, converterResult, //
-                                                                            entry.getKey(), entry.getValue() )
+                    jobPropertyConverter -> jobPropertyConverter.convert( converterRequest, converterResult, //
+                                                                          entry.getKey(), entry.getValue() )
 
                 );
             }

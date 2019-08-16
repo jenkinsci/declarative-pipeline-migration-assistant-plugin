@@ -25,22 +25,22 @@ public class BuildDiscarderPropertyConverter
     implements JobPropertyConverter
 {
     @Override
-    public boolean doConvert( ConverterRequest request, ConverterResult converterResult, //
-                                  JobPropertyDescriptor jobPropertyDescriptor, //
-                                  JobProperty jobProperty )
+    public void convert( ConverterRequest request, ConverterResult converterResult, //
+                         JobPropertyDescriptor jobPropertyDescriptor, //
+                         JobProperty jobProperty )
     {
 
         BuildDiscarderProperty buildDiscarderProperty = (BuildDiscarderProperty) jobProperty;
 
         if(buildDiscarderProperty.getStrategy()==null){
             // nothing to do
-            return true;
+            return;
         }
 
         BuildDiscarder buildDiscarder = buildDiscarderProperty.getStrategy();
         if(!(buildDiscarder instanceof LogRotator )){
             // nothing to do
-            return true;
+            return;
         }
 
         LogRotator logRotator = (LogRotator) buildDiscarder;
@@ -78,8 +78,6 @@ public class BuildDiscarderPropertyConverter
             modelASTPipelineDef.setOptions( new ModelASTOptions( this ) );
         }
         modelASTPipelineDef.getOptions().getOptions().add( option );
-
-        return true;
     }
 
 

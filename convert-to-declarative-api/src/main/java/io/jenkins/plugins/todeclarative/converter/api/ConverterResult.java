@@ -8,14 +8,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+/**
+ * Result of a conversion of a {@link Job} to a declarative pipeline model {@link ModelASTPipelineDef}
+ * A successful conversion can have some {@link #warnings}
+ */
 public class ConverterResult
 {
-    private ModelASTPipelineDef modelASTPipelineDef = new ModelASTPipelineDef(this);
+    private ModelASTPipelineDef modelASTPipelineDef = new ModelASTPipelineDef( this );
 
-    private List<Supplier<ModelASTTreeStep>> wrappingTreeSteps = new ArrayList<>( );
+    private List<Supplier<ModelASTTreeStep>> wrappingTreeSteps = new ArrayList<>();
 
-    private List<Warning> warnings = new ArrayList<>( );
+    private List<Warning> warnings = new ArrayList<>();
 
+    /**
+     * not used now but can be the created Job
+     */
     private Job job;
 
     public ConverterResult()
@@ -49,14 +56,14 @@ public class ConverterResult
         this.job = job;
     }
 
-    public void addWrappingTreeStep(Supplier<ModelASTTreeStep> treeStep)
+    public void addWrappingTreeStep( Supplier<ModelASTTreeStep> treeStep )
     {
         this.wrappingTreeSteps.add( treeStep );
     }
 
     /**
      * @return List of {@link ModelASTTreeStep} can be a Tree of withCredential, configFileProvider etc..
-     *          everything which need to wrap around builders
+     * everything which need to wrap around builders
      */
     public List<Supplier<ModelASTTreeStep>> getWrappingTreeSteps()
     {
@@ -78,8 +85,10 @@ public class ConverterResult
         this.warnings.add( warning );
     }
 
-    public static class Warning {
+    public static class Warning
+    {
         private String message;
+
         private String pluginClassName;
 
         public Warning()

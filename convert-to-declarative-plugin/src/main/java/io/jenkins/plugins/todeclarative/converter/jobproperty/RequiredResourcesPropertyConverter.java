@@ -23,9 +23,9 @@ public class RequiredResourcesPropertyConverter
     implements JobPropertyConverter
 {
     @Override
-    public boolean doConvert( ConverterRequest request, ConverterResult converterResult, //
-                                  JobPropertyDescriptor jobPropertyDescriptor, //
-                                  JobProperty jobProperty )
+    public void convert( ConverterRequest request, ConverterResult converterResult, //
+                         JobPropertyDescriptor jobPropertyDescriptor, //
+                         JobProperty jobProperty )
     {
 
         RequiredResourcesProperty requiredResourcesProperty = (RequiredResourcesProperty) jobProperty;
@@ -51,8 +51,6 @@ public class RequiredResourcesPropertyConverter
             modelASTPipelineDef.setOptions( new ModelASTOptions( this ) );
         }
         modelASTPipelineDef.getOptions().getOptions().add( option );
-
-        return true;
     }
 
     @Override

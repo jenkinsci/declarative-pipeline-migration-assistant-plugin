@@ -13,9 +13,9 @@ import java.io.IOException;
 public class GithubJobPropertyConverter implements JobPropertyConverter
 {
     @Override
-    public boolean doConvert( ConverterRequest request, ConverterResult converterResult,
-                                  JobPropertyDescriptor jobPropertyDescriptor,
-                                  JobProperty jobProperty )
+    public void convert( ConverterRequest request, ConverterResult converterResult,
+                         JobPropertyDescriptor jobPropertyDescriptor,
+                         JobProperty jobProperty )
     {
         try
         {
@@ -27,7 +27,6 @@ public class GithubJobPropertyConverter implements JobPropertyConverter
         {
             e.printStackTrace();
         }
-        return true;
     }
 
     @Override
