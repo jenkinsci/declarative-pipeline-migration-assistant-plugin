@@ -34,7 +34,9 @@ public class TimeoutBuildWrapperConverter
         BuildTimeOutStrategy strategy = timeoutWrapper.getStrategy();
 
         if(!(strategy instanceof AbsoluteTimeOutStrategy)){
-            LOGGER.info( "we can only convert Absolute timeout" );
+            converterResult.addWarning( new ConverterResult.Warning( "we can only convert Absolute timeout and not "
+                                                                         + strategy.getDescriptor().clazz,
+                                                                     BuildTimeOutStrategy.class.getName() ));
             return null;
         }
 

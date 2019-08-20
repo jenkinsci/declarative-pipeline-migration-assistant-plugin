@@ -57,23 +57,6 @@ public class ToDeclarativeAction
             return;
         }
 
-        String newName = request.getParameter( "newName" );
-
-        if (StringUtils.isNotBlank( newName ) && !StringUtils.equalsIgnoreCase( newName, job.getFullName() ) )
-        {
-
-            FreestyleToDeclarativeConverter converter =
-                Jenkins.get().getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
-            ConverterRequest converterRequest =
-                new ConverterRequest().job( job ).createdProjectName( request.getParameter( "newName" ) );
-            ConverterResult converterResult =
-                new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
-            converter.convert( converterRequest, converterResult );
-
-            Jenkins.get().reload();
-            response.sendRedirect2( converterResult.getJob().getAbsoluteUrl() );
-            return;
-        }
         response.forwardToPreviousPage( request );
     }
 

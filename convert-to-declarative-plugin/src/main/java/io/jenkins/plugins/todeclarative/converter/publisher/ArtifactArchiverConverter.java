@@ -7,6 +7,7 @@ import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
 import io.jenkins.plugins.todeclarative.converter.api.publisher.PublisherConverter;
+import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildCondition;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
@@ -14,6 +15,7 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTNamedArgumentL
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
+import org.jenkinsci.plugins.structs.describable.DescribableModel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +26,10 @@ public class ArtifactArchiverConverter implements PublisherConverter
     @Override
     public ModelASTStage convert( ConverterRequest request, ConverterResult result, Publisher publisher )
     {
+        if (!(publisher instanceof SimpleBuildStep )) {
+            // can't use automatic conversion
+            return null;
+        }
         ArtifactArchiver artifactArchiver = (ArtifactArchiver) publisher;
         ModelASTBuildCondition buildCondition;
         // FIXME manage result condition
@@ -39,50 +45,25 @@ public class ArtifactArchiverConverter implements PublisherConverter
             buildCondition.setBranch( branch );
         }
 
+        Class<Publisher> actualPublisherClass = (Class<Publisher>)publisher.getClass();
+        DescribableModel<Publisher> model = DescribableModel.of( actualPublisherClass);
+        Map<String, Object> uninstantiated = model.uninstantiate2(publisher).toMap();
+
         // archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
         ModelASTStep archiveArtifacts = new ModelASTStep( this );
-        archiveArtifacts.setName( "archiveArtifacts" );
+        archiveArtifacts.setName( "archiveArtifacts" ); // publisher.getDescriptor().getClass().getAnnotation( Symbol.class ).value()[0]
         branch.getSteps().add( archiveArtifacts );
 
         Map<ModelASTKey, ModelASTValue> args = new HashMap<>();
-        // archiveArtifacts allowEmptyArchive: true, artifacts: 'fpp', caseSensitive: false, defaultExcludes: false,
-        // excludes: 'fr*', fingerprint: true, onlyIfSuccessful: true
 
-        { // allowEmptyArchive
-            ModelASTKey allowEmptyArchive = new ModelASTKey( this );
-            allowEmptyArchive.setKey( "allowEmptyArchive" );
-            ModelASTValue urlValue = ModelASTValue.fromConstant( artifactArchiver.getAllowEmptyArchive(), this );
-            args.put( allowEmptyArchive, urlValue );
-        }
-        { // artifacts
-            ModelASTKey artifacts = new ModelASTKey( this );
-            artifacts.setKey( "artifacts" );
-            ModelASTValue urlValue = ModelASTValue.fromConstant( artifactArchiver.getArtifacts(), this );
-            args.put( artifacts, urlValue );
-        }
-        { // caseSensitive
-            ModelASTKey caseSensitive = new ModelASTKey( this );
-            caseSensitive.setKey( "caseSensitive" );
-            ModelASTValue urlValue = ModelASTValue.fromConstant( artifactArchiver.isCaseSensitive(), this );
-            args.put( caseSensitive, urlValue );
-        }
-        { // defaultExcludes
-            ModelASTKey defaultExcludes = new ModelASTKey( this );
-            defaultExcludes.setKey( "defaultExcludes" );
-            ModelASTValue urlValue = ModelASTValue.fromConstant( artifactArchiver.isDefaultExcludes(), this );
-            args.put( defaultExcludes, urlValue );
-        }
-        { // excludes
-            ModelASTKey excludes = new ModelASTKey( this );
-            excludes.setKey( "excludes" );
-            ModelASTValue urlValue = ModelASTValue.fromConstant( artifactArchiver.getExcludes(), this );
-            args.put( excludes, urlValue );
-        }
-        { // fingerprint
-            ModelASTKey fingerprint = new ModelASTKey( this );
-            fingerprint.setKey( "fingerprint" );
-            ModelASTValue urlValue = ModelASTValue.fromConstant( artifactArchiver.isFingerprint(), this );
-            args.put( fingerprint, urlValue );
+        ModelASTStep step = new ModelASTStep( this );
+        step.setName("step");
+        for (Map.Entry<String, Object> arg: uninstantiated.entrySet()) {
+            // add the args to the step, will be something like ([$class: 'ArtifactArchiver', artifacts: 'something'])
+            ModelASTKey key = new ModelASTKey( this );
+            key.setKey( arg.getKey() );
+            ModelASTValue value = ModelASTValue.fromConstant( arg.getValue(), this );
+            args.put( key, value );
         }
 
         ModelASTNamedArgumentList stepArgs = new ModelASTNamedArgumentList( null);

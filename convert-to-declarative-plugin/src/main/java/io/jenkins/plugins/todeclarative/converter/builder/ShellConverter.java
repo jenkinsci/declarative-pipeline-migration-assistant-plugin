@@ -17,7 +17,6 @@ import java.util.Arrays;
 
 @Extension
 public class ShellConverter
-    extends AbstractBuilderConverter
     implements BuilderConverter
 {
     public static final String SHELL_NUMBER_KEY = ShellConverter.class.getName() + ".shell.number";

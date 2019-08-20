@@ -6,6 +6,7 @@ import hudson.tasks.Builder;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.builder.BuilderConverter;
+import io.jenkins.plugins.todeclarative.converter.api.builder.SingleTypeBuilderConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTSingleArgument;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
@@ -16,13 +17,11 @@ import java.util.Arrays;
 
 
 @Extension
-public class BatchFileConverter
-    extends AbstractBuilderConverter
+public class BatchFileConverter //extends SingleTypeBuilderConverter<BatchFile>
     implements BuilderConverter
 {
     public static final String BATCH_NUMBER_KEY = BatchFileConverter.class.getName() + ".shell.number";
 
-    @Override
     public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, Builder builder )
     {
         BatchFile batchFile = (BatchFile) builder;

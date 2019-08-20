@@ -7,20 +7,20 @@ import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.publisher.PublisherConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
-
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Extension
 public class AggregatedTestResultPublisherConverter implements PublisherConverter
 {
 
-    private static final Logger LOGGER = Logger.getLogger( AggregatedTestResultPublisherConverter.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger( AggregatedTestResultPublisherConverter.class.getName());
 
     @Override
     public ModelASTStage convert( ConverterRequest request, ConverterResult result, Publisher publisher )
     {
-        // FIXME warnings
-        LOGGER.info( "Cannot convert publisher:" + publisher.getClass() );
+        result.addWarning( new ConverterResult.Warning( "Cannot convert publisher:" + publisher.getClass(),
+                                                                    AggregatedTestResultPublisher.class.getName() ));
         return null;
 
 
