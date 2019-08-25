@@ -7,10 +7,15 @@ import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import com.coravy.hudson.plugins.github.GithubProjectProperty;
 import htmlpublisher.HtmlPublisher;
 import htmlpublisher.HtmlPublisherTarget;
+import hudson.FilePath;
 import hudson.Functions;
+import hudson.Launcher;
+import hudson.model.AbstractBuild;
 import hudson.model.BooleanParameterDefinition;
+import hudson.model.BuildListener;
 import hudson.model.FreeStyleProject;
 import hudson.model.JDK;
+import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Result;
@@ -28,6 +33,7 @@ import hudson.tasks.LogRotator;
 import hudson.tasks.Mailer;
 import hudson.tasks.Maven;
 import hudson.tasks.Shell;
+import hudson.tasks.junit.JUnitResultArchiver;
 import hudson.tasks.test.AggregatedTestResultPublisher;
 import hudson.triggers.SCMTrigger;
 import hudson.triggers.TimerTrigger;
@@ -48,6 +54,7 @@ import org.jenkinsci.plugins.configfiles.properties.PropertiesConfig;
 import org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper;
 import org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
+import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Assert;
@@ -55,8 +62,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.ExtractResourceSCM;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.TestBuilder;
 import org.jvnet.hudson.test.ToolInstallations;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -165,6 +174,14 @@ public class FreestyleTest
             artifactArchiver.setOnlyIfSuccessful( true );
             p.getPublishersList().add( artifactArchiver );
         }
+
+        {
+            JUnitResultArchiver jUnitResultArchiver = new JUnitResultArchiver("target/**.txt");
+            jUnitResultArchiver.setHealthScaleFactor( 2 );
+            jUnitResultArchiver.setKeepLongStdio( true );
+            p.getPublishersList().add( jUnitResultArchiver );
+        }
+
         p.getPublishersList().add( new AggregatedTestResultPublisher("foo", true) );
 
         {
@@ -285,6 +302,23 @@ public class FreestyleTest
             p.getPublishersList().add( new HtmlPublisher( Arrays.asList( htmlPublisherTarget ) ));
         }
 
+        {
+            ArtifactArchiver artifactArchiver = new ArtifactArchiver( "**/target/**.jar" );
+            artifactArchiver.setAllowEmptyArchive( true );
+            artifactArchiver.setExcludes( "**pom**" );
+            artifactArchiver.setCaseSensitive( true );
+            artifactArchiver.setFingerprint( true );
+            artifactArchiver.setOnlyIfSuccessful( true );
+            p.getPublishersList().add( artifactArchiver );
+        }
+
+        {
+            JUnitResultArchiver jUnitResultArchiver = new JUnitResultArchiver("**/**.xml");
+            jUnitResultArchiver.setHealthScaleFactor( 2 );
+            jUnitResultArchiver.setKeepLongStdio( true );
+            p.getPublishersList().add( jUnitResultArchiver );
+        }
+
         j.createFreeStyleProject( "foo" );
         p.getPublishersList().add( new AggregatedTestResultPublisher("foo", true) );
 
@@ -294,7 +328,7 @@ public class FreestyleTest
 
         Assert.assertTrue( converter.canConvert( p ) );
 
-        ConverterRequest request = new ConverterRequest().job( p ).createdProjectName( "foo-beer" );
+        ConverterRequest request = new ConverterRequest().job( p );
         ConverterResult converterResult = new ConverterResult()
             .modelASTPipelineDef( new ModelASTPipelineDef(null));
 
@@ -303,12 +337,17 @@ public class FreestyleTest
 
         System.out.println( groovy );
 
-        System.out.println( converterResult.getJob().getProperties() );
+        WorkflowJob job = j.jenkins.createProject(WorkflowJob.class, "singleStep");
+        job.setDefinition(new CpsFlowDefinition( groovy, true));
 
-        WorkflowRun run =( (WorkflowJob)converterResult.getJob()).scheduleBuild2( 0).get();
+        FilePath ws = j.jenkins.getWorkspaceFor(job);
+        FilePath testFile = ws.child("test-result.xml");
+        testFile.copyFrom(Thread.currentThread().getContextClassLoader().getResourceAsStream("junit-report.xml"));
+
+        WorkflowRun run = job.scheduleBuild2( 0).get();
+
         j.waitForCompletion( run );
         j.assertBuildStatus( Result.SUCCESS, run);
-
     }
 
     @Test
@@ -414,8 +453,9 @@ public class FreestyleTest
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
 
         System.out.println( groovy );
-
-        WorkflowRun run =( (WorkflowJob)converterResult.getJob()).scheduleBuild2( 0).get();
+        WorkflowJob job = j.jenkins.createProject(WorkflowJob.class, "singleStep");
+        job.setDefinition(new CpsFlowDefinition( groovy, true));
+        WorkflowRun run =job.scheduleBuild2( 0).get();
         j.waitForCompletion( run );
         j.assertBuildStatus( Result.SUCCESS, run);
 

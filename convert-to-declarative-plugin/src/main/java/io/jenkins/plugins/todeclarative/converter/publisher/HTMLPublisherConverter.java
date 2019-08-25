@@ -42,6 +42,7 @@ public class HTMLPublisherConverter
 
             ModelASTStep publishHTML = new ModelASTStep( this );
             publishHTML.setName( "publishHTML" );
+
             branch.getSteps().add( publishHTML );
 
             Map<ModelASTKey, ModelASTValue> args = new HashMap<>();

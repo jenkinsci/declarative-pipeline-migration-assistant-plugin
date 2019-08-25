@@ -96,18 +96,20 @@ public class ConverterRequest
         return this;
     }
 
-    public int getInt( String key )
+    /**
+     * convenient method to have a counter associated with a key.
+     * @param key the counter key
+     * @return retrieve the counter value and add 1
+     */
+    public int getAndIncrement( String key )
     {
         if ( !context.containsKey( key ) )
         {
             context.put( key, 0 );
         }
-        return (int) context.get( key );
-    }
-
-    public void setInt( String key, int value )
-    {
-        context.put( key, value );
+        int value = (int) context.get( key );
+        context.put( key, value + 1 );
+        return value;
     }
 
 }

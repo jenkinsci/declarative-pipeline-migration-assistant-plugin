@@ -16,7 +16,7 @@ import java.util.Arrays;
 
 
 @Extension
-public class BatchFileConverter //extends SingleTypeBuilderConverter<BatchFile>
+public class BatchFileConverter
     implements BuilderConverter
 {
     public static final String BATCH_NUMBER_KEY = BatchFileConverter.class.getName() + ".shell.number";
@@ -25,9 +25,8 @@ public class BatchFileConverter //extends SingleTypeBuilderConverter<BatchFile>
     {
         BatchFile batchFile = (BatchFile) builder;
         ModelASTStage stage = new ModelASTStage( this );
-        int shellNumber = request.getInt( BATCH_NUMBER_KEY );
+        int shellNumber = request.getAndIncrement( BATCH_NUMBER_KEY );
         stage.setName( "Batch script " + shellNumber );
-        request.setInt( BATCH_NUMBER_KEY, ++shellNumber );
         ModelASTBranch branch = new ModelASTBranch( this );
         stage.setBranches( Arrays.asList( branch ) );
         ModelASTStep step = new ModelASTStep( this );

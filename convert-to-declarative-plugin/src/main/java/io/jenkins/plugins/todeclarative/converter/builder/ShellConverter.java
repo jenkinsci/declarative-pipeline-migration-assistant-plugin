@@ -26,14 +26,12 @@ public class ShellConverter
     {
         Shell shell = (Shell) builder;
         ModelASTStage stage = new ModelASTStage( this );
-        int shellNumber = request.getInt( SHELL_NUMBER_KEY );
+        int shellNumber = request.getAndIncrement( SHELL_NUMBER_KEY );
         stage.setName( "Shell script " + shellNumber );
-        request.setInt( SHELL_NUMBER_KEY, ++shellNumber );
         ModelASTBranch branch = new ModelASTBranch( this );
         stage.setBranches( Arrays.asList( branch ) );
         ModelASTStep step = new ModelASTStep( this );
         ModelASTSingleArgument singleArgument = new ModelASTSingleArgument( this );
-        // TODO olamy escape shell command?? not sure as might be done when running it
         singleArgument.setValue( ModelASTValue.fromConstant( shell.getCommand(), this ) );
         step.setArgs( singleArgument );
         step.setName( "sh" );
