@@ -9,9 +9,14 @@ import hudson.util.ArgumentListBuilder;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.builder.BuilderConverter;
+import jenkins.mvn.FilePathGlobalSettingsProvider;
+import jenkins.mvn.FilePathSettingsProvider;
+import jenkins.mvn.GlobalSettingsProvider;
 import jenkins.mvn.SettingsProvider;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTEnvironment;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTEnvironmentValue;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTSingleArgument;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
@@ -20,21 +25,28 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTools;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 
 import java.util.Arrays;
+import java.util.Map;
 
-@Extension
-public class MavenConverter implements BuilderConverter
+@Extension( ordinal = 100 )
+/**
+ * This is a basic converter Maven converter to a simple sh command.
+ */
+public class MavenConverter
+    implements BuilderConverter
 {
     @Override
     public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, Builder builder )
     {
         ModelASTTools tools = converterResult.getModelASTPipelineDef().getTools();
-        if(tools==null){
+        if ( tools == null )
+        {
             tools = new ModelASTTools( this );
-            converterResult.getModelASTPipelineDef().setTools(tools);
+            converterResult.getModelASTPipelineDef().setTools( tools );
         }
         Maven maven = (Maven) builder;
         Maven.MavenInstallation mavenInstallation = maven.getMaven();
-        if(mavenInstallation!=null){
+        if ( mavenInstallation != null )
+        {
             ModelASTKey key = new ModelASTKey( this );
             key.setKey( "maven" );
             tools.getTools().put( key, ModelASTValue.fromConstant( mavenInstallation.getName(), this ) );
@@ -42,15 +54,15 @@ public class MavenConverter implements BuilderConverter
 
         FreeStyleProject freeStyleProject = (FreeStyleProject) request.getJob();
         JDK jdk = freeStyleProject.getJDK();
-        if(jdk!=null){
+        if ( jdk != null )
+        {
             ModelASTKey key = new ModelASTKey( this );
             key.setKey( "jdk" );
             tools.getTools().put( key, ModelASTValue.fromConstant( jdk.getName(), this ) );
         }
 
-
         ModelASTStage stage = new ModelASTStage( this );
-        stage.setName( "Maven Build ");
+        stage.setName( "Maven Build " );
         ModelASTBranch branch = new ModelASTBranch( this );
         stage.setBranches( Arrays.asList( branch ) );
         ModelASTStep step = new ModelASTStep( this );
@@ -59,22 +71,66 @@ public class MavenConverter implements BuilderConverter
 
         ArgumentListBuilder args = new ArgumentListBuilder();
         args.add( "mvn" );
-        Arrays.asList(StringUtils.split( maven.getTargets() )).stream().forEach( s -> args.add( s ) );
-        
+        Arrays.asList( StringUtils.split( maven.getTargets() ) ).stream().forEach( s -> args.add( s ) );
+        if ( maven.usePrivateRepository )
+        {
+            args.add( "-Dmaven.repo.local=.repository" );
+        }
 
-        //String settingsPath = SettingsProvider.getSettingsRemotePath( maven.getSettings(), build, listener);
-        SettingsProvider settingsProvider = maven.getSettings();
-//        if(settingsProvider!=null)
-//        if( StringUtils.isNotBlank( settingsPath)){
-//            args.add("-s", settingsPath);
-//        }
+        if ( StringUtils.isNotBlank( maven.pom ) )
+        {
+            args.add( "-f", maven.pom );
+        }
 
+        if ( StringUtils.isNotBlank( maven.properties ) )
+        {
+            args.add( maven.properties );
+        }
+
+        {
+            SettingsProvider settingsProvider = maven.getSettings();
+            if ( settingsProvider instanceof FilePathSettingsProvider )
+            {
+                String settingsPath = ( (FilePathSettingsProvider) settingsProvider ).getPath();
+                if ( StringUtils.isNotBlank( settingsPath ) )
+                {
+                    args.add( "-s", settingsPath );
+                }
+            }
+        }
+
+        {
+            GlobalSettingsProvider globalSettingsProvider = maven.getGlobalSettings();
+            if ( globalSettingsProvider instanceof FilePathGlobalSettingsProvider )
+            {
+                String settingsPath = ( (FilePathGlobalSettingsProvider) globalSettingsProvider ).getPath();
+                if ( StringUtils.isNotBlank( settingsPath ) )
+                {
+                    args.add( "-gs", settingsPath );
+                }
+            }
+        }
 
         ModelASTSingleArgument singleArgument = new ModelASTSingleArgument( this );
         singleArgument.setValue( ModelASTValue.fromConstant( args.toString(), this ) );
 
         step.setArgs( singleArgument );
         step.setName( "sh" );
+
+        if ( StringUtils.isNotBlank( maven.jvmOptions ) )
+        {
+            ModelASTEnvironment environment = stage.getEnvironment();
+            if ( environment == null )
+            {
+                environment = new ModelASTEnvironment( this );
+                stage.setEnvironment( environment );
+            }
+            Map<ModelASTKey, ModelASTEnvironmentValue> environmentVariables = environment.getVariables();
+            ModelASTKey key = new ModelASTKey(this);
+            key.setKey( "MAVEN_OPTS" );
+            environmentVariables.put( key, ModelASTValue.fromConstant( maven.jvmOptions, this ) );
+        }
+
         return stage;
 
     }

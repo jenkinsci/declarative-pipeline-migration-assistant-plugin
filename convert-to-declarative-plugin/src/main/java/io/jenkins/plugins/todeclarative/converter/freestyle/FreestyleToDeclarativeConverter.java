@@ -9,6 +9,7 @@ import hudson.model.Label;
 import hudson.scm.SCM;
 import hudson.tasks.BuildWrapper;
 import hudson.tasks.Builder;
+import hudson.tasks.Maven;
 import hudson.tasks.Publisher;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterException;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Extension
@@ -194,13 +196,25 @@ public class FreestyleToDeclarativeConverter
         }
         for ( Builder builder : builders )
         {
-            findBuilderConverter( builder ).stream().forEach( builderConverter -> {
+            Consumer<? super BuilderConverter> consumer = builderConverter -> {
                 ModelASTStage stage = builderConverter.convert( converterRequest, converterResult, builder );
                 if ( stage != null )
                 {
                     converterResult.getModelASTPipelineDef().getStages().getStages().add( stage );
                 }
-            } );
+            };
+            if ( builder instanceof Maven ) // Maven is a special one and we can apply only one converter so we pick the first one
+            {
+                List<BuilderConverter> builderConverters = findBuilderConverter( builder );
+                if ( !builderConverters.isEmpty() )
+                {
+                    builderConverters.subList( 0, 1 ).stream().forEach( consumer );
+                }
+            }
+            else
+            {
+                findBuilderConverter( builder ).stream().forEach( consumer );
+            }
         }
     }
 
@@ -250,7 +264,6 @@ public class FreestyleToDeclarativeConverter
 
     protected List<BuilderConverter> findBuilderConverter( Builder builder )
     {
-
         List<BuilderConverter> converters = Jenkins.get().getExtensionList( BuilderConverter.class );
         return converters.stream().filter( converter -> converter.canConvert( builder ) ).collect(
             Collectors.toList() );

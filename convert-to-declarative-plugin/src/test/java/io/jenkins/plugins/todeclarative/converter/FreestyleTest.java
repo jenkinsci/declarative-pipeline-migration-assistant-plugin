@@ -29,6 +29,7 @@ import hudson.plugins.git.UserRemoteConfig;
 import hudson.tasks.ArtifactArchiver;
 import hudson.tasks.BatchFile;
 import hudson.tasks.BuildTrigger;
+import hudson.tasks.Builder;
 import hudson.tasks.LogRotator;
 import hudson.tasks.Mailer;
 import hudson.tasks.Maven;
@@ -42,14 +43,18 @@ import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.freestyle.FreestyleToDeclarativeConverter;
 import jenkins.model.BuildDiscarderProperty;
 import jenkins.model.Jenkins;
+import jenkins.mvn.FilePathGlobalSettingsProvider;
+import jenkins.mvn.GlobalSettingsProvider;
 import jenkins.triggers.ReverseBuildTrigger;
 import org.apache.commons.io.IOUtils;
+import org.hamcrest.CoreMatchers;
 import org.jenkins.plugins.lockableresources.RequiredResourcesProperty;
 import org.jenkinsci.lib.configprovider.ConfigProvider;
 import org.jenkinsci.plugins.configfiles.GlobalConfigFiles;
 import org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper;
 import org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile;
 import org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig;
+import org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider;
 import org.jenkinsci.plugins.configfiles.properties.PropertiesConfig;
 import org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper;
 import org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding;
@@ -421,24 +426,26 @@ public class FreestyleTest
 
         p.setScm(new ExtractResourceSCM(Thread.currentThread().getContextClassLoader().getResource( "maven3-project.zip" )));
 
+        {
+            GlobalConfigFiles store =
+                j.getInstance().getExtensionList( GlobalConfigFiles.class ).get( GlobalConfigFiles.class );
 
-        GlobalConfigFiles store = j.getInstance().getExtensionList(GlobalConfigFiles.class)
-            .get( GlobalConfigFiles.class);
+            String content = IOUtils.toString(
+                Thread.currentThread().getContextClassLoader().getResource( "global-maven-settings.xml" ) );
+            GlobalMavenSettingsConfig globalMavenSettingsConfig =
+                new GlobalMavenSettingsConfig( "global-maven-settings-id", "global-maven-settings-name", "comment",
+                                               content );
+            store.save( globalMavenSettingsConfig );
 
-        String content = IOUtils.toString(Thread.currentThread().getContextClassLoader().getResource( "global-maven-settings.xml" ));
-        GlobalMavenSettingsConfig globalMavenSettingsConfig =
-            new GlobalMavenSettingsConfig( "global-maven-settings-id", "global-maven-settings-name", "comment", content );
-        store.save(globalMavenSettingsConfig);
+            Maven.MavenInstallation mavenInstallation = ToolInstallations.configureMaven35();
 
-        Maven.MavenInstallation mavenInstallation = ToolInstallations.configureMaven35();
+            Maven maven = new Maven( "clean verify", mavenInstallation.getName() /*maven name*/, "pom.xml",
+                                     "-DskipTests" /*properties*/, "-Djava.awt.headless=true" /*jvmOptions*/,
+                                     true /*usePrivateRepository*/, null /*SettingsProvider settings*/,
+                                     new MvnGlobalSettingsProvider( "global-maven-settings-id") /*GlobalSettingsProvider*/ );
 
-        Maven maven = new Maven( "clean verify",mavenInstallation.getName() /*maven name*/, "pom.xml", "" /*properties*/,
-                                 null /*jvmOptions*/, false /*usePrivateRepository*/,
-                                 null /*SettingsProvider settings*/,/*GlobalSettingsProvider*/null);
-
-        //GlobalMavenSettingsConfig.GlobalMavenSettingsConfigProvider.
-        p.getBuildersList().add(maven);
-
+            p.getBuildersList().add( maven );
+        }
 
         FreestyleToDeclarativeConverter converter = Jenkins.get()
             .getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
@@ -453,6 +460,7 @@ public class FreestyleTest
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
 
         System.out.println( groovy );
+        Assert.assertThat( groovy, CoreMatchers.containsString( "mvn" ) );
         WorkflowJob job = j.jenkins.createProject(WorkflowJob.class, "singleStep");
         job.setDefinition(new CpsFlowDefinition( groovy, true));
         WorkflowRun run =job.scheduleBuild2( 0).get();
