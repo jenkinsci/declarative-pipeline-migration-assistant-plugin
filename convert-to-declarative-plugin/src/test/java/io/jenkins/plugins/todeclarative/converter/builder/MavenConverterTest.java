@@ -21,6 +21,8 @@ import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.ToolInstallations;
 
+import static org.junit.Assert.*;
+
 public class MavenConverterTest
 {
 
@@ -65,7 +67,7 @@ public class MavenConverterTest
         ConverterRequest request = new ConverterRequest().job( p );
         ConverterResult result = new ConverterResult();
         ModelASTStage stage = mavenConverter.convert( request, result, maven );
-        Assert.assertNotNull( stage );
+        assertNotNull( stage );
 
         String toolsGroovy = result.getModelASTPipelineDef().getTools().toGroovy();
         System.out.println( "tools: " + toolsGroovy );
@@ -73,17 +75,70 @@ public class MavenConverterTest
         String stageGroovy = stage.toGroovy();
         System.out.println( "groovy: " + stageGroovy );
 
-        Assert.assertThat( toolsGroovy, CoreMatchers.containsString( "maven 'apache-maven-3.5.0'" ) );
-        Assert.assertThat( toolsGroovy, CoreMatchers.containsString( "jdk 'thejdk'" ) );
+        assertThat( toolsGroovy, CoreMatchers.containsString( "tools" ) );
+        assertThat( toolsGroovy, CoreMatchers.containsString( "maven 'apache-maven-3.5.0'" ) );
+        assertThat( toolsGroovy, CoreMatchers.containsString( "jdk 'thejdk'" ) );
 
-        Assert.assertThat( stageGroovy, CoreMatchers.containsString( "mvn" ) );
-        Assert.assertThat( stageGroovy, CoreMatchers.containsString( "clean verify" ) );
-        Assert.assertThat( stageGroovy, CoreMatchers.containsString( "-Dmaven.repo.local=.repository" ) );
-        Assert.assertThat( stageGroovy, CoreMatchers.containsString( "-f thepom.xml" ) );
-        Assert.assertThat( stageGroovy, CoreMatchers.containsString( "-DskipTests -Dfoo=bar" ) );
-        Assert.assertThat( stageGroovy, CoreMatchers.containsString( "-s settings.xml" ) );
-        Assert.assertThat( stageGroovy, CoreMatchers.containsString( "-gs global.xml" ) );
-        Assert.assertThat( stageGroovy, CoreMatchers.containsString(
+        assertThat( stageGroovy, CoreMatchers.containsString( "mvn" ) );
+        assertThat( stageGroovy, CoreMatchers.containsString( "clean verify" ) );
+        assertThat( stageGroovy, CoreMatchers.containsString( "-Dmaven.repo.local=.repository" ) );
+        assertThat( stageGroovy, CoreMatchers.containsString( "-f thepom.xml" ) );
+        assertThat( stageGroovy, CoreMatchers.containsString( "-DskipTests -Dfoo=bar" ) );
+        assertThat( stageGroovy, CoreMatchers.containsString( "-s settings.xml" ) );
+        assertThat( stageGroovy, CoreMatchers.containsString( "-gs global.xml" ) );
+        assertThat( stageGroovy, CoreMatchers.containsString(
+            "MAVEN_OPTS = '-Djava.awt.headless=true -Xmx768m -Xms768m -client -XX:+HeapDumpOnOutOfMemoryError'" ) );
+    }
+
+    @Test
+    public void simpleMavenConversionNoJDKNoMaven()
+        throws Exception
+    {
+
+        String projectName = Long.toString( System.currentTimeMillis() );
+        FreeStyleProject p = j.createFreeStyleProject( projectName );
+
+        GlobalConfigFiles store =
+            j.getInstance().getExtensionList( GlobalConfigFiles.class ).get( GlobalConfigFiles.class );
+
+        String content = IOUtils.toString(
+            Thread.currentThread().getContextClassLoader().getResource( "global-maven-settings.xml" ) );
+        GlobalMavenSettingsConfig globalMavenSettingsConfig =
+            new GlobalMavenSettingsConfig( "global-maven-settings-id", "global-maven-settings-name", "comment",
+                                           content );
+        store.save( globalMavenSettingsConfig );
+
+
+        GlobalSettingsProvider globalSettingsProvider = new FilePathGlobalSettingsProvider( "global.xml" );
+        SettingsProvider settingsProvider = new FilePathSettingsProvider( "settings.xml" );
+
+        Maven maven = new Maven( "clean verify", null /*maven name*/, "thepom.xml",
+                                 "-DskipTests -Dfoo=bar" /*properties*/,
+                                 "-Djava.awt.headless=true -Xmx768m -Xms768m -client -XX:+HeapDumpOnOutOfMemoryError" /*jvmOptions*/,
+                                 true /*usePrivateRepository*/, settingsProvider /*SettingsProvider settings*/,
+                                 globalSettingsProvider /*GlobalSettingsProvider*/ );
+
+        MavenConverter mavenConverter = j.jenkins.getExtensionList( MavenConverter.class ).get( 0 );
+
+        assertTrue( mavenConverter.canConvert( maven ) );
+        ConverterRequest request = new ConverterRequest().job( p );
+        ConverterResult result = new ConverterResult();
+        ModelASTStage stage = mavenConverter.convert( request, result, maven );
+        assertNotNull( stage );
+
+        assertNull( result.getModelASTPipelineDef().getTools() );
+
+        String stageGroovy = stage.toGroovy();
+        System.out.println( "groovy: " + stageGroovy );
+
+        assertThat( stageGroovy, CoreMatchers.containsString( "mvn" ) );
+        assertThat( stageGroovy, CoreMatchers.containsString( "clean verify" ) );
+        assertThat( stageGroovy, CoreMatchers.containsString( "-Dmaven.repo.local=.repository" ) );
+        assertThat( stageGroovy, CoreMatchers.containsString( "-f thepom.xml" ) );
+        assertThat( stageGroovy, CoreMatchers.containsString( "-DskipTests -Dfoo=bar" ) );
+        assertThat( stageGroovy, CoreMatchers.containsString( "-s settings.xml" ) );
+        assertThat( stageGroovy, CoreMatchers.containsString( "-gs global.xml" ) );
+        assertThat( stageGroovy, CoreMatchers.containsString(
             "MAVEN_OPTS = '-Djava.awt.headless=true -Xmx768m -Xms768m -client -XX:+HeapDumpOnOutOfMemoryError'" ) );
     }
 

@@ -9,6 +9,7 @@ import hudson.util.ArgumentListBuilder;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.builder.BuilderConverter;
+import jenkins.model.Jenkins;
 import jenkins.mvn.FilePathGlobalSettingsProvider;
 import jenkins.mvn.FilePathSettingsProvider;
 import jenkins.mvn.GlobalSettingsProvider;
@@ -41,7 +42,6 @@ public class MavenConverter
         if ( tools == null )
         {
             tools = new ModelASTTools( this );
-            converterResult.getModelASTPipelineDef().setTools( tools );
         }
         Maven maven = (Maven) builder;
         Maven.MavenInstallation mavenInstallation = maven.getMaven();
@@ -54,11 +54,17 @@ public class MavenConverter
 
         FreeStyleProject freeStyleProject = (FreeStyleProject) request.getJob();
         JDK jdk = freeStyleProject.getJDK();
-        if ( jdk != null )
+        // default jdk may have configured automatically but we don't want that
+        if ( jdk != null && !(Jenkins.get().getJDKs().size()==1 && StringUtils.equalsIgnoreCase( "default", jdk.getName() )) )
         {
             ModelASTKey key = new ModelASTKey( this );
             key.setKey( "jdk" );
             tools.getTools().put( key, ModelASTValue.fromConstant( jdk.getName(), this ) );
+        }
+
+        if(!tools.getTools().isEmpty())
+        {
+            converterResult.getModelASTPipelineDef().setTools( tools );
         }
 
         ModelASTStage stage = new ModelASTStage( this );
