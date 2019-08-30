@@ -441,7 +441,7 @@ public class FreestyleTest
 
             Maven maven = new Maven( "clean verify", mavenInstallation.getName() /*maven name*/, "pom.xml",
                                      "-DskipTests" /*properties*/, "-Djava.awt.headless=true" /*jvmOptions*/,
-                                     true /*usePrivateRepository*/, null /*SettingsProvider settings*/,
+                                     false /*usePrivateRepository*/, null /*SettingsProvider settings*/,
                                      new MvnGlobalSettingsProvider( "global-maven-settings-id") /*GlobalSettingsProvider*/ );
 
             p.getBuildersList().add( maven );
