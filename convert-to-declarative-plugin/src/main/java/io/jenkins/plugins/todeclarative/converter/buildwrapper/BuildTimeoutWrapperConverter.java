@@ -22,10 +22,10 @@ import java.util.List;
 import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.buildKeyPairArg;
 
 @Extension
-public class TimeoutBuildWrapperConverter
+public class BuildTimeoutWrapperConverter
     implements BuildWrapperConverter
 {
-    private Logger LOGGER = LoggerFactory.getLogger( TimeoutBuildWrapperConverter.class );
+    private Logger LOGGER = LoggerFactory.getLogger( BuildTimeoutWrapperConverter.class );
 
     @Override
     public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, BuildWrapper wrapper )
