@@ -37,18 +37,6 @@ public class ParameterPropertyConverter
             return;
         }
 
-        try
-        {
-            if(request.isCreateProject())
-            {
-                converterResult.getJob().addProperty( jobProperty );
-            }
-        }
-        catch ( IOException e )
-        {
-            e.printStackTrace();
-        }
-
         // now in the Jenkinsfile as well
         ModelASTPipelineDef model = converterResult.getModelASTPipelineDef();
         if(model.getParameters()==null){
@@ -66,10 +54,10 @@ public class ParameterPropertyConverter
 
     protected ModelASTBuildParameter build( ParameterDefinition parameterDefinition ){
         // maybe an extension point here if users have their parameter definition type?
+        List<ModelASTMethodArg> args = new ArrayList<>();
         if( StringParameterDefinition.class.getSimpleName().equals(parameterDefinition.getType())){
             ModelASTBuildParameter parameter = new ModelASTBuildParameter(this);
             parameter.setName( "string" );
-            List<ModelASTMethodArg> args = new ArrayList<>();
             args.add( ModelASTUtils.buildKeyPairArg( "name", parameterDefinition.getName()));
             args.add( ModelASTUtils.buildKeyPairArg( "defaultValue", ((StringParameterDefinition)parameterDefinition).getDefaultValue()));
             args.add( ModelASTUtils.buildKeyPairArg( "description", parameterDefinition.getDescription()));
@@ -81,7 +69,6 @@ public class ParameterPropertyConverter
         if( ChoiceParameterDefinition.class.getSimpleName().equals( parameterDefinition.getType())){
             ModelASTBuildParameter parameter = new ModelASTBuildParameter(this);
             parameter.setName( "choice" );
-            List<ModelASTMethodArg> args = new ArrayList<>();
             args.add( ModelASTUtils.buildKeyPairArg( "name", parameterDefinition.getName()));
             args.add( ModelASTUtils.buildKeyPairArg( "choices", ((ChoiceParameterDefinition)parameterDefinition).getChoices()));
             args.add( ModelASTUtils.buildKeyPairArg( "description", parameterDefinition.getDescription()));
@@ -92,7 +79,6 @@ public class ParameterPropertyConverter
         if( BooleanParameterDefinition.class.getSimpleName().equals( parameterDefinition.getType())){
             ModelASTBuildParameter parameter = new ModelASTBuildParameter(this);
             parameter.setName( "booleanParam" );
-            List<ModelASTMethodArg> args = new ArrayList<>();
             args.add( ModelASTUtils.buildKeyPairArg( "name", parameterDefinition.getName()));
             args.add( ModelASTUtils.buildKeyPairArg( "defaultValue", ((BooleanParameterDefinition)parameterDefinition).getDefaultParameterValue().value));
             args.add( ModelASTUtils.buildKeyPairArg( "description", parameterDefinition.getDescription()));

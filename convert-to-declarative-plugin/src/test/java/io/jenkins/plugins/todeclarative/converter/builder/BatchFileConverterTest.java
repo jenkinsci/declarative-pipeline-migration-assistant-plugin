@@ -9,8 +9,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class BatchFileConverterTest
 {
@@ -22,10 +21,10 @@ public class BatchFileConverterTest
     public void simpletest()
         throws Exception
     {
-
         BatchFileConverter converter = j.jenkins.getExtensionList( BatchFileConverter.class ).get( 0 );
         BatchFile batchFile = new BatchFile( "cmd" );
         ConverterResult result = new ConverterResult();
+        assertTrue( converter.canConvert( batchFile ) );
         ModelASTStage stage = converter.convert( new ConverterRequest(), result, batchFile );
         assertNotNull( stage );
         String stageGroovy = stage.toGroovy();

@@ -12,8 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class BuildDiscarderPropertyConverterTest
 {
@@ -24,7 +23,6 @@ public class BuildDiscarderPropertyConverterTest
     public void simpletest()
         throws Exception
     {
-
         String projectName = Long.toString( System.currentTimeMillis() );
         FreeStyleProject p = j.createFreeStyleProject( projectName );
 
@@ -35,7 +33,7 @@ public class BuildDiscarderPropertyConverterTest
 
         BuildDiscarderPropertyConverter converter =
             j.jenkins.getExtensionList( BuildDiscarderPropertyConverter.class ).get( 0 );
-
+        assertTrue( converter.canConvert( null, buildDiscarderProperty ) );
         ConverterResult result = new ConverterResult();
         converter.convert( new ConverterRequest(), result, null, buildDiscarderProperty );
         ModelASTOptions options = result.getModelASTPipelineDef().getOptions();
