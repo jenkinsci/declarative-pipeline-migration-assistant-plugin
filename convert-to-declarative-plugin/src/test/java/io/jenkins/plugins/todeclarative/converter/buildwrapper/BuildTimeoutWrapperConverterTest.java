@@ -5,7 +5,6 @@ import hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy;
 import hudson.plugins.build_timeout.operations.FailOperation;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
-import org.hamcrest.CoreMatchers;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOption;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOptions;
 import org.junit.Rule;
@@ -14,6 +13,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 
 import java.util.Collections;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -39,7 +39,7 @@ public class BuildTimeoutWrapperConverterTest
         ModelASTOption option = options.getOptions().get( 0 );
         assertEquals( "timeout", option.getName() );
         String groovy = option.toGroovy();
-        assertThat( groovy, CoreMatchers.containsString( "time: 180" ) );
-        assertThat( groovy, CoreMatchers.containsString( "unit: 'MINUTES'" ) );
+        assertThat( groovy, containsString( "time: 180" ) );
+        assertThat( groovy, containsString( "unit: 'MINUTES'" ) );
     }
 }

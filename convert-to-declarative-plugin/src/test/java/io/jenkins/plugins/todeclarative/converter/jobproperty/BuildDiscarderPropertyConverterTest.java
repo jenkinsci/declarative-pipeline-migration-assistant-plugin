@@ -5,13 +5,13 @@ import hudson.tasks.LogRotator;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import jenkins.model.BuildDiscarderProperty;
-import org.hamcrest.CoreMatchers;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOption;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOptions;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
 
 public class BuildDiscarderPropertyConverterTest
@@ -41,9 +41,9 @@ public class BuildDiscarderPropertyConverterTest
         ModelASTOption option = options.getOptions().get( 0 );
         assertEquals( "buildDiscarder", option.getName() );
         String groovy = option.toGroovy();
-        assertThat( groovy, CoreMatchers.containsString( "daysToKeepStr: '1'" ) );
-        assertThat( groovy, CoreMatchers.containsString( "numToKeepStr: '2'" ) );
-        assertThat( groovy, CoreMatchers.containsString( "artifactDaysToKeepStr: '3'" ) );
-        assertThat( groovy, CoreMatchers.containsString( "artifactNumToKeepStr: '4'" ) );
+        assertThat( groovy, containsString( "daysToKeepStr: '1'" ) );
+        assertThat( groovy, containsString( "numToKeepStr: '2'" ) );
+        assertThat( groovy, containsString( "artifactDaysToKeepStr: '3'" ) );
+        assertThat( groovy, containsString( "artifactNumToKeepStr: '4'" ) );
     }
 }

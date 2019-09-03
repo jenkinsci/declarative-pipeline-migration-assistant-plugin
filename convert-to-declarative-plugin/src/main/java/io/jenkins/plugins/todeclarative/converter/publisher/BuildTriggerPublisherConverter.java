@@ -29,6 +29,11 @@ public class BuildTriggerPublisherConverter
         BuildTrigger buildTrigger = (BuildTrigger) publisher;
         // FIXME must depends on Threshold
         //buildTrigger.getThreshold()
+        if (buildTrigger.getChildJobs((AbstractProject<?, ?>) request.getJob()) == null ||
+            buildTrigger.getChildJobs((AbstractProject<?, ?>) request.getJob()).isEmpty())
+        {
+            return null;
+        }
         ModelASTBuildCondition buildCondition =
             ModelASTUtils.buildOrFindBuildCondition( result.getModelASTPipelineDef(), "always" );
         buildTrigger.getChildJobs((AbstractProject<?, ?>) request.getJob()).forEach( abstractProject -> {

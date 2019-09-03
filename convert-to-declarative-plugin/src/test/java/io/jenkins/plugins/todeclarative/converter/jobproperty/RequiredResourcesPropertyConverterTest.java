@@ -1,24 +1,15 @@
 package io.jenkins.plugins.todeclarative.converter.jobproperty;
 
-import hudson.model.BooleanParameterDefinition;
-import hudson.model.ChoiceParameterDefinition;
 import hudson.model.FreeStyleProject;
-import hudson.model.ParameterDefinition;
-import hudson.model.ParametersDefinitionProperty;
-import hudson.model.StringParameterDefinition;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
-import org.hamcrest.CoreMatchers;
 import org.jenkins.plugins.lockableresources.RequiredResourcesProperty;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildParameters;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOptions;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
 
 public class RequiredResourcesPropertyConverterTest
@@ -47,8 +38,8 @@ public class RequiredResourcesPropertyConverterTest
         ModelASTOptions options = result.getModelASTPipelineDef().getOptions();
         assertEquals( 1, options.getOptions().size() );
         String groovy = options.toGroovy();
-        assertThat( groovy, CoreMatchers.containsString( "lock" ) );
-        assertThat( groovy, CoreMatchers.containsString( "resource: 'beer'" ) );
-        assertThat( groovy, CoreMatchers.containsString( "label: 'labelName'" ) );
+        assertThat( groovy, containsString( "lock" ) );
+        assertThat( groovy, containsString( "resource: 'beer'" ) );
+        assertThat( groovy, containsString( "label: 'labelName'" ) );
     }
 }
