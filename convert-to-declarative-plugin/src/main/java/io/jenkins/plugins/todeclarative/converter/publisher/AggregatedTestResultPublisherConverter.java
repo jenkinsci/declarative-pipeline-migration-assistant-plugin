@@ -5,6 +5,7 @@ import hudson.tasks.Publisher;
 import hudson.tasks.test.AggregatedTestResultPublisher;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
+import io.jenkins.plugins.todeclarative.converter.api.Warning;
 import io.jenkins.plugins.todeclarative.converter.api.publisher.PublisherConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.slf4j.Logger;
@@ -19,8 +20,8 @@ public class AggregatedTestResultPublisherConverter implements PublisherConverte
     @Override
     public ModelASTStage convert( ConverterRequest request, ConverterResult result, Publisher publisher )
     {
-        result.addWarning( new ConverterResult.Warning( "Cannot convert publisher:" + publisher.getClass(),
-                                                                    AggregatedTestResultPublisher.class.getName() ));
+        result.addWarning( new Warning( "Cannot convert publisher:" + publisher.getClass(),
+                                        AggregatedTestResultPublisher.class.getName() ));
         return null;
 
 

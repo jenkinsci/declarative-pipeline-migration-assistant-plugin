@@ -8,56 +8,53 @@ import hudson.model.FreeStyleProject;
 import hudson.util.FormValidation;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
+import io.jenkins.plugins.todeclarative.converter.api.Warning;
 import io.jenkins.plugins.todeclarative.converter.freestyle.FreestyleToDeclarativeConverter;
 import jenkins.model.Jenkins;
 import jenkins.model.TransientActionFactory;
-import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
 import javax.annotation.CheckForNull;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class ToDeclarativeAction
     implements Action, Describable<ToDeclarativeAction>
 {
 
-    public static final String JELLY_RESOURCES_PATH = "/io/jenkins/plugins/todeclarative/actions/ToDeclarativeAction/";
-    //TODO make it dynamic
-    // ToDeclarativeAction.class.getPackage().getName();
-
     private FreeStyleProject job;
 
     private String jenkinsFile;
+
+    private List<Warning> warnings;
 
     public ToDeclarativeAction( FreeStyleProject job )
     {
         this.job = job;
     }
 
-    public void doConvert( final StaplerRequest request, final StaplerResponse response )
+    public String doConvert()
         throws Exception
     {
-        // FIXME use boolean
-        if (StringUtils.equalsIgnoreCase( request.getParameter( "jenkinsFileOnly" ), "on" ))
-        {
-            FreestyleToDeclarativeConverter converter =
-                Jenkins.get().getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
-            ConverterRequest converterRequest = new ConverterRequest().job( job ).createProject( false );
-            ConverterResult converterResult =
-                new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
-            converter.convert( converterRequest, converterResult );
-            this.jenkinsFile = converterResult.getModelASTPipelineDef().toPrettyGroovy();
-            request.setAttribute( "Jenkinsfile", this.jenkinsFile);
-            request.getView( this, JELLY_RESOURCES_PATH + "jenkinsfile.jelly" ).forward( request, response );
-            return;
-        }
 
-        response.forwardToPreviousPage( request );
+        FreestyleToDeclarativeConverter converter =
+            Jenkins.get().getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
+        ConverterRequest converterRequest = new ConverterRequest().job( job ).createProject( false );
+        ConverterResult converterResult =
+            new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
+        converter.convert( converterRequest, converterResult );
+        this.jenkinsFile = converterResult.getModelASTPipelineDef().toPrettyGroovy();
+        this.warnings = converterResult.getWarnings();
+        this.warnings.add( new Warning( "Sucks", "Awesome plugin class" ) );
+        return jenkinsFile;
+    }
+
+    public List<Warning> getWarnings()
+    {
+        return warnings;
     }
 
     @CheckForNull

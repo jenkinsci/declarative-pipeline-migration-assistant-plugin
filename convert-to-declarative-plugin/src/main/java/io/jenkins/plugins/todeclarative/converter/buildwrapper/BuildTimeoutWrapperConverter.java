@@ -7,6 +7,7 @@ import hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy;
 import hudson.tasks.BuildWrapper;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
+import io.jenkins.plugins.todeclarative.converter.api.Warning;
 import io.jenkins.plugins.todeclarative.converter.api.buildwrapper.BuildWrapperConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTMethodArg;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOption;
@@ -34,9 +35,9 @@ public class BuildTimeoutWrapperConverter
         BuildTimeOutStrategy strategy = timeoutWrapper.getStrategy();
 
         if(!(strategy instanceof AbsoluteTimeOutStrategy)){
-            converterResult.addWarning( new ConverterResult.Warning( "we can only convert Absolute timeout and not "
+            converterResult.addWarning( new Warning( "we can only convert Absolute timeout and not "
                                                                          + strategy.getDescriptor().clazz,
-                                                                     BuildTimeOutStrategy.class.getName() ));
+                                                     BuildTimeOutStrategy.class.getName() ));
             return null;
         }
 

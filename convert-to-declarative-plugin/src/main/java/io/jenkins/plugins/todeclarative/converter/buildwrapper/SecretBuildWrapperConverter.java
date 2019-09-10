@@ -4,6 +4,7 @@ import hudson.Extension;
 import hudson.tasks.BuildWrapper;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
+import io.jenkins.plugins.todeclarative.converter.api.Warning;
 import io.jenkins.plugins.todeclarative.converter.api.buildwrapper.BuildWrapperConverter;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.credentialsbinding.MultiBinding;
@@ -89,8 +90,8 @@ public class SecretBuildWrapperConverter
                         return withCredentials;
                     default:
                         LOGGER.warn( "credential binding, ignore symbol: {}",  symbol );
-                        converterResult.addWarning( new ConverterResult.Warning( "Cannot convert credential binding: '" + symbol + "'",
-                                                                                 secretBuildWrapper.getClass().getName()) );
+                        converterResult.addWarning( new Warning( "Cannot convert credential binding: '" + symbol + "'",
+                                                                 secretBuildWrapper.getClass().getName()) );
 
                 }
             }

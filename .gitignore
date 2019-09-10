@@ -2,3 +2,5 @@ target/
 *.iml
 .work
 work
+node/
+node_modules/

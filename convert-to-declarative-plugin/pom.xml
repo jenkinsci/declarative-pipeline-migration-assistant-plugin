@@ -40,6 +40,11 @@
       <artifactId>workflow-api</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.jenkins-ci.ui</groupId>
+      <artifactId>ace-editor</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+    <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-cps</artifactId>
       <version>2.62</version>
@@ -190,5 +195,14 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>target/generated-resources/adjuncts</directory>
+      </resource>
+    </resources>
+  </build>
 </project>
