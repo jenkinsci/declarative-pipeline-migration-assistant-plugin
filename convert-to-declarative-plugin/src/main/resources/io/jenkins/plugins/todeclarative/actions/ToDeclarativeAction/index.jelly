@@ -7,19 +7,35 @@
       <j:set var="Jenkinsfile" value="${it.doConvert()}"/>
       <j:set var="warnings" value="${it.warnings}"/>
       <j:if test="${!warnings.isEmpty()}">
-        <f:section>
-          <div class="alert alert-warning">
-            <l:icon class="icon-warning icon-xlg"/>Conversion Complete with warnings
+        <div class="result-top-title">
+          <div class="alert">
+            <l:icon class="icon-warning icon-xlg"/>${%warnings.section.title}
           </div>
-        </f:section>
-        <f:section>
-          ${%warnings.section.title}
+        </div>
+        <div class="result-text">
+          ${%warnings.section.text}
           <ul>
           <j:forEach var="w" items="${warnings}">
             <li>${w.message} (${w.pluginClassName})</li>
           </j:forEach>
           </ul>
-        </f:section>
+        </div>
+        <div class="result-link">
+          <div><a href="https://jenkins.io/doc/book/pipeline/" target="_blank">${%jenkinsfile.help.scm}</a></div>
+          <div><a href="https://jenkins.io/doc/tutorials/build-a-multibranch-pipeline-project/" target="_blank">${%jenkinsfile.help.multibranch}</a></div>
+        </div>
+      </j:if>
+      <j:if test="${warnings.isEmpty()}">
+        <div class="result-top-title">
+          <div class="info">
+            <l:icon class="icon-info icon-xlg"/>${%success.section.title}
+          </div>
+        </div>
+        <div class="result-text">
+          ${%success.section.text}
+          <div><a href="https://jenkins.io/doc/book/pipeline/" target="_blank">${%jenkinsfile.help.scm}</a></div>
+          <div><a href="https://jenkins.io/doc/tutorials/build-a-multibranch-pipeline-project/" target="_blank">${%jenkinsfile.help.multibranch}</a></div>
+        </div>
       </j:if>
       <f:section title="${%jenkinsfile.section.title}">
         <div class="workflow-editor-wrapper" style="display: none; position: relative">
@@ -30,8 +46,4 @@
       </f:section>
     </l:main-panel>
   </l:layout>
-  <script type="text/javascript" language="javascript">
-    jQueryToDeclarative.noConflict();
-    jQueryToDeclarative("#jenkinsfile").setNumber();
-  </script>
 </j:jelly>

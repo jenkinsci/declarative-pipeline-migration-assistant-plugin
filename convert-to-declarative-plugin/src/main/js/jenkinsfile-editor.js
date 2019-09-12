@@ -58,38 +58,6 @@ jenkinsJSModules.import('ace-editor:ace-editor-122')
                     editor.getSession().on('change', function() {
                         textarea.val(editor.getValue());
                     });
-    
-                    editor.on('blur', function() {
-                        editor.session.clearAnnotations();
-                        var url = textarea.attr("checkUrl") + 'Compile';
-    
-                        new Ajax.Request(url, { // jshint ignore:line
-                            method: textarea.attr('checkMethod') || 'POST',
-                            parameters: {
-                                value: editor.getValue()
-                            },
-                            onSuccess : function(data) {
-                                var json = data.responseJSON;
-                                var annotations = [];
-                                if (json.status && json.status === 'success') {
-                                    // Fire script approval check - only if the script is syntactically correct
-                                    textarea.trigger('change');
-                                    return;
-                                } else {
-                                    // Syntax errors
-                                    $.each(json, function(i, value) {
-                                        annotations.push({
-                                            row: value.line - 1,
-                                            column: value.column,
-                                            text: value.message,
-                                            type: 'error'
-                                        });
-                                    });
-                                }
-                                editor.getSession().setAnnotations(annotations);
-                            }
-                        });
-                    });
                 });
     
                 // Make the editor resizable using jQuery UI resizable (http://api.jqueryui.com/resizable).

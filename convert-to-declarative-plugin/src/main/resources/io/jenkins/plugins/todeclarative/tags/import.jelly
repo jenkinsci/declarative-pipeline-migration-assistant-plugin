@@ -1,3 +1,4 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core">
+	<link rel="stylesheet" type="text/css" href="${rootURL}/plugin/convert-to-declarative/css/todeclarative.css"/>
 </j:jelly>

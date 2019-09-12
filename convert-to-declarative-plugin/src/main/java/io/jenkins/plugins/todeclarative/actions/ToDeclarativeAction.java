@@ -48,7 +48,7 @@ public class ToDeclarativeAction
         converter.convert( converterRequest, converterResult );
         this.jenkinsFile = converterResult.getModelASTPipelineDef().toPrettyGroovy();
         this.warnings = converterResult.getWarnings();
-        this.warnings.add( new Warning( "Sucks", "Awesome plugin class" ) );
+        //this.warnings.add( new Warning( "Sucks", "Awesome plugin class" ) );
         return jenkinsFile;
     }
 

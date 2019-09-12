@@ -1,0 +1,20 @@
+.result-top-title {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    margin: 1px;
+    margin-bottom: 0;
+    background: rgba(0, 0, 0, 0.025);
+}
+.result-text {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    margin: 1px;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 15px;
+}
+
+.result-link {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    margin: 1px;
+    margin-top: 0;
+    padding: 15px;
+}
