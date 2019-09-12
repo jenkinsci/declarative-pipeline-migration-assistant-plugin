@@ -31,6 +31,8 @@ public class ToDeclarativeAction
 
     private List<Warning> warnings;
 
+    private Exception error;
+
     public ToDeclarativeAction( FreeStyleProject job )
     {
         this.job = job;
@@ -39,17 +41,30 @@ public class ToDeclarativeAction
     public String doConvert()
         throws Exception
     {
+        try
+        {
+            FreestyleToDeclarativeConverter converter = Jenkins.get().getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
+            ConverterRequest converterRequest = new ConverterRequest().job( job ).createProject( false );
+            ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
+            converter.convert( converterRequest, converterResult );
+//            if(true)
+//            {
+//                throw new Exception( "Something really bad happened with this bloody conversion" );
+//            }
+            this.jenkinsFile = converterResult.getModelASTPipelineDef().toPrettyGroovy();
+            this.warnings = converterResult.getWarnings();
+            //this.warnings.add( new Warning( "Not good", "Awesome plugin class" ) );
+            return jenkinsFile;
+        } catch ( Exception e )
+        {
+            this.error = e;
+        }
+        return null;
+    }
 
-        FreestyleToDeclarativeConverter converter =
-            Jenkins.get().getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
-        ConverterRequest converterRequest = new ConverterRequest().job( job ).createProject( false );
-        ConverterResult converterResult =
-            new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
-        converter.convert( converterRequest, converterResult );
-        this.jenkinsFile = converterResult.getModelASTPipelineDef().toPrettyGroovy();
-        this.warnings = converterResult.getWarnings();
-        //this.warnings.add( new Warning( "Sucks", "Awesome plugin class" ) );
-        return jenkinsFile;
+    public Exception getError()
+    {
+        return error;
     }
 
     public List<Warning> getWarnings()

@@ -6,7 +6,8 @@
     <l:main-panel>
       <j:set var="Jenkinsfile" value="${it.doConvert()}"/>
       <j:set var="warnings" value="${it.warnings}"/>
-      <j:if test="${!warnings.isEmpty()}">
+      <j:set var="error" value="${it.error}"/>
+      <j:if test="${!warnings.isEmpty() and error==null}">
         <div class="result-top-title">
           <div class="alert">
             <l:icon class="icon-warning icon-xlg"/>${%warnings.section.title}
@@ -21,29 +22,40 @@
           </ul>
         </div>
         <div class="result-link">
+          <div>${%warnings.section.create.text}</div>
           <div><a href="https://jenkins.io/doc/book/pipeline/" target="_blank">${%jenkinsfile.help.scm}</a></div>
           <div><a href="https://jenkins.io/doc/tutorials/build-a-multibranch-pipeline-project/" target="_blank">${%jenkinsfile.help.multibranch}</a></div>
         </div>
       </j:if>
-      <j:if test="${warnings.isEmpty()}">
+      <j:if test="${warnings.isEmpty() and error==null}">
         <div class="result-top-title">
-          <div class="info">
-            <l:icon class="icon-info icon-xlg"/>${%success.section.title}
-          </div>
+          <l:icon class="icon-accept icon-xlg"/>${%success.section.title}
         </div>
         <div class="result-text">
-          ${%success.section.text}
+          <div>${%success.section.text}</div>
           <div><a href="https://jenkins.io/doc/book/pipeline/" target="_blank">${%jenkinsfile.help.scm}</a></div>
           <div><a href="https://jenkins.io/doc/tutorials/build-a-multibranch-pipeline-project/" target="_blank">${%jenkinsfile.help.multibranch}</a></div>
         </div>
       </j:if>
-      <f:section title="${%jenkinsfile.section.title}">
-        <div class="workflow-editor-wrapper" style="display: none; position: relative">
-          <f:textarea value="${Jenkinsfile}" readonly="readonly"/>
-          <div class="pane-frame editor" style="height: 500px;"/>
+
+      <j:if test="${Jenkinsfile!=null}">
+        <f:section title="${%jenkinsfile.section.title}">
+          <div class="workflow-editor-wrapper" style="display: none; position: relative">
+            <f:textarea value="${Jenkinsfile}" readonly="readonly"/>
+            <div class="pane-frame editor" style="height: 500px;"/>
+          </div>
+          <st:adjunct includes="io.jenkins.plugins.todeclarative.ui.jenkinsfile-editor"/>
+        </f:section>
+      </j:if>
+
+      <j:if test="${error!=null}">
+        <div class="result-top-title">
+          <div class="alert">
+            <l:icon class="icon-error icon-lg"/>
+          </div>
         </div>
-        <st:adjunct includes="io.jenkins.plugins.todeclarative.ui.jenkinsfile-editor"/>
-      </f:section>
+      </j:if>
+
     </l:main-panel>
   </l:layout>
 </j:jelly>
