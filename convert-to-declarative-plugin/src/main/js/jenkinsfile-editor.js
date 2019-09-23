@@ -9,8 +9,17 @@ var editorIdCounter = 0;
 jenkinsJSModules.import('ace-editor:ace-editor-122')
     .onFulfilled(function (acePack) {
         
-        $('.workflow-editor-wrapper').each(function() {
+        $('.jenkinsfile-editor-wrapper').each(function() {
             initEditor($(this));        
+        });
+
+        $('.rectangle-copy').on('click', function() {
+            var editor = window.aceEditor;
+            var sel = editor.selection.toJSON();
+            editor.selectAll();
+            editor.focus();
+            document.execCommand('copy');
+            editor.selection.fromJSON(sel);
         });
         
         function initEditor(wrapper) {
@@ -22,7 +31,7 @@ jenkinsJSModules.import('ace-editor:ace-editor-122')
             // The ACE Editor js expects the container element to have an id.
             // We generate one and add it.
             editorIdCounter++;
-            var editorId = 'workflow-editor-' + editorIdCounter;
+            var editorId = 'jenkinsfile-editor-' + editorIdCounter;
             aceContainer.attr('id', editorId);
             
             // The 'ace-editor:ace-editor-122' plugin supplies an "ACEPack" object.
@@ -36,6 +45,7 @@ jenkinsJSModules.import('ace-editor:ace-editor-122')
                 // Attach the ACE editor instance to the element. Useful for testing.
                 var $wfEditor = $('#' + editorId);
                 $wfEditor.get(0).aceEditor = editor;
+                window.aceEditor = editor;
     
                 acePack.addPackOverride('snippets/groovy.js');
     

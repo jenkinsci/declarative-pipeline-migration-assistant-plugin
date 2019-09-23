@@ -77,7 +77,7 @@ public class ToDeclarativeAction
     public String getIconFileName()
     {
         // TODO: Use real icon.
-        return "foo";
+        return "new-document.png";
     }
 
     @CheckForNull
