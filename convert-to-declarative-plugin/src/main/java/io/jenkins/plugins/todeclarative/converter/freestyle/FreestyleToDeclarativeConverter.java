@@ -15,6 +15,7 @@ import io.jenkins.plugins.todeclarative.converter.api.ConverterException;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.ToDeclarativeConverter;
+import io.jenkins.plugins.todeclarative.converter.api.Warning;
 import io.jenkins.plugins.todeclarative.converter.api.builder.BuilderConverter;
 import io.jenkins.plugins.todeclarative.converter.api.buildwrapper.BuildWrapperConverter;
 import io.jenkins.plugins.todeclarative.converter.api.jobproperty.JobPropertyConverter;
@@ -129,14 +130,22 @@ public class FreestyleToDeclarativeConverter
         }
         for ( BuildWrapper wrapper : wrappers )
         {
-            findBuildWrapperConverter( wrapper ).stream().forEach( buildWrapperConverterConverter -> {
-                ModelASTStage stage =
-                    buildWrapperConverterConverter.convert( converterRequest, converterResult, wrapper );
-                if ( stage != null )
-                {
-                    converterResult.getModelASTPipelineDef().getStages().getStages().add( stage );
-                }
-            } );
+            List<BuildWrapperConverter> converters = findBuildWrapperConverters( wrapper );
+            if ( !converters.isEmpty() )
+            {
+                converters.stream().forEach( buildWrapperConverterConverter -> {
+                    ModelASTStage stage =
+                        buildWrapperConverterConverter.convert( converterRequest, converterResult, wrapper );
+                    if ( stage != null )
+                    {
+                        converterResult.getModelASTPipelineDef().getStages().getStages().add( stage );
+                    }
+                } );
+            }
+            else
+            {
+                converterResult.getWarnings().add( new Warning( "Converter not found", wrapper.getClass().getName() ) );
+            }
         }
     }
 
@@ -148,11 +157,7 @@ public class FreestyleToDeclarativeConverter
         {
             return;
         }
-        List<PublisherConverter> converters = Jenkins.get().getExtensionList( PublisherConverter.class );
-        if ( converters == null || converters.isEmpty() )
-        {
-            return;
-        }
+
         ModelASTStages stages = converterResult.getModelASTPipelineDef().getStages();
         if ( stages == null )
         {
@@ -161,27 +166,38 @@ public class FreestyleToDeclarativeConverter
         }
         for ( Publisher publisher : publishers )
         {
-            converters.stream().filter( converter -> converter.canConvert( publisher ) ).forEach( converter -> {
-                ModelASTStage stage = converter.convert( converterRequest, converterResult, publisher );
-                if ( stage != null )
-                {
-                    converterResult.getModelASTPipelineDef().getStages().getStages().add( stage );
-                }
-            } );
+            List<PublisherConverter> converters = findPublisherConverters( publisher );
+            if ( !converters.isEmpty() )
+            {
+                converters.stream().forEach( converter -> {
+                    ModelASTStage stage = converter.convert( converterRequest, converterResult, publisher );
+                    if ( stage != null )
+                    {
+                        converterResult.getModelASTPipelineDef().getStages().getStages().add( stage );
+                    }
+                } );
+            }
+            else
+            {
+                converterResult.getWarnings().add(
+                    new Warning( "Converter not found", publisher.getClass().getName() ) );
+            }
         }
     }
 
     protected void convertScm( ConverterRequest converterRequest, ConverterResult converterResult, SCM scm )
         throws ConverterException
     {
-        List<ScmConverter> converters = Jenkins.get().getExtensionList( ScmConverter.class );
-        if ( converters == null || converters.isEmpty() )
+        List<ScmConverter> converters = findBuildScmConverters( scm );
+        if ( !converters.isEmpty() )
         {
-            return;
+            converters.stream() //
+                .forEach( scmConverter -> scmConverter.convert( converterRequest, converterResult, scm ) );
         }
-        converters.stream() //
-            .filter( scmConverter -> scmConverter.canConvert( scm ) ) //
-            .forEach( scmConverter -> scmConverter.convert( converterRequest, converterResult, scm ) );
+        else
+        {
+            converterResult.getWarnings().add( new Warning( "SCM Converter not found", scm.getClass().getName() ) );
+        }
     }
 
     protected void convertBuilders( ConverterRequest converterRequest, ConverterResult converterResult,
@@ -205,7 +221,7 @@ public class FreestyleToDeclarativeConverter
             };
             if ( builder instanceof Maven ) // Maven is a special one and we can apply only one converter so we pick the first one
             {
-                List<BuilderConverter> builderConverters = findBuilderConverter( builder );
+                List<BuilderConverter> builderConverters = findBuilderConverters( builder );
                 if ( !builderConverters.isEmpty() )
                 {
                     builderConverters.subList( 0, 1 ).stream().forEach( consumer );
@@ -213,7 +229,16 @@ public class FreestyleToDeclarativeConverter
             }
             else
             {
-                findBuilderConverter( builder ).stream().forEach( consumer );
+                List<BuilderConverter> converters = findBuilderConverters( builder );
+                if ( !converters.isEmpty() )
+                {
+                    converters.stream().forEach( consumer );
+                }
+                else
+                {
+                    converterResult.getWarnings().add(
+                        new Warning( "Builder Converter not found", builder.getClass().getName() ) );
+                }
             }
         }
     }
@@ -248,6 +273,11 @@ public class FreestyleToDeclarativeConverter
                         e.printStackTrace();
                     }
                 }
+                else
+                {
+                    converterResult.getWarnings().add(
+                        new Warning( "Converter not found", entry.getKey().getClass().getName() ) );
+                }
             }
         }
 
@@ -256,26 +286,38 @@ public class FreestyleToDeclarativeConverter
     protected List<JobPropertyConverter> findJobPropertyConverters( JobPropertyDescriptor jobPropertyDescriptor,
                                                                     JobProperty jobProperty )
     {
-
         List<JobPropertyConverter> converters = Jenkins.get().getExtensionList( JobPropertyConverter.class );
         return converters.stream().filter(
             converter -> converter.canConvert( jobPropertyDescriptor, jobProperty ) ).collect( Collectors.toList() );
     }
 
-    protected List<BuilderConverter> findBuilderConverter( Builder builder )
+    protected List<BuilderConverter> findBuilderConverters( Builder builder )
     {
         List<BuilderConverter> converters = Jenkins.get().getExtensionList( BuilderConverter.class );
         return converters.stream().filter( converter -> converter.canConvert( builder ) ).collect(
             Collectors.toList() );
     }
 
-    protected List<BuildWrapperConverter> findBuildWrapperConverter( BuildWrapper wrapper )
+    protected List<PublisherConverter> findPublisherConverters( Publisher publisher )
     {
+        List<PublisherConverter> converters = Jenkins.get().getExtensionList( PublisherConverter.class );
+        return converters.stream().filter( converter -> converter.canConvert( publisher ) ).collect(
+            Collectors.toList() );
+    }
 
+    protected List<BuildWrapperConverter> findBuildWrapperConverters( BuildWrapper wrapper )
+    {
         List<BuildWrapperConverter> converters = Jenkins.get().getExtensionList( BuildWrapperConverter.class );
         return converters.stream().filter( converter -> converter.canConvert( wrapper ) ).collect(
             Collectors.toList() );
     }
+
+    protected List<ScmConverter> findBuildScmConverters( SCM scm )
+    {
+        List<ScmConverter> converters = Jenkins.get().getExtensionList( ScmConverter.class );
+        return converters.stream().filter( converter -> converter.canConvert( scm ) ).collect( Collectors.toList() );
+    }
+
 
     @Override
     public boolean canConvert( Job job )

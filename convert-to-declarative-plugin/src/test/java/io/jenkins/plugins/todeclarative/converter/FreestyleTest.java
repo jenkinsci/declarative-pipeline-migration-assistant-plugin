@@ -66,31 +66,34 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static junit.framework.TestCase.assertEquals;
 
 public class FreestyleTest
 {
 
     @Rule
-    public JenkinsRule j  = new JenkinsRule();
+    public JenkinsRule j = new JenkinsRule();
 
     @Test
-    public void freestyle_conversion() throws Exception {
+    public void freestyle_conversion()
+        throws Exception
+    {
 
         Slave slave = j.createOnlineSlave();
         slave.setLabelString( "FOO_AGENT" );
 
         String projectName = Long.toString( System.currentTimeMillis() );
         FreeStyleProject p = j.createFreeStyleProject( projectName );
-        p.addProperty( new GithubProjectProperty( "https://github.com/olamy/foo") );
+        p.addProperty( new GithubProjectProperty( "https://github.com/olamy/foo" ) );
 
         { // git
             List<UserRemoteConfig> repoList = new ArrayList<>();
-            repoList.add(new UserRemoteConfig("https://github.com/olamy/foo.git", null,
-                                              "master", null));
-            repoList.add(new UserRemoteConfig("https://github.com/olamy/bar.git", null,
-                                              "patch-1", "credsId"));
-            GitSCM gitSCM = new GitSCM( repoList, null, false,
-                                        Collections.emptyList(), null, null, Collections.emptyList() );
+            repoList.add( new UserRemoteConfig( "https://github.com/olamy/foo.git", null, "master", null ) );
+            repoList.add( new UserRemoteConfig( "https://github.com/olamy/bar.git", null, "patch-1", "credsId" ) );
+            GitSCM gitSCM =
+                new GitSCM( repoList, null, false, Collections.emptyList(), null, null, Collections.emptyList() );
             p.setScm( gitSCM );
         }
 
@@ -108,13 +111,16 @@ public class FreestyleTest
         }
 
         {
-            BuildTimeoutWrapper buildTimeoutWrapper = new BuildTimeoutWrapper( new AbsoluteTimeOutStrategy("180"), Collections.singletonList( new FailOperation() ), "FOO");
+            BuildTimeoutWrapper buildTimeoutWrapper = new BuildTimeoutWrapper( new AbsoluteTimeOutStrategy( "180" ),
+                                                                               Collections.singletonList(
+                                                                                   new FailOperation() ), "FOO" );
             p.getBuildWrappersList().add( buildTimeoutWrapper );
         }
 
         {
             List<ParameterDefinition> parametersDefinitions = new ArrayList<>();
-            parametersDefinitions.add( new StringParameterDefinition( "str", "defaultValue", "description str", true ) );
+            parametersDefinitions.add(
+                new StringParameterDefinition( "str", "defaultValue", "description str", true ) );
             // List<String> toGroovy needs to be fixed
             //parametersDefinitions.add( new ChoiceParameterDefinition( "choice", new String[]{"choice1","choice2"}, "description choice" ) );
             parametersDefinitions.add( new BooleanParameterDefinition( "nameboolean", true, "boolean description" ) );
@@ -127,8 +133,8 @@ public class FreestyleTest
             reverseBuildTrigger.setThreshold( Result.UNSTABLE );
             p.addTrigger( reverseBuildTrigger );
 
-            p.addTrigger(new TimerTrigger( "45 9-16/2 * * 1-5" ));
-            SCMTrigger scmTrigger = new SCMTrigger("45 9-16/2 * * 1-5");
+            p.addTrigger( new TimerTrigger( "45 9-16/2 * * 1-5" ) );
+            SCMTrigger scmTrigger = new SCMTrigger( "45 9-16/2 * * 1-5" );
             scmTrigger.setIgnorePostCommitHooks( true );
             p.addTrigger( scmTrigger );
         }
@@ -156,9 +162,9 @@ public class FreestyleTest
 
         // ConfigFileBuildWrapper
         {
-            ManagedFile managedFile1 = new ManagedFile( "id1", "myfile1.txt", "MYFILE1");
-            ManagedFile managedFile2 = new ManagedFile( "id2", "myfile2.txt", "MYFILE2");
-            p.getBuildWrappersList().add( new ConfigFileBuildWrapper(Arrays.asList(managedFile1,managedFile2)));
+            ManagedFile managedFile1 = new ManagedFile( "id1", "myfile1.txt", "MYFILE1" );
+            ManagedFile managedFile2 = new ManagedFile( "id2", "myfile2.txt", "MYFILE2" );
+            p.getBuildWrappersList().add( new ConfigFileBuildWrapper( Arrays.asList( managedFile1, managedFile2 ) ) );
         }
 
         {
@@ -172,13 +178,13 @@ public class FreestyleTest
         }
 
         {
-            JUnitResultArchiver jUnitResultArchiver = new JUnitResultArchiver("target/**.txt");
+            JUnitResultArchiver jUnitResultArchiver = new JUnitResultArchiver( "target/**.txt" );
             jUnitResultArchiver.setHealthScaleFactor( 2 );
             jUnitResultArchiver.setKeepLongStdio( true );
             p.getPublishersList().add( jUnitResultArchiver );
         }
 
-        p.getPublishersList().add( new AggregatedTestResultPublisher("foo", true) );
+        p.getPublishersList().add( new AggregatedTestResultPublisher( "foo", true ) );
 
         {
             p.getPublishersList().add( new BuildTrigger( "foo,bar", Result.SUCCESS ) );
@@ -190,74 +196,78 @@ public class FreestyleTest
         }
 
         {
-            HtmlPublisherTarget htmlPublisherTarget = new HtmlPublisherTarget("reportName", "reportDir", "reportFiles", /*keepAll*/true,
-            /*alwaysLinkToLastBuild*/true, /*allowMissing*/true);
-            p.getPublishersList().add( new HtmlPublisher( Arrays.asList( htmlPublisherTarget ) ));
+            HtmlPublisherTarget htmlPublisherTarget =
+                new HtmlPublisherTarget( "reportName", "reportDir", "reportFiles", /*keepAll*/true,
+                    /*alwaysLinkToLastBuild*/true, /*allowMissing*/true );
+            p.getPublishersList().add( new HtmlPublisher( Arrays.asList( htmlPublisherTarget ) ) );
         }
 
         {
             p.getPublishersList().add( new Mailer( "foo@beer.com", //
                 /* notifyEveryUnstableBuild */ true, //
-                /* sendToIndividuals*/ true ));
+                /* sendToIndividuals*/ true ) );
         }
 
-        FreestyleToDeclarativeConverter converter = Jenkins.get()
-            .getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
+        FreestyleToDeclarativeConverter converter =
+            Jenkins.get().getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
 
         Assert.assertTrue( converter.canConvert( p ) );
 
         ConverterRequest request = new ConverterRequest().job( p ).createdProjectName( "foo-beer" );
-        ConverterResult converterResult = new ConverterResult()
-            .modelASTPipelineDef( new ModelASTPipelineDef(null));
+        ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
 
-        converter.convert( request, converterResult);
+        converter.convert( request, converterResult );
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
 
-        System.out.println(groovy);
+        System.out.println( groovy );
 
-        Assert.assertTrue(groovy.contains("branch: 'master'"));
-        Assert.assertTrue(groovy.contains("url: 'https://github.com/olamy/foo.git'"));
+        Assert.assertTrue( groovy.contains( "branch: 'master'" ) );
+        Assert.assertTrue( groovy.contains( "url: 'https://github.com/olamy/foo.git'" ) );
 
-        Assert.assertTrue(groovy.contains("credentialsId: 'credsId'"));
+        Assert.assertTrue( groovy.contains( "credentialsId: 'credsId'" ) );
 
-        Assert.assertEquals( 3, ((WorkflowJob)converterResult.getJob()).getTriggers().size() );
+        Assert.assertEquals( 3, ( (WorkflowJob) converterResult.getJob() ).getTriggers().size() );
 
         System.out.println( converterResult.getJob().getProperties() );
 
     }
 
     @Test
-    public void freestyle_conversion_then_run() throws Exception {
+    public void freestyle_conversion_then_run()
+        throws Exception
+    {
 
         Slave slave = j.createOnlineSlave();
         slave.setLabelString( "FOO_AGENT" );
 
         String projectName = Long.toString( System.currentTimeMillis() );
         FreeStyleProject p = j.createFreeStyleProject( projectName );
-        p.addProperty( new GithubProjectProperty( "http://github.com/beer/paleale") );
+        p.addProperty( new GithubProjectProperty( "http://github.com/beer/paleale" ) );
 
         //int daysToKeep, int numToKeep, int artifactDaysToKeep, int artifactNumToKeep
-        LogRotator logRotator = new LogRotator(1, 2,3, 4);
+        LogRotator logRotator = new LogRotator( 1, 2, 3, 4 );
         BuildDiscarderProperty buildDiscarderProperty = new BuildDiscarderProperty( logRotator );
         p.addProperty( buildDiscarderProperty );
 
         List<ParameterDefinition> parametersDefinitions = new ArrayList<>();
         parametersDefinitions.add( new StringParameterDefinition( "str", "defaultValue", "description str", true ) );
         //parametersDefinitions.add( new ChoiceParameterDefinition( "choice", new String[]{"choice1","choice2"}, "description choice" ) );
-        parametersDefinitions.add( new BooleanParameterDefinition("nameboolean", true, "boolean description") );
-        ParametersDefinitionProperty parametersDefinitionProperty = new ParametersDefinitionProperty(parametersDefinitions);
+        parametersDefinitions.add( new BooleanParameterDefinition( "nameboolean", true, "boolean description" ) );
+        ParametersDefinitionProperty parametersDefinitionProperty =
+            new ParametersDefinitionProperty( parametersDefinitions );
         p.addProperty( parametersDefinitionProperty );
 
-
-        if( Functions.isWindows()) {
+        if ( Functions.isWindows() )
+        {
             p.getBuildersList().add( new BatchFile( "cmd" ) );
-        } else {
+        }
+        else
+        {
             p.getBuildersList().add( new Shell( "pwd" ) );
             p.getBuildersList().add( new Shell( "ls -lrt" ) );
             p.getBuildersList().add( new Shell( "echo $str" ) );
             p.getBuildersList().add( new Shell( "cat myfile1.txt" ) );
         }
-
 
         {
             String username = "bob";
@@ -275,7 +285,9 @@ public class FreestyleTest
         }
 
         {
-            BuildTimeoutWrapper buildTimeoutWrapper = new BuildTimeoutWrapper( new AbsoluteTimeOutStrategy("180"), Collections.singletonList( new FailOperation() ), "FOO");
+            BuildTimeoutWrapper buildTimeoutWrapper = new BuildTimeoutWrapper( new AbsoluteTimeOutStrategy( "180" ),
+                                                                               Collections.singletonList(
+                                                                                   new FailOperation() ), "FOO" );
             p.getBuildWrappersList().add( buildTimeoutWrapper );
         }
 
@@ -283,18 +295,18 @@ public class FreestyleTest
         {
             GlobalConfigFiles globalConfigFiles = GlobalConfigFiles.get();
             ConfigProvider configProvider = ConfigProvider.getByIdOrNull( PropertiesConfig.class.getName() );
-            globalConfigFiles.save(configProvider.newConfig( "id1", "the id1", "id1 comment", "foo=bar_id1" ));
-            globalConfigFiles.save(configProvider.newConfig( "id2", "the id2", "id2 comment", "foo=bar_id2" ));
-            ManagedFile managedFile1 = new ManagedFile( "id1", "myfile1.txt", "MYFILE1");
-            ManagedFile managedFile2 = new ManagedFile( "id2", "myfile2.txt", "MYFILE2");
-            p.getBuildWrappersList().add( new ConfigFileBuildWrapper(Arrays.asList(managedFile1,managedFile2)));
+            globalConfigFiles.save( configProvider.newConfig( "id1", "the id1", "id1 comment", "foo=bar_id1" ) );
+            globalConfigFiles.save( configProvider.newConfig( "id2", "the id2", "id2 comment", "foo=bar_id2" ) );
+            ManagedFile managedFile1 = new ManagedFile( "id1", "myfile1.txt", "MYFILE1" );
+            ManagedFile managedFile2 = new ManagedFile( "id2", "myfile2.txt", "MYFILE2" );
+            p.getBuildWrappersList().add( new ConfigFileBuildWrapper( Arrays.asList( managedFile1, managedFile2 ) ) );
         }
 
-
         {
-            HtmlPublisherTarget htmlPublisherTarget = new HtmlPublisherTarget("reportName", "reportDir", "reportFiles", /*keepAll*/true,
-                /*alwaysLinkToLastBuild*/true, /*allowMissing*/true);
-            p.getPublishersList().add( new HtmlPublisher( Arrays.asList( htmlPublisherTarget ) ));
+            HtmlPublisherTarget htmlPublisherTarget =
+                new HtmlPublisherTarget( "reportName", "reportDir", "reportFiles", /*keepAll*/true,
+                    /*alwaysLinkToLastBuild*/true, /*allowMissing*/true );
+            p.getPublishersList().add( new HtmlPublisher( Arrays.asList( htmlPublisherTarget ) ) );
         }
 
         {
@@ -308,55 +320,55 @@ public class FreestyleTest
         }
 
         {
-            JUnitResultArchiver jUnitResultArchiver = new JUnitResultArchiver("**/**.xml");
+            JUnitResultArchiver jUnitResultArchiver = new JUnitResultArchiver( "**/**.xml" );
             jUnitResultArchiver.setHealthScaleFactor( 2 );
             jUnitResultArchiver.setKeepLongStdio( true );
             p.getPublishersList().add( jUnitResultArchiver );
         }
 
         j.createFreeStyleProject( "foo" );
-        p.getPublishersList().add( new AggregatedTestResultPublisher("foo", true) );
+        p.getPublishersList().add( new AggregatedTestResultPublisher( "foo", true ) );
 
-
-        FreestyleToDeclarativeConverter converter = Jenkins.get()
-            .getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
+        FreestyleToDeclarativeConverter converter =
+            Jenkins.get().getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
 
         Assert.assertTrue( converter.canConvert( p ) );
 
         ConverterRequest request = new ConverterRequest().job( p );
-        ConverterResult converterResult = new ConverterResult()
-            .modelASTPipelineDef( new ModelASTPipelineDef(null));
+        ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
 
-        converter.convert( request, converterResult);
+        converter.convert( request, converterResult );
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
 
         System.out.println( groovy );
 
-        WorkflowJob job = j.jenkins.createProject(WorkflowJob.class, "singleStep");
-        job.setDefinition(new CpsFlowDefinition( groovy, true));
+        WorkflowJob job = j.jenkins.createProject( WorkflowJob.class, "singleStep" );
+        job.setDefinition( new CpsFlowDefinition( groovy, true ) );
 
-        FilePath ws = j.jenkins.getWorkspaceFor(job);
-        FilePath testFile = ws.child("test-result.xml");
-        testFile.copyFrom(Thread.currentThread().getContextClassLoader().getResourceAsStream("junit-report.xml"));
+        FilePath ws = j.jenkins.getWorkspaceFor( job );
+        FilePath testFile = ws.child( "test-result.xml" );
+        testFile.copyFrom( Thread.currentThread().getContextClassLoader().getResourceAsStream( "junit-report.xml" ) );
 
-        WorkflowRun run = job.scheduleBuild2( 0).get();
+        WorkflowRun run = job.scheduleBuild2( 0 ).get();
 
         j.waitForCompletion( run );
-        j.assertBuildStatus( Result.SUCCESS, run);
+        j.assertBuildStatus( Result.SUCCESS, run );
     }
 
     @Test
-    public void freestyle_conversion_only_Jenkinsfile() throws Exception {
+    public void freestyle_conversion_only_Jenkinsfile()
+        throws Exception
+    {
 
         Slave slave = j.createOnlineSlave();
         slave.setLabelString( "FOO_AGENT" );
 
         String projectName = Long.toString( System.currentTimeMillis() );
         FreeStyleProject p = j.createFreeStyleProject( projectName );
-        p.addProperty( new GithubProjectProperty( "http://github.com/beer/paleale") );
+        p.addProperty( new GithubProjectProperty( "http://github.com/beer/paleale" ) );
 
         //int daysToKeep, int numToKeep, int artifactDaysToKeep, int artifactNumToKeep
-        LogRotator logRotator = new LogRotator(1, 2,3, 4);
+        LogRotator logRotator = new LogRotator( 1, 2, 3, 4 );
         BuildDiscarderProperty buildDiscarderProperty = new BuildDiscarderProperty( logRotator );
         p.addProperty( buildDiscarderProperty );
 
@@ -364,23 +376,22 @@ public class FreestyleTest
         parametersDefinitions.add( new StringParameterDefinition( "str", "defaultValue", "description str", true ) );
         // List<String> toGroovy needs to be fixed
         //parametersDefinitions.add( new ChoiceParameterDefinition( "choice", new String[]{"choice1","choice2"}, "description choice" ) );
-        parametersDefinitions.add( new BooleanParameterDefinition("nameboolean", true, "boolean description") );
-        ParametersDefinitionProperty parametersDefinitionProperty = new ParametersDefinitionProperty(parametersDefinitions);
+        parametersDefinitions.add( new BooleanParameterDefinition( "nameboolean", true, "boolean description" ) );
+        ParametersDefinitionProperty parametersDefinitionProperty =
+            new ParametersDefinitionProperty( parametersDefinitions );
         p.addProperty( parametersDefinitionProperty );
-
 
         p.getBuildersList().add( new Shell( "pwd" ) );
 
-        FreestyleToDeclarativeConverter converter = Jenkins.get()
-            .getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
+        FreestyleToDeclarativeConverter converter =
+            Jenkins.get().getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
 
         Assert.assertTrue( converter.canConvert( p ) );
 
         ConverterRequest request = new ConverterRequest().job( p ).createProject( false );
-        ConverterResult converterResult = new ConverterResult()
-            .modelASTPipelineDef( new ModelASTPipelineDef(null));
+        ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
 
-        converter.convert( request, converterResult);
+        converter.convert( request, converterResult );
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
 
         System.out.println( groovy );
@@ -389,32 +400,36 @@ public class FreestyleTest
     }
 
     @Test
-    public void freestyle_conversion_maven_build_then_run_project() throws Exception {
+    public void freestyle_conversion_maven_build_then_run_project()
+        throws Exception
+    {
 
         Slave slave = j.createOnlineSlave();
         slave.setLabelString( "FOO_AGENT" );
 
         String projectName = Long.toString( System.currentTimeMillis() );
         FreeStyleProject p = j.createFreeStyleProject( projectName );
-        p.addProperty( new GithubProjectProperty( "https://github.com/olamy/foo") );
+        p.addProperty( new GithubProjectProperty( "https://github.com/olamy/foo" ) );
 
         //int daysToKeep, int numToKeep, int artifactDaysToKeep, int artifactNumToKeep
-        LogRotator logRotator = new LogRotator(1, 2,3, 4);
+        LogRotator logRotator = new LogRotator( 1, 2, 3, 4 );
         BuildDiscarderProperty buildDiscarderProperty = new BuildDiscarderProperty( logRotator );
         p.addProperty( buildDiscarderProperty );
 
         List<ParameterDefinition> parametersDefinitions = new ArrayList<>();
-        parametersDefinitions.add(new StringParameterDefinition( "str", "defaultValue", "description str", true ) );
+        parametersDefinitions.add( new StringParameterDefinition( "str", "defaultValue", "description str", true ) );
         // List<String> toGroovy needs to be fixed
         //parametersDefinitions.add( new ChoiceParameterDefinition( "choice", new String[]{"choice1","choice2"}, "description choice" ) );
-        parametersDefinitions.add( new BooleanParameterDefinition("nameboolean", true, "boolean description") );
-        ParametersDefinitionProperty parametersDefinitionProperty = new ParametersDefinitionProperty(parametersDefinitions);
+        parametersDefinitions.add( new BooleanParameterDefinition( "nameboolean", true, "boolean description" ) );
+        ParametersDefinitionProperty parametersDefinitionProperty =
+            new ParametersDefinitionProperty( parametersDefinitions );
         p.addProperty( parametersDefinitionProperty );
 
         // should work everywhere.... at least I hope
-        p.setJDK( new JDK( "thejdk", System.getenv( "JAVA_HOME" )));
+        p.setJDK( new JDK( "thejdk", System.getenv( "JAVA_HOME" ) ) );
 
-        p.setScm(new ExtractResourceSCM(Thread.currentThread().getContextClassLoader().getResource( "maven3-project.zip" )));
+        p.setScm( new ExtractResourceSCM(
+            Thread.currentThread().getContextClassLoader().getResource( "maven3-project.zip" ) ) );
 
         {
             GlobalConfigFiles store =
@@ -432,30 +447,61 @@ public class FreestyleTest
             Maven maven = new Maven( "clean verify", mavenInstallation.getName() /*maven name*/, "pom.xml",
                                      "-DskipTests" /*properties*/, "-Djava.awt.headless=true" /*jvmOptions*/,
                                      false /*usePrivateRepository*/, null /*SettingsProvider settings*/,
-                                     new MvnGlobalSettingsProvider( "global-maven-settings-id") /*GlobalSettingsProvider*/ );
+                                     new MvnGlobalSettingsProvider(
+                                         "global-maven-settings-id" ) /*GlobalSettingsProvider*/ );
 
             p.getBuildersList().add( maven );
         }
 
-        FreestyleToDeclarativeConverter converter = Jenkins.get()
-            .getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
+        FreestyleToDeclarativeConverter converter =
+            Jenkins.get().getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
 
         Assert.assertTrue( converter.canConvert( p ) );
 
-        ConverterRequest request = new ConverterRequest().job( p ).createProject( true ).createdProjectName( "foo-blabla" );
-        ConverterResult converterResult = new ConverterResult()
-            .modelASTPipelineDef( new ModelASTPipelineDef(null));
+        ConverterRequest request =
+            new ConverterRequest().job( p ).createProject( true ).createdProjectName( "foo-blabla" );
+        ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
 
-        converter.convert( request, converterResult);
+        converter.convert( request, converterResult );
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
 
         System.out.println( groovy );
         Assert.assertThat( groovy, CoreMatchers.containsString( "mvn" ) );
-        WorkflowJob job = j.jenkins.createProject(WorkflowJob.class, "singleStep");
-        job.setDefinition(new CpsFlowDefinition( groovy, true));
-        WorkflowRun run =job.scheduleBuild2( 0).get();
+        WorkflowJob job = j.jenkins.createProject( WorkflowJob.class, "singleStep" );
+        job.setDefinition( new CpsFlowDefinition( groovy, true ) );
+        WorkflowRun run = job.scheduleBuild2( 0 ).get();
         j.waitForCompletion( run );
-        j.assertBuildStatus( Result.SUCCESS, run);
+        j.assertBuildStatus( Result.SUCCESS, run );
+
+    }
+
+    @Test
+    public void get_warning()
+        throws Exception
+    {
+        Slave slave = j.createOnlineSlave();
+        slave.setLabelString( "FOO_AGENT" );
+
+        String projectName = Long.toString( System.currentTimeMillis() );
+        FreeStyleProject p = j.createFreeStyleProject( projectName );
+        p.getBuildersList().add( new FakeBuilder() );
+
+        ConverterRequest request = new ConverterRequest().job( p );
+        ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
+
+        FreestyleToDeclarativeConverter converter =
+            Jenkins.get().getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
+        converter.convert( request, converterResult );
+        assertEquals( converterResult.getWarnings().toString(), 2, converterResult.getWarnings().size() );
+
+        assertEquals( 1, converterResult.getWarnings().stream() //
+            .filter( warning -> warning.getPluginClassName().equals(
+                "io.jenkins.plugins.todeclarative.converter.FakeBuilder" ) ) //
+            .collect( Collectors.toList() ).size() );
+
+        assertEquals( 1, converterResult.getWarnings().stream() //
+            .filter( warning -> warning.getPluginClassName().equals( "hudson.scm.NullSCM" ) ) //
+            .collect( Collectors.toList() ).size() );
 
     }
 

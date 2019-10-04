@@ -8,35 +8,61 @@
         <j:set var="Jenkinsfile" value="${it.doConvert()}"/>
         <j:set var="warnings" value="${it.warnings}"/>
         <j:set var="error" value="${it.error}"/>
+        <div class="main-title">
+          Convert to Declarative Pipeline
+        </div>
+
+        <!-- warnings part -->
         <j:if test="${!warnings.isEmpty() and error==null}">
           <div class="result-top-title">
-            <div class="alert">
-              <l:icon class="icon-warning icon-xlg"/>${%warnings.section.title}
+            <div class="conversion-success">
+              <div class="rectangle-conversion-success">
+                <div class="icons-converter-ui">
+                  <img src="${rootURL}/plugin/convert-to-declarative/img/warning.svg"/>
+                </div>
+                <div class="conversion-warning-title">
+                  ${%warnings.section.title}
+                </div>
+              </div>
+              <div class="result-text">
+                ${%warnings.section.text}
+                <ul>
+                  <j:forEach var="w" items="${warnings}">
+                    <li>${w.message} (${w.pluginClassName})</li>
+                  </j:forEach>
+                </ul>
+                ${%success.section.text}
+                <div class="result-links">
+                  <div><a href="https://jenkins.io/doc/book/pipeline/" target="_blank">${%jenkinsfile.help.scm}</a></div>
+                  <div><a href="https://jenkins.io/doc/tutorials/build-a-multibranch-pipeline-project/" target="_blank">${%jenkinsfile.help.multibranch}</a></div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="result-text">
-            ${%warnings.section.text}
-            <ul>
-            <j:forEach var="w" items="${warnings}">
-              <li>${w.message} (${w.pluginClassName})</li>
-            </j:forEach>
-            </ul>
-          </div>
-          <div class="result-link">
-            <div>${%warnings.section.create.text}</div>
-            <div><a href="https://jenkins.io/doc/book/pipeline/" target="_blank">${%jenkinsfile.help.scm}</a></div>
-            <div><a href="https://jenkins.io/doc/tutorials/build-a-multibranch-pipeline-project/" target="_blank">${%jenkinsfile.help.multibranch}</a></div>
-          </div>
+
         </j:if>
+
+
+        <!-- success part -->
         <j:if test="${warnings.isEmpty() and error==null}">
-          <div class="result-top-title conversion-success">
-            <img src="${rootURL}/plugin/convert-to-declarative/img/success.svg"/>
-            ${%success.section.title}
-          </div>
-          <div class="result-text">
-            <div>${%success.section.text}</div>
-            <div><a href="https://jenkins.io/doc/book/pipeline/" target="_blank">${%jenkinsfile.help.scm}</a></div>
-            <div><a href="https://jenkins.io/doc/tutorials/build-a-multibranch-pipeline-project/" target="_blank">${%jenkinsfile.help.multibranch}</a></div>
+          <div class="result-top-title">
+            <div class="conversion-success">
+              <div class="rectangle-conversion-success">
+                <div class="icons-converter-ui">
+                  <img src="${rootURL}/plugin/convert-to-declarative/img/success.svg"/>
+                </div>
+                <div class="conversion-success-title">
+                  ${%success.section.title}
+                </div>
+              </div>
+              <div class="result-text">
+                ${%success.section.text}
+                <div class="result-links">
+                  <div><a href="https://jenkins.io/doc/book/pipeline/" target="_blank">${%jenkinsfile.help.scm}</a></div>
+                  <div><a href="https://jenkins.io/doc/tutorials/build-a-multibranch-pipeline-project/" target="_blank">${%jenkinsfile.help.multibranch}</a></div>
+                </div>
+              </div>
+            </div>
           </div>
         </j:if>
 
@@ -47,38 +73,121 @@
                 <div class="review-converted">
                   ${%jenkinsfile.section.title}
                 </div>
+
                 <div class="rectangle-copy">
-                  <a href="#">
                   <div class="icons-converter-ui">
                     <img src="${rootURL}/plugin/convert-to-declarative/img/copy.svg"/>
                   </div>
                   <div class="copy">Copy</div>
-                  </a>
                 </div>
-                <div class="rectangle-expand">
-                  <div class="icons-converter-ui">
-                    <img src="${rootURL}/plugin/convert-to-declarative/img/expand.svg"/>
-                  </div>
-                  <div class="expand">Expand</div>
+
+                <div class="rectangle-download">
+                    <div class="icons-converter-ui">
+                      <img src="${rootURL}/plugin/convert-to-declarative/img/expand.svg"/>
+                    </div>
+                    <div class="download">Download</div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+            <div class="jenkinsfile-editor-wrapper" id="jenkinsfile-editor-original" style="display: none; position: relative">
+              <f:textarea value="${Jenkinsfile}" readonly="readonly" id="jenkinsfile-content"/>
+              <div class="pane-frame editor" style="height: 500px;width: 1200px"/>
+            </div>
+            <st:adjunct includes="io.jenkins.plugins.todeclarative.ui.jenkinsfile-editor"/>
+
+        </j:if>
+
+        <j:if test="${error!=null}">
+
+<!--          <div class="result-top-title">-->
+<!--            <div class="conversion-error">-->
+<!--              <div class="rectangle-conversion-error">-->
+<!--                <div class="icons-converter-ui">-->
+<!--                  <img src="${rootURL}/plugin/convert-to-declarative/img/error.svg"/>-->
+<!--                </div>-->
+<!--                <div class="conversion-error-title">-->
+<!--                  ${%error.section.title}-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="result-text">-->
+<!--                ${%error.section.text}-->
+<!--                <ul>-->
+<!--                  <li>${error.message}</li>-->
+<!--                </ul>-->
+<!--                <div class="result-links">-->
+<!--                  <div><a href="https://jenkins.io/doc/book/pipeline/" target="_blank">${%jenkinsfile.help.scm}</a></div>-->
+<!--                  <div><a href="https://jenkins.io/doc/tutorials/build-a-multibranch-pipeline-project/" target="_blank">${%jenkinsfile.help.multibranch}</a></div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+
+
+          <div class="result-top-title">
+            <div class="conversion-error">
+              <div class="rectangle-conversion-error">
+                <div class="icons-converter-ui">
+                  <img src="${rootURL}/plugin/convert-to-declarative/img/error.svg"/>
+                </div>
+                <div class="conversion-error-title">
+                  ${%error.section.title}
+                </div>
+              </div>
+              <div class="result-text">
+                ${%error.section.text}
+                <ul>
+                  <li>${error.message}</li>
+                </ul>
+                <div class="result-links">
+                  <div><a href="https://jenkins.io/doc/book/pipeline/" target="_blank">${%jenkinsfile.help.scm}</a></div>
+                  <div><a href="https://jenkins.io/doc/tutorials/build-a-multibranch-pipeline-project/" target="_blank">${%jenkinsfile.help.multibranch}</a></div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="jenkinsfile-editor-wrapper" style="display: none; position: relative">
-            <f:textarea value="${Jenkinsfile}" readonly="readonly" id="thejenkinsfile"/>
-            <div class="pane-frame editor" style="height: 500px;"/>
-          </div>
-          <st:adjunct includes="io.jenkins.plugins.todeclarative.ui.jenkinsfile-editor"/>
-        </j:if>
 
-        <j:if test="${error!=null}">
-          <div class="result-top-title">
-            <div class="alert">
-              <l:icon class="icon-error icon-lg"/>
-            </div>
-          </div>
+
         </j:if>
       </div>
+
+<!--      <div id="modal" class="modal-content">-->
+<!--        <div class="review-converted-top-title-modal">-->
+<!--          <div class="review-converted-panel">-->
+<!--            <div class="review-converted-row">-->
+<!--              <div class="review-converted">-->
+<!--                ${%jenkinsfile.section.title}-->
+<!--              </div>-->
+
+<!--              <div class="rectangle-copy-modal">-->
+<!--                <div class="icons-converter-ui">-->
+<!--                  <img src="${rootURL}/plugin/convert-to-declarative/img/copy.svg"/>-->
+<!--                </div>-->
+<!--                <div class="copy-modal">Copy</div>-->
+<!--              </div>-->
+
+
+<!--              <div class="rectangle-minimize">-->
+<!--                <div class="icons-converter-ui">-->
+<!--                  <img src="${rootURL}/plugin/convert-to-declarative/img/minimize.svg"/>-->
+<!--                </div>-->
+<!--                <div class="minimize">Minimize</div>-->
+<!--              </div>-->
+
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="jenkinsfile-editor-wrapper-copy" id="jenkinsfile-editor-copy" style="display: none;">-->
+<!--          <f:textarea value="${Jenkinsfile}" readonly="readonly" />-->
+<!--          <div class="pane-frame editor" style="height: 800px;width: 1400px;"/>-->
+<!--        </div>-->
+<!--        <st:adjunct includes="io.jenkins.plugins.todeclarative.ui.jenkinsfile-editor"/>-->
+<!--      </div>-->
+
     </l:main-panel>
+
   </l:layout>
+
 </j:jelly>

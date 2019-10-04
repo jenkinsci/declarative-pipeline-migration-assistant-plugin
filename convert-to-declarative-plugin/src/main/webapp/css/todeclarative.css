@@ -2,8 +2,65 @@
     display: table;
 }
 
+.main-title {
+    height: 5%;
+    width: 100%;
+    color: #323232;
+    font-family: "Helvetica Neue";
+    font-size: 28.5px;
+    font-weight: bold;
+    letter-spacing: -0.3px;
+    line-height: 35px;
+    margin-bottom: 10px;
+}
+
 .result-top-title {
-    margin: 1px;
+    display: table-row;
+}
+
+.conversion-success {
+    display: table-cell;
+}
+
+.conversion-error {
+    display: table-cell;
+}
+
+.conversion-warning-title {
+    height: 16px;
+    width: 350px;
+    color: #323232;
+    font-family: Helvetica;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: -0.1px;
+    line-height: 16px;
+    margin-top: 11px;
+    margin-left: 40px;
+}
+
+.conversion-error-title {
+    float: left;
+    height: 16px;
+    width: 127px;
+    color: #323232;
+    font-family: Helvetica;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: -0.1px;
+    line-height: 16px;
+    margin-left: 24px;
+    margin-top: 11px;
+}
+
+.rectangle-conversion-error{
+    color: #323232;
+    font-family: Helvetica;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: -0.1px;
+    line-height: 16px;
+    margin-top: 1px;
     margin-bottom: 0;
     font-weight: bold;
     box-sizing: border-box;
@@ -11,15 +68,41 @@
     border: 1px solid #CCCCCC;
     border-radius: 3px 3px 0 0;
     background-color: #F9F9F9;
+    float: left;
+    width: 100%;
 }
 
-.conversion-success {
+.rectangle-conversion-success{
     color: #323232;
     font-family: Helvetica;
     font-size: 13px;
     font-weight: bold;
     letter-spacing: -0.1px;
     line-height: 16px;
+    margin-top: 1px;
+    margin-bottom: 0;
+    font-weight: bold;
+    box-sizing: border-box;
+    height: 56px;
+    border: 1px solid #CCCCCC;
+    border-radius: 3px 3px 0 0;
+    background-color: #F9F9F9;
+    float: left;
+    width: 100%;
+}
+
+.conversion-success-title {
+    float: left;
+    height: 16px;
+    width: 127px;
+    color: #323232;
+    font-family: Helvetica;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: -0.1px;
+    line-height: 16px;
+    margin-left: 24px;
+    margin-top: 11px;
 }
 
 .icons-honey-ui-interfaces-comm {
@@ -29,17 +112,23 @@
 
 .result-text {
     border: 1px solid rgba(0, 0, 0, 0.1);
-    margin: 1px;
-    margin-top: 0;
-    margin-bottom: 0;
-    padding: 15px;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    padding-top: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
 }
 
 .result-link {
     border: 1px solid rgba(0, 0, 0, 0.1);
-    margin: 1px;
-    margin-top: 0;
+    margin-top: 1px;
     padding: 15px;
+}
+
+.result-links {
+    margin: 1px;
+    margin-top: 8px;
 }
 
 .ace_gutter-cell {
@@ -78,6 +167,15 @@
     margin-left: 12px;
 }
 
+.icons-converter-ui-modal{
+    height: 16px;
+    width: 16px;
+    float: right;
+    vertical-align: center;
+    margin-top: 6px;
+    margin-left: 12px;
+}
+
 .review-converted {
     color: #323232;
     font-family: Helvetica;
@@ -99,7 +197,11 @@
     background-color: #4B758B;
     display: table-cell;
     margin-top: 10px;
-    margin-left: 400px;
+    margin-left: 800px;
+}
+
+.rectangle-copy:hover {
+    cursor: pointer;
 }
 
 .copy {
@@ -117,6 +219,21 @@
     margin-right: 8px;
 }
 
+.rectangle-download {
+    float: right;
+    height: 34px;
+    width: 93px;
+    border-radius: 3px;
+    background-color: #4B758B;
+    display: table-cell;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.rectangle-download:hover {
+    cursor: pointer;
+}
+
 .rectangle-expand {
     float: right;
     height: 34px;
@@ -126,6 +243,25 @@
     display: table-cell;
     margin-left: 10px;
     margin-top: 10px;
+}
+
+.rectangle-expand:hover {
+    cursor: pointer;
+}
+
+.download {
+    float: right;
+    height: 14px;
+    width: 54px;
+    color: #FFFFFF;
+    font-family: Helvetica;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: -0.09px;
+    line-height: 14px;
+    display: table-cell;
+    margin-top: 8px;
+    margin-right: 8px;
 }
 
 .expand {
@@ -141,4 +277,88 @@
     display: table-cell;
     margin-top: 8px;
     margin-right: 8px;
+}
+
+.review-converted-top-title-modal {
+    box-sizing: border-box;
+    height: 56px;
+    width: 1400px;
+    border: 1px solid #CCCCCC;
+    border-radius: 3px 3px 0 0;
+    background-color: #F9F9F9;
+    font-weight: bold;
+    margin: auto;
+    display: table-row;
+    vertical-align: top;
+}
+
+.modal-content {
+    width: 1400px;
+    height: 800px;
+}
+.rectangle-copy-modal {
+    float: right;
+    height: 34px;
+    width: 80px;
+    border-radius: 3px;
+    background-color: #4B758B;
+    display: table-cell;
+    margin-top: 10px;
+    //margin-left: 400px;
+}
+
+.rectangle-copy-modal:hover {
+    cursor: pointer;
+}
+
+.rectangle-minimize {
+    float: right;
+    height: 34px;
+    width: 80px;
+    border-radius: 3px;
+    background-color: #4B758B;
+    display: table-cell;
+    margin-top: 10px;
+}
+
+.rectangle-minimize:hover {
+    cursor: pointer;
+}
+
+.minimize {
+    float: right;
+    height: 14px;
+    width: 50px;
+    color: #FFFFFF;
+    font-family: Helvetica;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: -0.09px;
+    line-height: 14px;
+    display: table-cell;
+    margin-top: 8px;
+    margin-right: 1px;
+}
+
+.copy-modal {
+    float: right;
+    height: 14px;
+    width: 30px;
+    color: #FFFFFF;
+    font-family: Helvetica;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: -0.09px;
+    line-height: 14px;
+    display: table-cell;
+    margin-top: 8px;
+    margin-right: 8px;
+}
+
+.no-close .ui-dialog-titlebar-close {
+    display: none;
+}
+
+.ui-widget-content {
+    border: none !important;
 }

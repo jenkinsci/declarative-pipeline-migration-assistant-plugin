@@ -21,8 +21,58 @@ jenkinsJSModules.import('ace-editor:ace-editor-122')
             document.execCommand('copy');
             editor.selection.fromJSON(sel);
         });
-        
+
+        $('.rectangle-copy-modal').on('click', function() {
+          var editor = window.aceEditorCopy;
+          var sel = editor.selection.toJSON();
+          editor.selectAll();
+          editor.focus();
+          document.execCommand('copy');
+          editor.selection.fromJSON(sel);
+        });
+
+        var wWidth = $(window).width();
+        var dWidth = wWidth * 0.8;
+
+        var wHeight = $(window).height();
+        var dHeight = wHeight * 0.8;
+
+        dialog = $('#modal').dialog({
+                                      autoOpen: false,
+                                      dialogClass: "no-close",
+                                      width: dWidth,
+                                      height: dHeight,
+                                      modal: true
+                                    });
+
+        $('.rectangle-download').on('click', function() {
+          download('Jenkinsfile',$('#jenkinsfile-content').val());
+        });
+
+      $('.rectangle-expand').on('click', function() {
+        $("#jenkinsfile-editor-original").hide();
+        $(".review-converted-top-title").hide();
+        dialog.dialog( "open" );
+        $('#jenkinsfile-editor-copy').each(function() {
+          initEditor($(this));
+        });
+        window.aceEditor.css('opacity', 0);
+        window.aceEditorCopy.css('opacity','1');
+        window.aceEditorCopy.resize(true);
+      });
+
+        $('.rectangle-minimize').on('click', function() {
+          dialog.dialog( "close" );
+          // $('.jenkinsfile-editor-wrapper').each(function() {
+          //   initEditor($(this));
+          // });
+          $(".review-converted-top-title").show();
+          $("#jenkinsfile-editor-original").show();
+        });
+
+
         function initEditor(wrapper) {
+
             var textarea = $('textarea', wrapper);
             var aceContainer = $('.editor', wrapper);
             
@@ -43,9 +93,13 @@ jenkinsJSModules.import('ace-editor:ace-editor-122')
                 var editor = this.editor;
                 
                 // Attach the ACE editor instance to the element. Useful for testing.
-                var $wfEditor = $('#' + editorId);
-                $wfEditor.get(0).aceEditor = editor;
-                window.aceEditor = editor;
+                //var $wfEditor = $('#' + editorId);
+                //$wfEditor.get(0).aceEditor = editor;
+                if(window.aceEditor){
+                  window.aceEditorCopy = editor;
+                } else {
+                  window.aceEditor = editor;
+                }
     
                 acePack.addPackOverride('snippets/groovy.js');
     
@@ -57,34 +111,25 @@ jenkinsJSModules.import('ace-editor:ace-editor-122')
                     editor.setTheme("ace/theme/tomorrow");
                     editor.setAutoScrollEditorIntoView(true);
                     editor.setOption("minLines", 50);
-                    // enable autocompletion and snippets
-                    // editor.setOptions({
-                    //     enableBasicAutocompletion: true,
-                    //     enableSnippets: true,
-                    //     enableLiveAutocompletion: false
-                    // });
                     editor.setReadOnly(true);
                     editor.setValue(textarea.val(), 1);
                     editor.getSession().on('change', function() {
                         textarea.val(editor.getValue());
                     });
                 });
-    
-                // Make the editor resizable using jQuery UI resizable (http://api.jqueryui.com/resizable).
-                // ACE Editor doesn't have this as a config option.
-                $wfEditor.wrap('<div class="jquery-ui-1"></div>');
-                $wfEditor.resizable({
-                    handles: "s", // Only allow vertical resize off the bottom/south border
-                    resize: function() {
-                        editor.resize();
-                    }
-                });
-                // Make the bottom border a bit thicker as a visual cue.
-                // May not be enough for some people's taste.
-                $wfEditor.css('border-bottom-width', '0.4em');
             });
             
             wrapper.show();
             textarea.hide();
         }
     });
+
+function download(filename, text) {
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  element.setAttribute('download', filename);
+  element.style.display = 'none';
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
+}

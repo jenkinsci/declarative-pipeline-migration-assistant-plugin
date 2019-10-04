@@ -49,11 +49,11 @@ public class ToDeclarativeAction
             converter.convert( converterRequest, converterResult );
 //            if(true)
 //            {
-//                throw new Exception( "Something really bad happened with this bloody conversion" );
+//                throw new Exception( "Something really bad happened with this conversion" );
 //            }
             this.jenkinsFile = converterResult.getModelASTPipelineDef().toPrettyGroovy();
             this.warnings = converterResult.getWarnings();
-            //this.warnings.add( new Warning( "Not good", "Awesome plugin class" ) );
+            //this.warnings.add( new Warning( "Not supported plugin", "Awesome plugin class" ) );
             return jenkinsFile;
         } catch ( Exception e )
         {
