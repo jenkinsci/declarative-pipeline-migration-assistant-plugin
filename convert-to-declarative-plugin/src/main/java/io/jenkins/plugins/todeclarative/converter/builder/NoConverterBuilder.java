@@ -16,25 +16,29 @@ import java.util.Arrays;
 
 
 @Extension
-public class ShellConverter
+public class NoConverterBuilder
     implements BuilderConverter
 {
-    public static final String SHELL_NUMBER_KEY = ShellConverter.class.getName() + ".shell.number";
+    public static final String NO_BUILDER_NUMBER_KEY = NoConverterBuilder.class.getName() + ".step.number";
 
     @Override
     public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, Builder builder )
     {
-        Shell shell = (Shell) builder;
         ModelASTStage stage = new ModelASTStage( this );
-        int stageNumber = request.getAndIncrement( SHELL_NUMBER_KEY );
-        stage.setName( "Shell script " + stageNumber );
+        int stageNumber = request.getAndIncrement( NO_BUILDER_NUMBER_KEY );
+        stage.setName( "No Converter-" + stageNumber );
         ModelASTBranch branch = new ModelASTBranch( this );
         stage.setBranches( Arrays.asList( branch ) );
-        ModelASTStep step = new ModelASTStep( this );
-        ModelASTSingleArgument singleArgument = new ModelASTSingleArgument( this );
-        singleArgument.setValue( ModelASTValue.fromConstant( shell.getCommand(), this ) );
-        step.setArgs( singleArgument );
-        step.setName( "sh" );
+        ModelASTStep step = new ModelASTStep( this ){
+            // need to override as per default () added at the end which doesn't work for echo..
+            @Override
+            public String toGroovy()
+            {
+                return this.getName();
+            }
+        };
+        step.setName( "echo 'No converter for Builder: " + builder.getClass().getName() + "'" );
+        step.setArgs( null );
         wrapBranch(converterResult, step, branch);
 
         return stage;
@@ -43,6 +47,6 @@ public class ShellConverter
     @Override
     public boolean canConvert( Builder builder )
     {
-        return builder.getClass().isAssignableFrom( Shell.class );
+        return false;
     }
 }

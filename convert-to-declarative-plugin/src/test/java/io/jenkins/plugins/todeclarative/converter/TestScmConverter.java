@@ -39,7 +39,7 @@ public class TestScmConverter
 
             ModelASTStep step = new ModelASTStep( this );
             ModelASTSingleArgument singleArgument = new ModelASTSingleArgument( this );
-            // TODO olamy escape shell command?? not sure as might be done when running it
+            // TODO escape shell command?? not sure as might be done when running it
             singleArgument.setValue( ModelASTValue.fromConstant( "unzip " + filePath, this ) );
             step.setArgs( singleArgument );
             step.setName( "sh" );

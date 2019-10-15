@@ -22,6 +22,7 @@ import hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy;
 import hudson.plugins.build_timeout.operations.FailOperation;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.UserRemoteConfig;
+import hudson.scm.NullSCM;
 import hudson.tasks.ArtifactArchiver;
 import hudson.tasks.BatchFile;
 import hudson.tasks.BuildTrigger;
@@ -69,6 +70,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertThat;
 
 public class FreestyleTest
 {
@@ -86,12 +89,12 @@ public class FreestyleTest
 
         String projectName = Long.toString( System.currentTimeMillis() );
         FreeStyleProject p = j.createFreeStyleProject( projectName );
-        p.addProperty( new GithubProjectProperty( "https://github.com/olamy/foo" ) );
+        p.addProperty( new GithubProjectProperty( "https://github.com/jenkinsci/foo" ) );
 
         { // git
             List<UserRemoteConfig> repoList = new ArrayList<>();
-            repoList.add( new UserRemoteConfig( "https://github.com/olamy/foo.git", null, "master", null ) );
-            repoList.add( new UserRemoteConfig( "https://github.com/olamy/bar.git", null, "patch-1", "credsId" ) );
+            repoList.add( new UserRemoteConfig( "https://github.com/jenkinsci/foo.git", null, "master", null ) );
+            repoList.add( new UserRemoteConfig( "https://github.com/jenkinsci/bar.git", null, "patch-1", "credsId" ) );
             GitSCM gitSCM =
                 new GitSCM( repoList, null, false, Collections.emptyList(), null, null, Collections.emptyList() );
             p.setScm( gitSCM );
@@ -221,10 +224,9 @@ public class FreestyleTest
 
         System.out.println( groovy );
 
-        Assert.assertTrue( groovy.contains( "branch: 'master'" ) );
-        Assert.assertTrue( groovy.contains( "url: 'https://github.com/olamy/foo.git'" ) );
-
-        Assert.assertTrue( groovy.contains( "credentialsId: 'credsId'" ) );
+        assertThat( groovy, containsString( "branch: 'master'" ) );
+        assertThat( groovy, containsString( "url: 'https://github.com/jenkinsci/foo.git'" ) );
+        assertThat( groovy, containsString( "credentialsId: 'credsId'" ) );
 
         Assert.assertEquals( 3, ( (WorkflowJob) converterResult.getJob() ).getTriggers().size() );
 
@@ -409,7 +411,7 @@ public class FreestyleTest
 
         String projectName = Long.toString( System.currentTimeMillis() );
         FreeStyleProject p = j.createFreeStyleProject( projectName );
-        p.addProperty( new GithubProjectProperty( "https://github.com/olamy/foo" ) );
+        p.addProperty( new GithubProjectProperty( "https://github.com/jenkinsci/foo" ) );
 
         //int daysToKeep, int numToKeep, int artifactDaysToKeep, int artifactNumToKeep
         LogRotator logRotator = new LogRotator( 1, 2, 3, 4 );
@@ -486,23 +488,45 @@ public class FreestyleTest
         FreeStyleProject p = j.createFreeStyleProject( projectName );
         p.getBuildersList().add( new FakeBuilder() );
 
+        p.getBuildWrappersList().add( new FakeBuildWrapper() );
+        p.getPublishersList().add( new FakeRecorder() );
+
         ConverterRequest request = new ConverterRequest().job( p );
         ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
 
         FreestyleToDeclarativeConverter converter =
             Jenkins.get().getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
         converter.convert( request, converterResult );
-        assertEquals( converterResult.getWarnings().toString(), 2, converterResult.getWarnings().size() );
+        assertEquals( converterResult.getWarnings().toString(), 4, converterResult.getWarnings().size() );
 
         assertEquals( 1, converterResult.getWarnings().stream() //
-            .filter( warning -> warning.getPluginClassName().equals(
-                "io.jenkins.plugins.todeclarative.converter.FakeBuilder" ) ) //
+            .filter( warning -> warning.getPluginClassName().equals( FakeBuilder.class.getName() ) ) //
             .collect( Collectors.toList() ).size() );
 
         assertEquals( 1, converterResult.getWarnings().stream() //
-            .filter( warning -> warning.getPluginClassName().equals( "hudson.scm.NullSCM" ) ) //
+            .filter( warning -> warning.getPluginClassName().equals( FakeBuildWrapper.class.getName() ) ) //
             .collect( Collectors.toList() ).size() );
 
+        assertEquals( 1, converterResult.getWarnings().stream() //
+            .filter( warning -> warning.getPluginClassName().equals( FakeRecorder.class.getName() ) ) //
+            .collect( Collectors.toList() ).size() );
+
+        assertEquals( 1, converterResult.getWarnings().stream() //
+            .filter( warning -> warning.getPluginClassName().equals( NullSCM.class.getName() ) ) //
+            .collect( Collectors.toList() ).size() );
+
+        String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
+
+        System.out.println( groovy );
+
+        assertThat( groovy, containsString( "No converter for Builder: io.jenkins.plugins.todeclarative.converter.FakeBuilder" ) );
+        assertThat( groovy, containsString( "No converter for Publisher: io.jenkins.plugins.todeclarative.converter.FakeRecorder" ));
+
+        WorkflowJob job = j.jenkins.createProject( WorkflowJob.class, "get_warning" );
+        job.setDefinition( new CpsFlowDefinition( groovy, true ) );
+        WorkflowRun run = job.scheduleBuild2( 0 ).get();
+        j.waitForCompletion( run );
+        j.assertBuildStatus( Result.SUCCESS, run );
     }
 
 }

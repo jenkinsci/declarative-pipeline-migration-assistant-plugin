@@ -9,6 +9,7 @@ import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -20,6 +21,7 @@ public class MavenTest
     public JenkinsRule j  = new JenkinsRule();
 
     @Test
+    @Ignore
     public void foo() throws Exception {
 
         Slave slave = j.createOnlineSlave();

@@ -27,7 +27,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-@Extension
+// not ready yet
+//@Extension
 public class MavenToDeclarativeConverter
     implements ToDeclarativeConverter
 {

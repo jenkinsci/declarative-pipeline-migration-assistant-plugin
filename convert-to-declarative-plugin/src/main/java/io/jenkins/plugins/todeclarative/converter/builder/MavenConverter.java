@@ -35,6 +35,9 @@ import java.util.Map;
 public class MavenConverter
     implements BuilderConverter
 {
+
+    public static final String MAVEN_NUMBER_KEY = ShellConverter.class.getName() + ".shell.number";
+
     @Override
     public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, Builder builder )
     {
@@ -68,7 +71,8 @@ public class MavenConverter
         }
 
         ModelASTStage stage = new ModelASTStage( this );
-        stage.setName( "Maven Build " );
+        int stageNumber = request.getAndIncrement( MAVEN_NUMBER_KEY );
+        stage.setName( "Maven Build " + stageNumber );
         ModelASTBranch branch = new ModelASTBranch( this );
         stage.setBranches( Arrays.asList( branch ) );
         ModelASTStep step = new ModelASTStep( this );

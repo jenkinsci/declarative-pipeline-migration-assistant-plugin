@@ -25,13 +25,13 @@ public class BatchFileConverter
     {
         BatchFile batchFile = (BatchFile) builder;
         ModelASTStage stage = new ModelASTStage( this );
-        int shellNumber = request.getAndIncrement( BATCH_NUMBER_KEY );
-        stage.setName( "Batch script " + shellNumber );
+        int stageNumber = request.getAndIncrement( BATCH_NUMBER_KEY );
+        stage.setName( "Batch script " + stageNumber );
         ModelASTBranch branch = new ModelASTBranch( this );
         stage.setBranches( Arrays.asList( branch ) );
         ModelASTStep step = new ModelASTStep( this );
         ModelASTSingleArgument singleArgument = new ModelASTSingleArgument( this );
-        // TODO olamy escape command?? not sure as might be done when running it
+        // TODO escape command?? not sure as might be done when running it
         singleArgument.setValue( ModelASTValue.fromConstant( batchFile.getCommand(), this ) );
         step.setArgs( singleArgument );
         step.setName( "bat" );
