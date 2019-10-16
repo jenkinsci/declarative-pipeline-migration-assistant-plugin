@@ -83,7 +83,7 @@
 
                 <div class="rectangle-download">
                     <div class="icons-converter-ui">
-                      <img src="${rootURL}/plugin/convert-to-declarative/img/expand.svg"/>
+                      <img src="${rootURL}/plugin/convert-to-declarative/img/download.svg"/>
                     </div>
                     <div class="download">Download</div>
                 </div>
