@@ -31,7 +31,6 @@ public class BatchFileConverter
         stage.setBranches( Arrays.asList( branch ) );
         ModelASTStep step = new ModelASTStep( this );
         ModelASTSingleArgument singleArgument = new ModelASTSingleArgument( this );
-        // TODO escape command?? not sure as might be done when running it
         singleArgument.setValue( ModelASTValue.fromConstant( batchFile.getCommand(), this ) );
         step.setArgs( singleArgument );
         step.setName( "bat" );

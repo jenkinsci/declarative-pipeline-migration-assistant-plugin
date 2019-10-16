@@ -31,7 +31,6 @@ public class ArtifactArchiverConverter implements PublisherConverter
         }
         ArtifactArchiver artifactArchiver = (ArtifactArchiver) publisher;
         ModelASTBuildCondition buildCondition;
-        // FIXME manage result condition
         if(artifactArchiver.isOnlyIfSuccessful())
         {
             buildCondition = ModelASTUtils.buildOrFindBuildCondition( result.getModelASTPipelineDef(), "success" );

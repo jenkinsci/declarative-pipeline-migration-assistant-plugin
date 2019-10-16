@@ -31,10 +31,10 @@ public class ShellConverter
         ModelASTBranch branch = new ModelASTBranch( this );
         stage.setBranches( Arrays.asList( branch ) );
         ModelASTStep step = new ModelASTStep( this );
+        step.setName( "sh" );
         ModelASTSingleArgument singleArgument = new ModelASTSingleArgument( this );
         singleArgument.setValue( ModelASTValue.fromConstant( shell.getCommand(), this ) );
         step.setArgs( singleArgument );
-        step.setName( "sh" );
         wrapBranch(converterResult, step, branch);
 
         return stage;
