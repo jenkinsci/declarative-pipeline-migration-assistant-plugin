@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    parameters {
+        booleanParam defaultValue: true, description: 'Build fails if coverage falls below value set in project property jacoco.coverage.target<br><li>True (default): Enables this behavior<li>False: Disables this behavior', name: 'failIfCoverageNotMet'
+    }
     stages {
         stage("Parallel Stage") {
             parallel {
@@ -12,7 +15,7 @@ pipeline {
                                 publisherStrategy: 'EXPLICIT',
                                 options: [junitPublisher(disabled: false)],
                                 mavenLocalRepo: ".repository") {
-                                sh "mvn -V -B clean install -e -Dmaven.test.failure.ignore=true"
+                                sh "mvn -Djacoco.haltOnFailure=${params.failIfCoverageNotMet} -V -B clean install -e -Dmaven.test.failure.ignore=true"
                             }  
                         }
                     }    
@@ -26,7 +29,7 @@ pipeline {
                                 publisherStrategy: 'EXPLICIT',
                                 options: [junitPublisher(disabled: false)],
                                 mavenLocalRepo: ".repository") {
-                                sh "mvn -V -B clean install -e -Dmaven.test.failure.ignore=true"
+                                sh "mvn -Djacoco.haltOnFailure=${params.failIfCoverageNotMet} -V -B clean install -e -Dmaven.test.failure.ignore=true"
                             }
                         }
                     }
