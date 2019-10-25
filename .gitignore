@@ -4,3 +4,6 @@ target/
 work
 node/
 node_modules/
+
+# IDE stuff
+.idea/
