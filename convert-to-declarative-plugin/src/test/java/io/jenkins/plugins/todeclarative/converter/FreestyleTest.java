@@ -49,7 +49,7 @@ import org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper;
 import org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile;
 import org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig;
 import org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider;
-import org.jenkinsci.plugins.configfiles.properties.PropertiesConfig;
+import org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig;
 import org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper;
 import org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
@@ -296,7 +296,7 @@ public class FreestyleTest
         // ConfigFileBuildWrapper
         {
             GlobalConfigFiles globalConfigFiles = GlobalConfigFiles.get();
-            ConfigProvider configProvider = ConfigProvider.getByIdOrNull( PropertiesConfig.class.getName() );
+            ConfigProvider configProvider = ConfigProvider.getByIdOrNull( GlobalMavenSettingsConfig.class.getName() );
             globalConfigFiles.save( configProvider.newConfig( "id1", "the id1", "id1 comment", "foo=bar_id1" ) );
             globalConfigFiles.save( configProvider.newConfig( "id2", "the id2", "id2 comment", "foo=bar_id2" ) );
             ManagedFile managedFile1 = new ManagedFile( "id1", "myfile1.txt", "MYFILE1" );
