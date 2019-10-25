@@ -39,14 +39,13 @@
   <name>Convert To Declarative</name>
   <!--
   <url>https://wiki.jenkins-ci.org/display/JENKINS/TODO</url>
-
+  -->
   <scm>
     <connection>scm:git:git://github.com/jenkinsci/convert-to-declarative.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/convert-to-declarative.git</developerConnection>
     <url>https://github.com/jenkinsci/convert-to-declarative</url>
     <tag>HEAD</tag>
   </scm>
-  -->
 
   <licenses>
     <license>
