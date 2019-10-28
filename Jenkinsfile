@@ -15,7 +15,7 @@ pipeline {
                                 publisherStrategy: 'EXPLICIT',
                                 options: [junitPublisher(disabled: false)],
                                 mavenLocalRepo: ".repository") {
-                                sh "mvn -Djacoco.haltOnFailure=${params.failIfCoverageNotMet} -V -B clean install -e -Dmaven.test.failure.ignore=true"
+                                sh "mvn -Penable-jacoco -Djacoco.haltOnFailure=${params.failIfCoverageNotMet} -V -B clean install -e -Dmaven.test.failure.ignore=true"
                             }  
                         }
                     }    
@@ -29,7 +29,7 @@ pipeline {
                                 publisherStrategy: 'EXPLICIT',
                                 options: [junitPublisher(disabled: false)],
                                 mavenLocalRepo: ".repository") {
-                                sh "mvn -Djacoco.haltOnFailure=${params.failIfCoverageNotMet} -V -B clean install -e -Dmaven.test.failure.ignore=true"
+                                sh "mvn -Penable-jacoco -Djacoco.haltOnFailure=${params.failIfCoverageNotMet} -V -B clean install -e -Dmaven.test.failure.ignore=true"
                             }
                         }
                     }
