@@ -39,7 +39,7 @@ pipeline {
     }
         post {
             always {
-                echo "--> ALWAYS: We are finished with ${currentBuild.fullDisplayName}"
+                echo "--> We are finished with ${currentBuild.fullDisplayName}"
                 junit testResults: 'target/surefire-reports/*.xml', keepLongStdio: true
                 archiveArtifacts "target/site/jacoco/jacoco.xml"
                 jacoco (
@@ -57,27 +57,12 @@ pipeline {
             }
             success {
                 echo "--> SUCCESS: ${currentBuild.fullDisplayName}"
-                slackSend(
-                    message: 'Successful build: currentBuild.fullDisplayName'
-                    color: ‘good’,
-                    channel: ‘#team-pipeline’
-                )
             }
             unstable {
                 echo "--> UNSTABLE: ${currentBuild.fullDisplayName}"
-                slackSend(
-                    message: 'Ustable build: currentBuild.fullDisplayName'
-                    color: ‘good’,
-                    channel: ‘#team-pipeline’
-                )
             }
             failure {
                 echo "--> FAILURE: ${currentBuild.fullDisplayName}"
-                slackSend(
-                    message: 'Failed build: currentBuild.fullDisplayName'
-                    color: ‘bad’,
-                    channel: ‘#team-pipeline’
-                )
             }
         }
 }
