@@ -14,6 +14,8 @@
   <properties>
     <!-- maybe fix this.. -->
     <findbugs.failOnError>false</findbugs.failOnError>
+    <!-- skip it here as it is only API with interfaces etc all the tests are done in plugin module -->
+    <jacoco.skip>true</jacoco.skip>
   </properties>
   <name>Convert To Declarative :: Api</name>
   <description>TODO</description>
