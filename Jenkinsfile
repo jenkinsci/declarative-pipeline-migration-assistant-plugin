@@ -40,7 +40,8 @@ pipeline {
         post {
             always {
                 echo "--> We are finished with ${currentBuild.fullDisplayName}"
-                junit testResults: 'target/surefire-reports/*.xml', keepLongStdio: true
+                // junit done via withMaven
+                //junit testResults: 'target/surefire-reports/*.xml', keepLongStdio: true
                 archiveArtifacts "target/site/jacoco/jacoco.xml"
                 jacoco (
                     classPattern: 'target/classes',
