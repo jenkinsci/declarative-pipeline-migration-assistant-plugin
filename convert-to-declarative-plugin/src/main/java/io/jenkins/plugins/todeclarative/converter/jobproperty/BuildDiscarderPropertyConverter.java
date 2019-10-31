@@ -6,6 +6,7 @@ import hudson.model.JobPropertyDescriptor;
 import hudson.tasks.LogRotator;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
+import io.jenkins.plugins.todeclarative.converter.api.Warning;
 import io.jenkins.plugins.todeclarative.converter.api.jobproperty.JobPropertyConverter;
 import jenkins.model.BuildDiscarder;
 import jenkins.model.BuildDiscarderProperty;
@@ -33,14 +34,12 @@ public class BuildDiscarderPropertyConverter
 
         BuildDiscarderProperty buildDiscarderProperty = (BuildDiscarderProperty) jobProperty;
 
-        if(buildDiscarderProperty.getStrategy()==null){
-            // nothing to do
-            return;
-        }
-
         BuildDiscarder buildDiscarder = buildDiscarderProperty.getStrategy();
         if(!(buildDiscarder instanceof LogRotator )){
             // nothing to do
+            converterResult.addWarning( new Warning( "We cannot convert BuildDiscarder strategy " +
+                                                         (buildDiscarder == null ? "'null'" : buildDiscarder.getClass().getName()),
+                                                     getClass().getName() ) );
             return;
         }
 

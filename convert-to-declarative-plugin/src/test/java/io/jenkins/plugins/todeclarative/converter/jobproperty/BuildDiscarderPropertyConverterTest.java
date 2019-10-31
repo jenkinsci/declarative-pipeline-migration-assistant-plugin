@@ -46,4 +46,46 @@ public class BuildDiscarderPropertyConverterTest
         assertThat( groovy, containsString( "artifactDaysToKeepStr: '3'" ) );
         assertThat( groovy, containsString( "artifactNumToKeepStr: '4'" ) );
     }
+
+    @Test
+    public void nulltest()
+        throws Exception
+    {
+        String projectName = Long.toString( System.currentTimeMillis() );
+        FreeStyleProject p = j.createFreeStyleProject( projectName );
+
+        //int daysToKeep, int numToKeep, int artifactDaysToKeep, int artifactNumToKeep
+        BuildDiscarderProperty buildDiscarderProperty = new BuildDiscarderProperty( null );
+        p.addProperty( buildDiscarderProperty );
+
+        BuildDiscarderPropertyConverter converter =
+            j.jenkins.getExtensionList( BuildDiscarderPropertyConverter.class ).get( 0 );
+        assertTrue( converter.canConvert( null, buildDiscarderProperty ) );
+        ConverterResult result = new ConverterResult();
+        converter.convert( new ConverterRequest(), result, null, buildDiscarderProperty );
+        assertEquals( 1, result.getWarnings().size() );
+    }
+
+    @Test
+    public void simpletestnullvalues()
+        throws Exception
+    {
+        String projectName = Long.toString( System.currentTimeMillis() );
+        FreeStyleProject p = j.createFreeStyleProject( projectName );
+
+        //int daysToKeep, int numToKeep, int artifactDaysToKeep, int artifactNumToKeep
+        LogRotator logRotator = new LogRotator( "", "", "", "");
+        BuildDiscarderProperty buildDiscarderProperty = new BuildDiscarderProperty( logRotator );
+        p.addProperty( buildDiscarderProperty );
+
+        BuildDiscarderPropertyConverter converter =
+            j.jenkins.getExtensionList( BuildDiscarderPropertyConverter.class ).get( 0 );
+        assertTrue( converter.canConvert( null, buildDiscarderProperty ) );
+        ConverterResult result = new ConverterResult();
+        converter.convert( new ConverterRequest(), result, null, buildDiscarderProperty );
+        ModelASTOptions options = result.getModelASTPipelineDef().getOptions();
+        assertEquals( 1, options.getOptions().size() );
+        ModelASTOption option = options.getOptions().get( 0 );
+        assertEquals( "buildDiscarder", option.getName() );
+    }
 }

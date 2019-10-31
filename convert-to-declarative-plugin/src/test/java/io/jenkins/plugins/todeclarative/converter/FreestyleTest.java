@@ -116,17 +116,6 @@ public class FreestyleTest
             p.addProperty( buildDiscarderProperty );
         }
 
-//        {
-//            // because we want increase jacoco coverage percentage....
-//            LogRotator logRotator = new LogRotator( null, null, null, null );
-//            p.addProperty( new BuildDiscarderProperty( logRotator ) );
-//        }
-//
-//        {
-//            // because we want increase jacoco coverage percentage....
-//            p.addProperty( new BuildDiscarderProperty( null ) );
-//        }
-
         {
             RequiredResourcesProperty requiredResourcesProperty =
                 new RequiredResourcesProperty( "beer", null, null, "labelName", null );
@@ -295,9 +284,7 @@ public class FreestyleTest
         FreeStyleProject p = j.createFreeStyleProject( projectName );
         p.addProperty( new GithubProjectProperty( "http://github.com/beer/paleale" ) );
 
-        p.addProperty( new BuildDiscarderProperty( null ) );
-        //p.addProperty( new BuildDiscarderProperty(new NoOpBuildDiscarder() ));
-
+        p.addProperty( new BuildDiscarderProperty(new NoOpBuildDiscarder() ));
 
         List<ParameterDefinition> parametersDefinitions = new ArrayList<>();
         parametersDefinitions.add( new StringParameterDefinition( "str", "defaultValue", "description str", true ) );
