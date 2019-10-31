@@ -10,8 +10,11 @@ import htmlpublisher.HtmlPublisherTarget;
 import hudson.FilePath;
 import hudson.Functions;
 import hudson.model.BooleanParameterDefinition;
+import hudson.model.ChoiceParameterDefinition;
+import hudson.model.FileParameterDefinition;
 import hudson.model.FreeStyleProject;
 import hudson.model.JDK;
+import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Result;
@@ -19,7 +22,9 @@ import hudson.model.Slave;
 import hudson.model.StringParameterDefinition;
 import hudson.plugins.build_timeout.BuildTimeoutWrapper;
 import hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy;
+import hudson.plugins.build_timeout.impl.NoActivityTimeOutStrategy;
 import hudson.plugins.build_timeout.operations.FailOperation;
+import hudson.plugins.git.BranchSpec;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.UserRemoteConfig;
 import hudson.scm.NullSCM;
@@ -37,6 +42,7 @@ import hudson.triggers.TimerTrigger;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.freestyle.FreestyleToDeclarativeConverter;
+import jenkins.model.BuildDiscarder;
 import jenkins.model.BuildDiscarderProperty;
 import jenkins.model.Jenkins;
 import jenkins.triggers.ReverseBuildTrigger;
@@ -63,6 +69,8 @@ import org.jvnet.hudson.test.ExtractResourceSCM;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.ToolInstallations;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -95,8 +103,9 @@ public class FreestyleTest
             List<UserRemoteConfig> repoList = new ArrayList<>();
             repoList.add( new UserRemoteConfig( "https://github.com/jenkinsci/foo.git", null, "master", null ) );
             repoList.add( new UserRemoteConfig( "https://github.com/jenkinsci/bar.git", null, "patch-1", "credsId" ) );
+            BranchSpec branchSpec = new BranchSpec( "master" );
             GitSCM gitSCM =
-                new GitSCM( repoList, null, false, Collections.emptyList(), null, null, Collections.emptyList() );
+                new GitSCM( repoList, Arrays.asList( branchSpec ), false, Collections.emptyList(), null, null, Collections.emptyList() );
             p.setScm( gitSCM );
         }
 
@@ -111,6 +120,7 @@ public class FreestyleTest
             RequiredResourcesProperty requiredResourcesProperty =
                 new RequiredResourcesProperty( "beer", null, null, "labelName", null );
             p.addProperty( requiredResourcesProperty );
+            p.addProperty( new RequiredResourcesProperty( null, null, null, null, null ) );
         }
 
         {
@@ -124,9 +134,9 @@ public class FreestyleTest
             List<ParameterDefinition> parametersDefinitions = new ArrayList<>();
             parametersDefinitions.add(
                 new StringParameterDefinition( "str", "defaultValue", "description str", true ) );
-            // List<String> toGroovy needs to be fixed
-            //parametersDefinitions.add( new ChoiceParameterDefinition( "choice", new String[]{"choice1","choice2"}, "description choice" ) );
+            parametersDefinitions.add( new ChoiceParameterDefinition( "choice", new String[]{"choice1","choice2"}, "description choice" ) );
             parametersDefinitions.add( new BooleanParameterDefinition( "nameboolean", true, "boolean description" ) );
+            parametersDefinitions.add( new FileParameterDefinition( "foo.txt", "foo.txt file" ) );
             ParametersDefinitionProperty parametersDefinitionProperty =
                 new ParametersDefinitionProperty( parametersDefinitions );
             p.addProperty( parametersDefinitionProperty );
@@ -236,6 +246,22 @@ public class FreestyleTest
 
     }
 
+    static class NoOpBuildDiscarder extends BuildDiscarder implements Serializable
+    {
+
+        public NoOpBuildDiscarder()
+        {
+            super();
+        }
+
+        @Override
+        public void perform( Job<?, ?> job )
+            throws IOException, InterruptedException
+        {
+
+        }
+    }
+
     @Test
     public void freestyle_conversion_then_run()
         throws Exception
@@ -252,10 +278,12 @@ public class FreestyleTest
         LogRotator logRotator = new LogRotator( 1, 2, 3, 4 );
         BuildDiscarderProperty buildDiscarderProperty = new BuildDiscarderProperty( logRotator );
         p.addProperty( buildDiscarderProperty );
+        p.addProperty( new BuildDiscarderProperty( null ) );
+        p.addProperty( new BuildDiscarderProperty(new NoOpBuildDiscarder() ));
+
 
         List<ParameterDefinition> parametersDefinitions = new ArrayList<>();
         parametersDefinitions.add( new StringParameterDefinition( "str", "defaultValue", "description str", true ) );
-        //parametersDefinitions.add( new ChoiceParameterDefinition( "choice", new String[]{"choice1","choice2"}, "description choice" ) );
         parametersDefinitions.add( new BooleanParameterDefinition( "nameboolean", true, "boolean description" ) );
         ParametersDefinitionProperty parametersDefinitionProperty =
             new ParametersDefinitionProperty( parametersDefinitions );
@@ -290,6 +318,13 @@ public class FreestyleTest
 
         {
             BuildTimeoutWrapper buildTimeoutWrapper = new BuildTimeoutWrapper( new AbsoluteTimeOutStrategy( "180" ),
+                                                                               Collections.singletonList(
+                                                                                   new FailOperation() ), "FOO" );
+            p.getBuildWrappersList().add( buildTimeoutWrapper );
+        }
+
+        {
+            BuildTimeoutWrapper buildTimeoutWrapper = new BuildTimeoutWrapper( new NoActivityTimeOutStrategy( "180" ),
                                                                                Collections.singletonList(
                                                                                    new FailOperation() ), "FOO" );
             p.getBuildWrappersList().add( buildTimeoutWrapper );

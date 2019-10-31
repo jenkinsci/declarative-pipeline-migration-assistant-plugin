@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.addStage;
+
 @Extension
 public class GitScmConverter implements ScmConverter
 {
@@ -69,13 +71,11 @@ public class GitScmConverter implements ScmConverter
             git.setArgs( stepArgs );
             steps.add( git );
         }
-        if(converterResult.getModelASTPipelineDef().getStages()==null){
-            converterResult.getModelASTPipelineDef().setStages( new ModelASTStages( this ) );
-        }
+
         ModelASTBranch branch = new ModelASTBranch( this );
         branch.setSteps(steps);
         stage.setBranches( Arrays.asList( branch ) );
-        converterResult.getModelASTPipelineDef().getStages().getStages().add( stage );
+        addStage(converterResult.getModelASTPipelineDef(), stage );
     }
 
     @Override

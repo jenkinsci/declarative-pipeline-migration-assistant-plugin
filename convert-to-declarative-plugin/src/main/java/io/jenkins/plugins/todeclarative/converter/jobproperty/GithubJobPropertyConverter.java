@@ -22,16 +22,10 @@ public class GithubJobPropertyConverter implements JobPropertyConverter
                          JobPropertyDescriptor jobPropertyDescriptor,
                          JobProperty jobProperty )
     {
-        try
-        {
-            if(request.isCreateProject()) {
-                converterResult.getJob().addProperty( jobProperty );
-            }
-        }
-        catch ( IOException e )
-        {
-            LOGGER.error( "fail convert jobProperty: " + jobProperty, e );
-        }
+//            if(request.isCreateProject()) {
+//                converterResult.getJob().addProperty( jobProperty );
+//            }
+        // nothing as we do not create project
     }
 
     @Override

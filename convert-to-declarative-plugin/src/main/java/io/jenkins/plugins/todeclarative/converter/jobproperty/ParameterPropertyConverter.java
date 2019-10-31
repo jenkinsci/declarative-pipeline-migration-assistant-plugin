@@ -11,6 +11,7 @@ import hudson.model.StringParameterDefinition;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
+import io.jenkins.plugins.todeclarative.converter.api.Warning;
 import io.jenkins.plugins.todeclarative.converter.api.jobproperty.JobPropertyConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildParameter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildParameters;
@@ -30,13 +31,10 @@ public class ParameterPropertyConverter
                          JobPropertyDescriptor jobPropertyDescriptor, //
                          JobProperty jobProperty )
     {
-
         ParametersDefinitionProperty parametersDefinitionProperty = (ParametersDefinitionProperty)jobProperty;
-
         if(parametersDefinitionProperty.getParameterDefinitions().isEmpty()){
             return;
         }
-
         // now in the Jenkinsfile as well
         ModelASTPipelineDef model = converterResult.getModelASTPipelineDef();
         if(model.getParameters()==null){
@@ -45,14 +43,14 @@ public class ParameterPropertyConverter
 
         parametersDefinitionProperty.getParameterDefinitions() //
             .forEach( parameterDefinition -> {
-                ModelASTBuildParameter parameter = build(parameterDefinition);
+                ModelASTBuildParameter parameter = build(parameterDefinition, converterResult);
                 if(parameter!=null){
                     model.getParameters().getParameters().add(parameter);
                 }
             } );
     }
 
-    protected ModelASTBuildParameter build( ParameterDefinition parameterDefinition ){
+    protected ModelASTBuildParameter build( ParameterDefinition parameterDefinition, ConverterResult converterResult ){
         // maybe an extension point here if users have their parameter definition type?
         List<ModelASTMethodArg> args = new ArrayList<>();
         if( StringParameterDefinition.class.getSimpleName().equals(parameterDefinition.getType())){
@@ -86,6 +84,8 @@ public class ParameterPropertyConverter
             return parameter;
         }
 
+        converterResult.addWarning( new Warning( "Cannot convert property of type: " + parameterDefinition.getType(),
+                                                 getClass().getName() ) );
         return null;
     }
 

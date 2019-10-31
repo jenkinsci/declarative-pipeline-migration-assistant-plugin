@@ -4,8 +4,13 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildCondition;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKeyValueOrMethodCallPair;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOption;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOptions;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPostBuild;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStages;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 
 import java.util.Optional;
@@ -45,6 +50,29 @@ public class ModelASTUtils
         modelASTBuildCondition.setCondition( condition );
         postBuild.getConditions().add( modelASTBuildCondition );
         return modelASTBuildCondition;
+    }
+
+    public static void addStage( ModelASTPipelineDef modelASTPipelineDef, ModelASTStage stage) {
+        if(modelASTPipelineDef.getStages()==null){
+            modelASTPipelineDef.setStages( new ModelASTStages( modelASTPipelineDef ) );
+        }
+        modelASTPipelineDef.getStages().getStages().add( stage );
+    }
+
+    public static void addOption(ModelASTPipelineDef modelASTPipelineDef, ModelASTOption option) {
+        if(modelASTPipelineDef.getOptions()==null){
+            modelASTPipelineDef.setOptions( new ModelASTOptions( modelASTPipelineDef ) );
+        }
+        modelASTPipelineDef.getOptions().getOptions().add( option );
+    }
+
+    public static void addStep(ModelASTBuildCondition buildCondition, ModelASTStep step) {
+        ModelASTBranch branch = buildCondition.getBranch();
+        if(branch==null){
+            branch = new ModelASTBranch( buildCondition );
+            buildCondition.setBranch( branch );
+        }
+        branch.getSteps().add( step );
     }
 
 }

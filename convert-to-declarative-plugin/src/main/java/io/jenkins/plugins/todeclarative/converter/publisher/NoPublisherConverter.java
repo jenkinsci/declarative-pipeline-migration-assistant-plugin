@@ -12,6 +12,8 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildCondition
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
 
+import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.addStep;
+
 @Extension
 public class NoPublisherConverter
     implements PublisherConverter
@@ -21,13 +23,6 @@ public class NoPublisherConverter
     {
 
         ModelASTBuildCondition buildCondition = ModelASTUtils.buildOrFindBuildCondition( result.getModelASTPipelineDef(), "always" );
-
-        ModelASTBranch branch = buildCondition.getBranch();
-        if(branch==null){
-            branch =new ModelASTBranch( this );
-            buildCondition.setBranch( branch );
-        }
-
         ModelASTStep step = new ModelASTStep( this ){
             // need to override as per default () added at the end which doesn't work for echo..
             @Override
@@ -38,8 +33,7 @@ public class NoPublisherConverter
         };
         step.setName( "echo 'No converter for Publisher: " + publisher.getClass().getName() + "'" );
         step.setArgs( null );
-        branch.getSteps().add( step );
-
+        addStep(buildCondition, step);
         return null;
     }
 

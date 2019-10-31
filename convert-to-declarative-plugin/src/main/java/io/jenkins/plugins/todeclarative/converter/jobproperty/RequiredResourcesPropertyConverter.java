@@ -16,6 +16,7 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.addOption;
 import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.buildKeyPairArg;
 
 @Extension
@@ -46,11 +47,7 @@ public class RequiredResourcesPropertyConverter
 
         option.setArgs( lockArgs );
 
-        ModelASTPipelineDef modelASTPipelineDef = converterResult.getModelASTPipelineDef();
-        if(modelASTPipelineDef.getOptions()==null){
-            modelASTPipelineDef.setOptions( new ModelASTOptions( this ) );
-        }
-        modelASTPipelineDef.getOptions().getOptions().add( option );
+        addOption(converterResult.getModelASTPipelineDef(), option );
     }
 
     @Override

@@ -18,6 +18,7 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.addOption;
 import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.buildKeyPairArg;
 
 @Extension
@@ -54,11 +55,6 @@ public class BuildDiscarderPropertyConverter
 
         List<ModelASTMethodArg> rotatorArgs = new ArrayList<>();
 
-        //options {
-        //    buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '30'))
-        // args String daysToKeepStr, String numToKeepStr, String artifactDaysToKeepStr, String artifactNumToKeepStr
-        //}
-
         if( StringUtils.isNotBlank(logRotator.getArtifactDaysToKeepStr())){
             rotatorArgs.add( buildKeyPairArg("artifactDaysToKeepStr",  logRotator.getArtifactDaysToKeepStr()));
         }
@@ -73,11 +69,7 @@ public class BuildDiscarderPropertyConverter
         }
         logRotatorOption.setArgs( rotatorArgs );
 
-        ModelASTPipelineDef modelASTPipelineDef = converterResult.getModelASTPipelineDef();
-        if(modelASTPipelineDef.getOptions()==null){
-            modelASTPipelineDef.setOptions( new ModelASTOptions( this ) );
-        }
-        modelASTPipelineDef.getOptions().getOptions().add( option );
+        addOption(converterResult.getModelASTPipelineDef(), option );
     }
 
 
