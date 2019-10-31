@@ -1,7 +1,9 @@
 package io.jenkins.plugins.todeclarative.converter;
 
 import hudson.maven.MavenModuleSet;
+import hudson.model.Label;
 import hudson.model.Slave;
+import hudson.tasks.Shell;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.maven.MavenToDeclarativeConverter;
@@ -21,22 +23,23 @@ public class MavenTest
     public JenkinsRule j  = new JenkinsRule();
 
     @Test
-    @Ignore
     public void foo() throws Exception {
 
         Slave slave = j.createOnlineSlave();
         slave.setLabelString( "FOO_AGENT" );
 
         MavenModuleSet mavenModuleSet = new MavenModuleSet( j.jenkins, "Foo"  );
+        mavenModuleSet.setAssignedLabel( Label.get( "FOO_AGENT" ) );
         mavenModuleSet.setGoals( "clean deploy" );
         mavenModuleSet.setAssignedNode( slave );
 
-        MavenToDeclarativeConverter converter = Jenkins.getInstance()
-            .getExtensionList( MavenToDeclarativeConverter.class ).get( 0 );
+        mavenModuleSet.getPrebuilders().add( new Shell( "ls -lrt" ) );
+
+        MavenToDeclarativeConverter converter = new MavenToDeclarativeConverter();
 
         Assert.assertTrue( converter.canConvert( mavenModuleSet ) );
 
-        ConverterRequest request = new ConverterRequest().job( mavenModuleSet ).useWithMvn( true );
+        ConverterRequest request = new ConverterRequest().job( mavenModuleSet );
 
         ModelASTStage stage = converter.toWithMvn( request );
         String groovy = ModelASTPipelineDef.toIndentedGroovy( stage.toGroovy());

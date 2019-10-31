@@ -12,8 +12,6 @@ public class ConverterRequest
 {
     private Job job;
 
-    private boolean useWithMvn;
-
     private boolean createProject;
 
     private String createdProjectName;
@@ -43,22 +41,6 @@ public class ConverterRequest
     public ConverterRequest job( Job job )
     {
         this.job = job;
-        return this;
-    }
-
-    public boolean isUseWithMvn()
-    {
-        return useWithMvn;
-    }
-
-    public void setUseWithMvn( boolean useWithMvn )
-    {
-        this.useWithMvn = useWithMvn;
-    }
-
-    public ConverterRequest useWithMvn( boolean useWithMvn )
-    {
-        this.useWithMvn = useWithMvn;
         return this;
     }
 

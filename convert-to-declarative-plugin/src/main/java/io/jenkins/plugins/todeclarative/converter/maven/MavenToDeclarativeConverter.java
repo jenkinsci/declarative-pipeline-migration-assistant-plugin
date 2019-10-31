@@ -1,6 +1,5 @@
 package io.jenkins.plugins.todeclarative.converter.maven;
 
-import hudson.Extension;
 import hudson.ExtensionList;
 import hudson.maven.MavenModuleSet;
 import hudson.model.Job;
@@ -28,6 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 // not ready yet
+// re enable jacoco when ready
 //@Extension
 public class MavenToDeclarativeConverter
     implements ToDeclarativeConverter
@@ -36,11 +36,6 @@ public class MavenToDeclarativeConverter
     public void convert( ConverterRequest request , ConverterResult converterResult)
         throws ConverterException
     {
-        if(! (request.getJob() instanceof MavenModuleSet))
-        {
-            // TODO log something
-        }
-
         MavenModuleSet mavenModuleSet = (MavenModuleSet) request.getJob();
 
         ModelASTPipelineDef pipelineDef = converterResult.getModelASTPipelineDef();
@@ -64,17 +59,13 @@ public class MavenToDeclarativeConverter
         }
 
         // convert the main maven build part
-        if(request.isUseWithMvn()){
-            pipelineDef.getStages().getStages().add( toWithMvn( request ) );
-        } else {
-            pipelineDef.getStages().getStages().add( toSh( request ) );
-        }
+        pipelineDef.getStages().getStages().add( toWithMvn( request ) );
 
-        mavenModuleSet.getPostbuilders();
-
-        mavenModuleSet.getPublishers();
-
-        mavenModuleSet.getReporters();
+//        mavenModuleSet.getPostbuilders();
+//
+//        mavenModuleSet.getPublishers();
+//
+//        mavenModuleSet.getReporters();
     }
 
     public ModelASTStage toWithMvn( ConverterRequest converterRequest)
@@ -123,11 +114,6 @@ public class MavenToDeclarativeConverter
         stage.getBranches().add( branch );
 
         return stage;
-    }
-
-    public ModelASTStage toSh(ConverterRequest converterRequest)
-    {
-        return null;
     }
 
     @Override

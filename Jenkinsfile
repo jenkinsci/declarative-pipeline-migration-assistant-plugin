@@ -13,8 +13,7 @@ pipeline {
                             withMaven(
                                 maven: 'maven3.6.1',
                                 publisherStrategy: 'EXPLICIT',
-                                options: [junitPublisher(disabled: false)],
-                                mavenLocalRepo: ".repository") {
+                                options: [junitPublisher(disabled: false),jacocoPublisher(disabled: false)]) {
                                 sh "mvn -Penable-jacoco -Djacoco.haltOnFailure=${params.failIfCoverageNotMet} -V -B clean install -e -Dmaven.test.failure.ignore=true"
                             }  
                         }
@@ -27,8 +26,7 @@ pipeline {
                             withMaven(
                                 maven: 'maven3.6.1',
                                 publisherStrategy: 'EXPLICIT',
-                                options: [junitPublisher(disabled: false)],
-                                mavenLocalRepo: ".repository") {
+                                options: [junitPublisher(disabled: false)]) {
                                 sh "mvn -Penable-jacoco -Djacoco.haltOnFailure=${params.failIfCoverageNotMet} -V -B clean install -e -Dmaven.test.failure.ignore=true"
                             }
                         }
@@ -40,21 +38,19 @@ pipeline {
         post {
             always {
                 echo "--> We are finished with ${currentBuild.fullDisplayName}"
-                // junit done via withMaven
-                //junit testResults: 'target/surefire-reports/*.xml', keepLongStdio: true
-                archiveArtifacts "target/site/jacoco/jacoco.xml"
-                jacoco (
-                    classPattern: 'target/classes',
-                    deltaBranchCoverage: '5',
-                    deltaClassCoverage: '5',
-                    deltaComplexityCoverage: '5',
-                    deltaInstructionCoverage: '5',
-                    deltaLineCoverage: '5',
-                    deltaMethodCoverage: '5',
-                    execPattern: 'target/jacoco.exec',
-                    sourceInclusionPattern: '',
-                    sourcePattern: 'src'
-                )
+//                archiveArtifacts "target/site/jacoco/jacoco.xml"
+//                jacoco (
+//                    classPattern: 'target/classes',
+//                    deltaBranchCoverage: '5',
+//                    deltaClassCoverage: '5',
+//                    deltaComplexityCoverage: '5',
+//                    deltaInstructionCoverage: '5',
+//                    deltaLineCoverage: '5',
+//                    deltaMethodCoverage: '5',
+//                    execPattern: 'target/jacoco.exec',
+//                    sourceInclusionPattern: '',
+//                    sourcePattern: 'src'
+//                )
             }
             success {
                 echo "--> SUCCESS: ${currentBuild.fullDisplayName}"

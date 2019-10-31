@@ -126,7 +126,10 @@
           <artifactId>jacoco-maven-plugin</artifactId>
           <configuration>
             <excludes combine.children="append">
-              <!--<exclude>io.jenkins.plugins.todeclarative.converter.api.*</exclude>-->
+              <!-- skip it here as it is only API with interfaces etc all the tests are done in plugin module -->
+              <exclude>io/jenkins/plugins/todeclarative/converter/api/**/**</exclude>
+              <!-- not yet developed -->
+              <exclude>io/jenkins/plugins/todeclarative/converter/maven/**</exclude>
             </excludes>
           </configuration>
           <executions>

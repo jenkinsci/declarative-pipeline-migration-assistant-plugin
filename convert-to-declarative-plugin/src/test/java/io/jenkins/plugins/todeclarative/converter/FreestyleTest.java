@@ -232,6 +232,8 @@ public class FreestyleTest
 
         System.out.println( converterResult.getJob().getProperties() );
 
+
+
     }
 
     @Test
