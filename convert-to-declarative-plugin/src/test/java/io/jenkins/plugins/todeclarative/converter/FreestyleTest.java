@@ -116,6 +116,17 @@ public class FreestyleTest
             p.addProperty( buildDiscarderProperty );
         }
 
+//        {
+//            // because we want increase jacoco coverage percentage....
+//            LogRotator logRotator = new LogRotator( null, null, null, null );
+//            p.addProperty( new BuildDiscarderProperty( logRotator ) );
+//        }
+//
+//        {
+//            // because we want increase jacoco coverage percentage....
+//            p.addProperty( new BuildDiscarderProperty( null ) );
+//        }
+
         {
             RequiredResourcesProperty requiredResourcesProperty =
                 new RequiredResourcesProperty( "beer", null, null, "labelName", null );
@@ -187,6 +198,16 @@ public class FreestyleTest
             artifactArchiver.setCaseSensitive( true );
             artifactArchiver.setFingerprint( true );
             artifactArchiver.setOnlyIfSuccessful( true );
+            p.getPublishersList().add( artifactArchiver );
+        }
+
+        {
+            ArtifactArchiver artifactArchiver = new ArtifactArchiver( "**/target/**.jar" );
+            artifactArchiver.setAllowEmptyArchive( true );
+            artifactArchiver.setExcludes( "**pom**" );
+            artifactArchiver.setCaseSensitive( true );
+            artifactArchiver.setFingerprint( true );
+            artifactArchiver.setOnlyIfSuccessful( false );
             p.getPublishersList().add( artifactArchiver );
         }
 
@@ -274,12 +295,8 @@ public class FreestyleTest
         FreeStyleProject p = j.createFreeStyleProject( projectName );
         p.addProperty( new GithubProjectProperty( "http://github.com/beer/paleale" ) );
 
-        //int daysToKeep, int numToKeep, int artifactDaysToKeep, int artifactNumToKeep
-        LogRotator logRotator = new LogRotator( 1, 2, 3, 4 );
-        BuildDiscarderProperty buildDiscarderProperty = new BuildDiscarderProperty( logRotator );
-        p.addProperty( buildDiscarderProperty );
         p.addProperty( new BuildDiscarderProperty( null ) );
-        p.addProperty( new BuildDiscarderProperty(new NoOpBuildDiscarder() ));
+        //p.addProperty( new BuildDiscarderProperty(new NoOpBuildDiscarder() ));
 
 
         List<ParameterDefinition> parametersDefinitions = new ArrayList<>();
@@ -491,6 +508,8 @@ public class FreestyleTest
 
             p.getBuildersList().add( maven );
         }
+
+        p.getPublishersList().add( new BuildTrigger( "beer", Result.SUCCESS ) );
 
         FreestyleToDeclarativeConverter converter =
             Jenkins.get().getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );

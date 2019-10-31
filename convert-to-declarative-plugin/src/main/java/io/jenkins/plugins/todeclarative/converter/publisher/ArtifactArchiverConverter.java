@@ -19,40 +19,29 @@ import org.jenkinsci.plugins.structs.describable.DescribableModel;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.addStep;
+
 @Extension
-public class ArtifactArchiverConverter implements PublisherConverter
-{
+public class ArtifactArchiverConverter implements PublisherConverter {
     @Override
-    public ModelASTStage convert( ConverterRequest request, ConverterResult result, Publisher publisher )
-    {
-        if (!(publisher instanceof ArtifactArchiver )) {
-            // can't use automatic conversion
-            return null;
-        }
+    public ModelASTStage convert( ConverterRequest request, ConverterResult result, Publisher publisher ) {
+
         ArtifactArchiver artifactArchiver = (ArtifactArchiver) publisher;
         ModelASTBuildCondition buildCondition;
-        if(artifactArchiver.isOnlyIfSuccessful())
-        {
+        if(artifactArchiver.isOnlyIfSuccessful()) {
             buildCondition = ModelASTUtils.buildOrFindBuildCondition( result.getModelASTPipelineDef(), "success" );
         } else {
             buildCondition = ModelASTUtils.buildOrFindBuildCondition( result.getModelASTPipelineDef(), "always" );
         }
 
-        ModelASTBranch branch = buildCondition.getBranch();
-        if(branch==null){
-            branch =new ModelASTBranch( this );
-            buildCondition.setBranch( branch );
-        }
-
         ModelASTStep archiveArtifacts = buildGenericStep(publisher);
-        branch.getSteps().add( archiveArtifacts );
+        addStep(buildCondition, archiveArtifacts);
 
         return null;
     }
 
     @Override
-    public boolean canConvert( Publisher publisher )
-    {
+    public boolean canConvert( Publisher publisher ) {
         return publisher instanceof ArtifactArchiver;
     }
 }

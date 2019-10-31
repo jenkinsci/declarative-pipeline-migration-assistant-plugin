@@ -30,8 +30,7 @@ public class BuildTriggerPublisherConverter
         // FIXME must depends on Threshold
         //buildTrigger.getThreshold()
         if (buildTrigger.getChildJobs((AbstractProject<?, ?>) request.getJob()) == null ||
-            buildTrigger.getChildJobs((AbstractProject<?, ?>) request.getJob()).isEmpty())
-        {
+            buildTrigger.getChildJobs((AbstractProject<?, ?>) request.getJob()).isEmpty()) {
             return null;
         }
         ModelASTBuildCondition buildCondition =
