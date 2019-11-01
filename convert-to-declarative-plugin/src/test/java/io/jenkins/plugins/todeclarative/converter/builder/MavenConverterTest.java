@@ -142,4 +142,50 @@ public class MavenConverterTest
             "MAVEN_OPTS = '-Djava.awt.headless=true -Xmx768m -Xms768m -client -XX:+HeapDumpOnOutOfMemoryError'" ) );
     }
 
+    @Test
+    public void simpleMavenConversionNoValues()
+        throws Exception
+    {
+
+        String projectName = Long.toString( System.currentTimeMillis() );
+        FreeStyleProject p = j.createFreeStyleProject( projectName );
+
+        GlobalConfigFiles store =
+            j.getInstance().getExtensionList( GlobalConfigFiles.class ).get( GlobalConfigFiles.class );
+
+        String content = IOUtils.toString(
+            Thread.currentThread().getContextClassLoader().getResource( "global-maven-settings.xml" ) );
+        GlobalMavenSettingsConfig globalMavenSettingsConfig =
+            new GlobalMavenSettingsConfig( "global-maven-settings-id", "global-maven-settings-name", "comment",
+                                           content );
+        store.save( globalMavenSettingsConfig );
+
+
+        GlobalSettingsProvider globalSettingsProvider = new FilePathGlobalSettingsProvider( "global.xml" );
+        SettingsProvider settingsProvider = new FilePathSettingsProvider( "settings.xml" );
+
+        Maven maven = new Maven( "clean verify", null /*maven name*/, null,
+                                 null /*properties*/,
+                                 null /*jvmOptions*/,
+                                 true /*usePrivateRepository*/, null /*SettingsProvider settings*/,
+                                 null /*GlobalSettingsProvider*/ );
+
+        MavenConverter mavenConverter = j.jenkins.getExtensionList( MavenConverter.class ).get( 0 );
+
+        assertTrue( mavenConverter.canConvert( maven ) );
+        ConverterRequest request = new ConverterRequest().job( p );
+        ConverterResult result = new ConverterResult();
+        ModelASTStage stage = mavenConverter.convert( request, result, maven );
+        assertNotNull( stage );
+
+        assertNull( result.getModelASTPipelineDef().getTools() );
+
+        String stageGroovy = stage.toGroovy();
+        System.out.println( "groovy: " + stageGroovy );
+
+        assertThat( stageGroovy, CoreMatchers.containsString( "mvn" ) );
+        assertThat( stageGroovy, CoreMatchers.containsString( "clean verify" ) );
+        assertThat( stageGroovy, CoreMatchers.containsString( "-Dmaven.repo.local=.repository" ) );
+    }
+
 }

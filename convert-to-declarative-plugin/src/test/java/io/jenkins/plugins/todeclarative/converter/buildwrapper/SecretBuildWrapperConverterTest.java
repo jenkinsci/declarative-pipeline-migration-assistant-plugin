@@ -1,9 +1,19 @@
 package io.jenkins.plugins.todeclarative.converter.buildwrapper;
 
 
+import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
+import hudson.Extension;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
+import org.jenkinsci.Symbol;
+import org.jenkinsci.plugins.credentialsbinding.Binding;
+import org.jenkinsci.plugins.credentialsbinding.BindingDescriptor;
 import org.jenkinsci.plugins.credentialsbinding.impl.CertificateMultiBinding;
 import org.jenkinsci.plugins.credentialsbinding.impl.FileBinding;
+import org.jenkinsci.plugins.credentialsbinding.impl.Messages;
 import org.jenkinsci.plugins.credentialsbinding.impl.SSHUserPrivateKeyBinding;
 import org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper;
 import org.jenkinsci.plugins.credentialsbinding.impl.StringBinding;
@@ -14,9 +24,13 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTreeStep;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.kohsuke.stapler.DataBoundConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
 import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -157,5 +171,58 @@ public class SecretBuildWrapperConverterTest
         assertThat( groovy, containsString( "credentialsId: 'credId'" ) );
         assertThat( groovy, containsString( "usernameVariable: 'uidVar'" ) );
         assertThat( groovy, containsString( "passphraseVariable: 'thepassphrase'" ) );
+    }
+
+    @Test
+    public void fakegeneratewarning()
+    {
+        ConverterResult result = new ConverterResult();
+        FakeBinding binding = //
+            new FakeBinding( "theVariable", "credId" );
+        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper( Arrays.asList( binding ) );
+        SecretBuildWrapperConverter converter = j.jenkins.getExtensionList( SecretBuildWrapperConverter.class ).get(0);
+        converter.convert( null, result, secretBuildWrapper );
+        assertEquals( 1, result.getWrappingTreeSteps().size() );
+        ModelASTTreeStep tree = result.getWrappingTreeSteps().get( 0 ).get();
+        assertEquals( 1, result.getWarnings().size() );
+    }
+
+
+    public static class FakeBinding
+        extends Binding<StandardUsernamePasswordCredentials>
+    {
+        @DataBoundConstructor
+        public FakeBinding( String variable, String credentialsId) {
+            super(variable, credentialsId);
+        }
+
+        protected Class<StandardUsernamePasswordCredentials> type() {
+            return StandardUsernamePasswordCredentials.class;
+        }
+
+        public SingleEnvironment bindSingle( @Nonnull Run<?, ?> build, @Nullable FilePath workspace, @Nullable Launcher launcher, @Nonnull TaskListener listener) throws
+            IOException, InterruptedException {
+            return null;
+        }
+
+        @Symbol({"fakeBinding"})
+        @Extension
+        public static class DescriptorImpl extends BindingDescriptor<StandardUsernamePasswordCredentials>
+        {
+            public DescriptorImpl() {
+            }
+
+            protected Class<StandardUsernamePasswordCredentials> type() {
+                return StandardUsernamePasswordCredentials.class;
+            }
+
+            public String getDisplayName() {
+                return "foo";
+            }
+
+            public boolean requiresWorkspace() {
+                return false;
+            }
+        }
     }
 }

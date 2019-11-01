@@ -39,20 +39,21 @@ public class ConfigFileBuildWrapperConverter
         ModelASTSingleArgument singleArgument = new ModelASTSingleArgument( null);
         configFileProvider.setArgs( singleArgument );
 
-        for( ManagedFile managedFile : configFileBuildWrapper.getManagedFiles() ){
-            //configFileProvider([configFile(fileId: 'yup', targetLocation: 'myfile.txt')])
-            // FIXME we need something with java code to generate this...
-            StringBuilder gstring = new StringBuilder( "[configFile(fileId:'" );
-            gstring.append( managedFile.getFileId());
-            gstring.append( "', targetLocation: '" );
-            gstring.append( managedFile.getTargetLocation() );
-            gstring.append( "')]" );
-            // TODO what about variable???
-            singleArgument.setValue( ModelASTValue.fromGString( gstring.toString(), this ) );
-            return configFileProvider;
-        }
+        //for( ManagedFile managedFile : configFileBuildWrapper.getManagedFiles() ){
+        // only the 1st one
+        ManagedFile managedFile = configFileBuildWrapper.getManagedFiles().get( 0 );
+        //configFileProvider([configFile(fileId: 'yup', targetLocation: 'myfile.txt')])
+        // FIXME we need something with java code to generate this...
+        StringBuilder gstring = new StringBuilder( "[configFile(fileId:'" );
+        gstring.append( managedFile.getFileId());
+        gstring.append( "', targetLocation: '" );
+        gstring.append( managedFile.getTargetLocation() );
+        gstring.append( "')]" );
+        // TODO what about variable???
+        singleArgument.setValue( ModelASTValue.fromGString( gstring.toString(), this ) );
 
-        return null;
+        //}
+        return configFileProvider;
     }
 
     @Override

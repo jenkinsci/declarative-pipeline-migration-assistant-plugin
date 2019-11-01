@@ -8,6 +8,7 @@ import hudson.tasks.Maven;
 import hudson.util.ArgumentListBuilder;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
+import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
 import io.jenkins.plugins.todeclarative.converter.api.builder.BuilderConverter;
 import jenkins.model.Jenkins;
 import jenkins.mvn.FilePathGlobalSettingsProvider;
@@ -41,18 +42,15 @@ public class MavenConverter
     @Override
     public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, Builder builder )
     {
-        ModelASTTools tools = converterResult.getModelASTPipelineDef().getTools();
-        if ( tools == null )
-        {
-            tools = new ModelASTTools( this );
-        }
+
         Maven maven = (Maven) builder;
         Maven.MavenInstallation mavenInstallation = maven.getMaven();
         if ( mavenInstallation != null )
         {
             ModelASTKey key = new ModelASTKey( this );
             key.setKey( "maven" );
-            tools.getTools().put( key, ModelASTValue.fromConstant( mavenInstallation.getName(), this ) );
+            ModelASTUtils.addTool( converterResult.getModelASTPipelineDef(),
+                                   key, ModelASTValue.fromConstant( mavenInstallation.getName(), this ) );
         }
 
         FreeStyleProject freeStyleProject = (FreeStyleProject) request.getJob();
@@ -62,12 +60,8 @@ public class MavenConverter
         {
             ModelASTKey key = new ModelASTKey( this );
             key.setKey( "jdk" );
-            tools.getTools().put( key, ModelASTValue.fromConstant( jdk.getName(), this ) );
-        }
-
-        if(!tools.getTools().isEmpty())
-        {
-            converterResult.getModelASTPipelineDef().setTools( tools );
+            ModelASTUtils.addTool( converterResult.getModelASTPipelineDef(),
+                                   key, ModelASTValue.fromConstant( jdk.getName(), this ) );
         }
 
         ModelASTStage stage = new ModelASTStage( this );

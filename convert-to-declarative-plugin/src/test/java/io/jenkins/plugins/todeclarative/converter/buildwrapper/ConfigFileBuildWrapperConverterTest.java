@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
@@ -38,5 +39,17 @@ public class ConfigFileBuildWrapperConverterTest
         assertThat( groovy, containsString( "[configFile(" ) );
         assertThat( groovy, containsString( "fileId:'id1'" ) );
         assertThat( groovy, containsString( "targetLocation: 'myfile1.txt'" ) );
+    }
+
+    @Test
+    public void simpletestemptyvalues()
+        throws Exception
+    {
+        ConfigFileBuildWrapperConverter converter =
+            j.jenkins.getExtensionList( ConfigFileBuildWrapperConverter.class ).get( 0 );
+
+        ConfigFileBuildWrapper wrapper = new ConfigFileBuildWrapper( Collections.emptyList() );
+        ConverterResult result = new ConverterResult();
+        converter.convert( new ConverterRequest(), result, wrapper );
     }
 }
