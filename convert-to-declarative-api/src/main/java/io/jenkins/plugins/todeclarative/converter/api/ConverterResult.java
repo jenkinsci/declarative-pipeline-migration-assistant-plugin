@@ -20,11 +20,6 @@ public class ConverterResult
 
     private List<Warning> warnings = new ArrayList<>();
 
-    /**
-     * not used now but can be the created Job
-     */
-    private Job job;
-
     public ConverterResult()
     {
         // no op
@@ -44,16 +39,6 @@ public class ConverterResult
     {
         this.modelASTPipelineDef = modelASTPipelineDef;
         return this;
-    }
-
-    public Job getJob()
-    {
-        return job;
-    }
-
-    public void setJob( Job job )
-    {
-        this.job = job;
     }
 
     public void addWrappingTreeStep( Supplier<ModelASTTreeStep> treeStep )

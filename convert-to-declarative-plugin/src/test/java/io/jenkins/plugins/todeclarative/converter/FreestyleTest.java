@@ -27,7 +27,6 @@ import hudson.plugins.build_timeout.operations.FailOperation;
 import hudson.plugins.git.BranchSpec;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.UserRemoteConfig;
-import hudson.scm.NullSCM;
 import hudson.tasks.ArtifactArchiver;
 import hudson.tasks.BatchFile;
 import hudson.tasks.BuildTrigger;
@@ -55,7 +54,6 @@ import org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper;
 import org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile;
 import org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig;
 import org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider;
-import org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig;
 import org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper;
 import org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
@@ -236,7 +234,7 @@ public class FreestyleTest
 
         Assert.assertTrue( converter.canConvert( p ) );
 
-        ConverterRequest request = new ConverterRequest().job( p ).createdProjectName( "foo-beer" );
+        ConverterRequest request = new ConverterRequest().job( p );
         ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
 
         converter.convert( request, converterResult );
@@ -247,11 +245,6 @@ public class FreestyleTest
         assertThat( groovy, containsString( "branch: 'master'" ) );
         assertThat( groovy, containsString( "url: 'https://github.com/jenkinsci/foo.git'" ) );
         assertThat( groovy, containsString( "credentialsId: 'credsId'" ) );
-
-        Assert.assertEquals( 3, ( (WorkflowJob) converterResult.getJob() ).getTriggers().size() );
-
-        System.out.println( converterResult.getJob().getProperties() );
-
 
 
     }
@@ -431,7 +424,7 @@ public class FreestyleTest
 
         Assert.assertTrue( converter.canConvert( p ) );
 
-        ConverterRequest request = new ConverterRequest().job( p ).createProject( false );
+        ConverterRequest request = new ConverterRequest().job( p );
         ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
 
         converter.convert( request, converterResult );
@@ -504,7 +497,7 @@ public class FreestyleTest
         Assert.assertTrue( converter.canConvert( p ) );
 
         ConverterRequest request =
-            new ConverterRequest().job( p ).createProject( true ).createdProjectName( "foo-blabla" );
+            new ConverterRequest().job( p );
         ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
 
         converter.convert( request, converterResult );
@@ -531,6 +524,8 @@ public class FreestyleTest
         FreeStyleProject p = j.createFreeStyleProject( projectName );
         p.getBuildersList().add( new FakeBuilder() );
 
+        p.addProperty( new hudson.plugins.jira.JiraProjectProperty("foosite") );
+
         p.getBuildWrappersList().add( new FakeBuildWrapper() );
         p.getPublishersList().add( new FakeRecorder() );
 
@@ -540,7 +535,7 @@ public class FreestyleTest
         FreestyleToDeclarativeConverter converter =
             Jenkins.get().getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
         converter.convert( request, converterResult );
-        assertEquals( converterResult.getWarnings().toString(), 4, converterResult.getWarnings().size() );
+        assertEquals( converterResult.getWarnings().toString(), 3, converterResult.getWarnings().size() );
 
         assertEquals( 1, converterResult.getWarnings().stream() //
             .filter( warning -> warning.getPluginClassName().equals( FakeBuilder.class.getName() ) ) //
@@ -552,10 +547,6 @@ public class FreestyleTest
 
         assertEquals( 1, converterResult.getWarnings().stream() //
             .filter( warning -> warning.getPluginClassName().equals( FakeRecorder.class.getName() ) ) //
-            .collect( Collectors.toList() ).size() );
-
-        assertEquals( 1, converterResult.getWarnings().stream() //
-            .filter( warning -> warning.getPluginClassName().equals( NullSCM.class.getName() ) ) //
             .collect( Collectors.toList() ).size() );
 
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();

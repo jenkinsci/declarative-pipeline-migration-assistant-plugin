@@ -44,7 +44,7 @@ public class ToDeclarativeAction
         try
         {
             FreestyleToDeclarativeConverter converter = Jenkins.get().getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
-            ConverterRequest converterRequest = new ConverterRequest().job( job ).createProject( false );
+            ConverterRequest converterRequest = new ConverterRequest().job( job );
             ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
             converter.convert( converterRequest, converterResult );
 //            if(true)

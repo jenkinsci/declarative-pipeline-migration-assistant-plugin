@@ -12,10 +12,6 @@ public class ConverterRequest
 {
     private Job job;
 
-    private boolean createProject;
-
-    private String createdProjectName;
-
     /**
      * Map to store some values related to the current conversion
      * if you use that please add the key name as a constant
@@ -41,40 +37,6 @@ public class ConverterRequest
     public ConverterRequest job( Job job )
     {
         this.job = job;
-        return this;
-    }
-
-    public boolean isCreateProject()
-    {
-        return createProject;
-    }
-
-    public void setCreateProject( boolean createProject )
-    {
-        this.createProject = createProject;
-    }
-
-    public ConverterRequest createProject( boolean createProject )
-    {
-        this.createProject = createProject;
-        return this;
-    }
-
-    public String getCreatedProjectName()
-    {
-        return createdProjectName;
-    }
-
-    public void setCreatedProjectName( String createdProjectName )
-    {
-        this.createProject = true;
-        this.createdProjectName = createdProjectName;
-    }
-
-    public ConverterRequest createdProjectName( String createdProjectName )
-    {
-        this.createProject = true;
-        this.createdProjectName = createdProjectName;
         return this;
     }
 

@@ -46,78 +46,46 @@ public class FreestyleToDeclarativeConverter
     public void convert( ConverterRequest converterRequest, ConverterResult converterResult )
         throws ConverterException
     {
-        try
-        {
-            FreeStyleProject freeStyleProject = (FreeStyleProject) converterRequest.getJob();
-            if ( converterRequest.isCreateProject() )
+
+        FreeStyleProject freeStyleProject = (FreeStyleProject) converterRequest.getJob();
+
+        convertBuildWrappers( converterRequest, converterResult, freeStyleProject.getBuildWrappersList() );
+
+        { // label
+            Label label = freeStyleProject.getAssignedLabel();
+            if ( label != null )
             {
-                WorkflowJob workflowJob = Jenkins.get().createProject( WorkflowJob.class,
-                                                                       // FIXME find something better than foo as default name :)
-                                                                       converterRequest.getCreatedProjectName() == null
-                                                                           ? "foo"
-                                                                           : converterRequest.getCreatedProjectName() );
-                converterResult.setJob( workflowJob );
+                ModelASTAgent agent = new ModelASTAgent( this );
+                ModelASTKey agentKey = new ModelASTKey( this );
+                agentKey.setKey( "'" + label.getName() + "'" );
 
-                workflowJob.makeDisabled( freeStyleProject.isDisabled() );
-                workflowJob.setQuietPeriod( freeStyleProject.getQuietPeriod() );
-                workflowJob.setDescription( freeStyleProject.getDescription() );
-                if ( !freeStyleProject.getTriggers().isEmpty() )
-                {
-                    workflowJob.setTriggers( new ArrayList<>( freeStyleProject.getTriggers().values() ) );
-                }
+                agent.setAgentType( agentKey );
+                converterResult.getModelASTPipelineDef().setAgent( agent );
             }
-
-            convertBuildWrappers( converterRequest, converterResult, freeStyleProject.getBuildWrappersList() );
-
-            { // label
-                Label label = freeStyleProject.getAssignedLabel();
-                if ( label != null )
-                {
-                    ModelASTAgent agent = new ModelASTAgent( this );
-                    ModelASTKey agentKey = new ModelASTKey( this );
-                    agentKey.setKey( "'" + label.getName() + "'" );
-
-                    agent.setAgentType( agentKey );
-                    converterResult.getModelASTPipelineDef().setAgent( agent );
-                }
-                else
-                {
-                    ModelASTAgent agent = new ModelASTAgent( this );
-                    ModelASTKey agentKey = new ModelASTKey( this );
-                    agentKey.setKey( "any" );
-
-                    agent.setAgentType( agentKey );
-                    converterResult.getModelASTPipelineDef().setAgent( agent );
-                }
-            }
-
-            { // scm
-                SCM scm = freeStyleProject.getScm();
-                if ( scm != null )
-                {
-                    convertScm( converterRequest, converterResult, scm );
-                }
-            }
-            convertJobProperties( converterRequest, converterResult, freeStyleProject.getProperties() );
-
-            convertBuilders( converterRequest, converterResult, freeStyleProject.getBuilders() );
-
-            convertPublishers( converterRequest, converterResult, freeStyleProject.getPublishersList() );
-
-            if ( converterRequest.isCreateProject() )
+            else
             {
+                ModelASTAgent agent = new ModelASTAgent( this );
+                ModelASTKey agentKey = new ModelASTKey( this );
+                agentKey.setKey( "any" );
 
-                String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
-                // FIXME make sandbox configurable
-                ( (WorkflowJob) converterResult.getJob() ).setDefinition( new CpsFlowDefinition( groovy, true ) );
-                converterResult.getJob().save();
+                agent.setAgentType( agentKey );
+                converterResult.getModelASTPipelineDef().setAgent( agent );
             }
+        }
 
+        { // scm
+            SCM scm = freeStyleProject.getScm();
+            if ( scm != null )
+            {
+                convertScm( converterRequest, converterResult, scm );
+            }
         }
-        catch ( IOException e )
-        {
-            throw new ConverterException( e.getMessage(), e );
-        }
+        convertJobProperties( converterRequest, converterResult, freeStyleProject.getProperties() );
+
+        convertBuilders( converterRequest, converterResult, freeStyleProject.getBuilders() );
+
+        convertPublishers( converterRequest, converterResult, freeStyleProject.getPublishersList() );
+
     }
 
     protected void convertBuildWrappers( ConverterRequest converterRequest, ConverterResult converterResult,
@@ -270,23 +238,15 @@ public class FreestyleToDeclarativeConverter
             }
             else
             {
-                if ( converterRequest.isCreateProject() )
+                if(entry.getKey().getClass().getName().startsWith( "hudson.plugins.jira.JiraProjectProperty" ))
                 {
-                    try
-                    {
-                        converterResult.getJob().addProperty( entry.getValue() );
-                    }
-                    catch ( IOException e )
-                    {
-                        // FIXME better exception handling here
-                        e.printStackTrace();
-                    }
+                    // we ignore this one as it is not removed when removing jira publishers
+                    // so we avoid false positive
+                    break;
                 }
-                else
-                {
-                    converterResult.addWarning(
-                        new Warning( "Converter not found", entry.getKey().getClass().getName() ) );
-                }
+                converterResult.addWarning(
+                    new Warning( "Converter not found", entry.getKey().getClass().getName() ) );
+
             }
         }
 
