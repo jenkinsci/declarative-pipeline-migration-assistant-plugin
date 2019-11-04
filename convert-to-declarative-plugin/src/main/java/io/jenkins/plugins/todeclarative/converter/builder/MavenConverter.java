@@ -23,7 +23,6 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTSingleArgument;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTools;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 
 import java.util.Arrays;

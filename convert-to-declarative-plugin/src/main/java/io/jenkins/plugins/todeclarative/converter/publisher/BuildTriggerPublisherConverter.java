@@ -19,7 +19,7 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 import java.util.HashMap;
 import java.util.Map;
 
-@Extension
+@Extension(optional = true)
 public class BuildTriggerPublisherConverter
     implements PublisherConverter
 {

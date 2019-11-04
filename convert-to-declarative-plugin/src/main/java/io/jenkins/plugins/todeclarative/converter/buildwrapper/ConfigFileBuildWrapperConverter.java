@@ -14,7 +14,7 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Extension
+@Extension(optional = true)
 public class ConfigFileBuildWrapperConverter
     implements BuildWrapperConverter
 {

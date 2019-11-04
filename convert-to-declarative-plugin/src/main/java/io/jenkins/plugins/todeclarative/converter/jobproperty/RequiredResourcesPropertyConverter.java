@@ -7,11 +7,8 @@ import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.jobproperty.JobPropertyConverter;
 import org.apache.commons.lang3.StringUtils;
-import org.jenkins.plugins.lockableresources.RequiredResourcesProperty;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTMethodArg;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOption;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOptions;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +16,7 @@ import java.util.List;
 import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.addOption;
 import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.buildKeyPairArg;
 
-@Extension
+@Extension(optional = true)
 public class RequiredResourcesPropertyConverter
     implements JobPropertyConverter
 {
@@ -29,7 +26,8 @@ public class RequiredResourcesPropertyConverter
                          JobProperty jobProperty )
     {
 
-        RequiredResourcesProperty requiredResourcesProperty = (RequiredResourcesProperty) jobProperty;
+        org.jenkins.plugins.lockableresources.RequiredResourcesProperty requiredResourcesProperty =
+            (org.jenkins.plugins.lockableresources.RequiredResourcesProperty) jobProperty;
 
         //lock(label: 'label', resource: 'resource')
         ModelASTOption option = new ModelASTOption( this );
@@ -53,6 +51,6 @@ public class RequiredResourcesPropertyConverter
     @Override
     public boolean canConvert( JobPropertyDescriptor jobPropertyDescriptor, JobProperty jobProperty )
     {
-        return jobProperty.getClass().isAssignableFrom( RequiredResourcesProperty.class );
+        return jobProperty.getClass().isAssignableFrom( org.jenkins.plugins.lockableresources.RequiredResourcesProperty.class );
     }
 }

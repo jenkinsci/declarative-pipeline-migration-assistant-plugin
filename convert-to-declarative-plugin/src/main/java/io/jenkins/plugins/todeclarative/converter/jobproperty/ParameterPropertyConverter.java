@@ -18,7 +18,6 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildParameter
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTMethodArg;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

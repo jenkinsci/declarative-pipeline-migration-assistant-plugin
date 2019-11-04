@@ -160,8 +160,6 @@ public class ToDeclarativeActionTest
         ToDeclarativeAction.ToDeclarativeActionDescriptor actionDescriptor =
             j.jenkins.getExtensionList( ToDeclarativeAction.ToDeclarativeActionDescriptor.class ).get( 0 );
 
-        assertNotNull( actionDescriptor.doCheckNewName( "foo", p ) );
-
         ToDeclarativeAction.ActionInjector actionInjector =
             j.jenkins.getExtensionList( ToDeclarativeAction.ActionInjector.class).get( 0 );
 

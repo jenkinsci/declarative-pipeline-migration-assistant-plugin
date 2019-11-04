@@ -22,7 +22,7 @@ import java.util.List;
 
 import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.buildKeyPairArg;
 
-@Extension
+@Extension(optional = true)
 public class BuildTimeoutWrapperConverter
     implements BuildWrapperConverter
 {

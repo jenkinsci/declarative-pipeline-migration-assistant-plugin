@@ -3,8 +3,6 @@ package io.jenkins.plugins.todeclarative.converter.publisher;
 import htmlpublisher.HtmlPublisher;
 import htmlpublisher.HtmlPublisherTarget;
 import hudson.model.FreeStyleProject;
-import hudson.model.Result;
-import hudson.tasks.BuildTrigger;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPostBuild;
@@ -15,7 +13,6 @@ import org.jvnet.hudson.test.JenkinsRule;
 import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
 
 public class HTMLPublisherConverterTest

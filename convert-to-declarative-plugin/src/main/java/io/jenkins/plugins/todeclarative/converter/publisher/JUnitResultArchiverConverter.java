@@ -9,14 +9,8 @@ import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
 import io.jenkins.plugins.todeclarative.converter.api.publisher.PublisherConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildCondition;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTNamedArgumentList;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Extension
 public class JUnitResultArchiverConverter

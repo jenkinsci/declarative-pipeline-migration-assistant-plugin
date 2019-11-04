@@ -1,7 +1,5 @@
 package io.jenkins.plugins.todeclarative.converter.publisher;
 
-import htmlpublisher.HtmlPublisher;
-import htmlpublisher.HtmlPublisherTarget;
 import hudson.model.FreeStyleProject;
 import hudson.tasks.junit.JUnitResultArchiver;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
@@ -10,8 +8,6 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPostBuild;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
-
-import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;

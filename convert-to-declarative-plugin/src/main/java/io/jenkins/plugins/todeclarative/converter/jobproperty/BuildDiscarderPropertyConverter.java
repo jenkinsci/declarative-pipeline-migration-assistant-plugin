@@ -13,8 +13,6 @@ import jenkins.model.BuildDiscarderProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTMethodArg;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOption;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOptions;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -7,17 +7,9 @@ import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
 import io.jenkins.plugins.todeclarative.converter.api.publisher.PublisherConverter;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildCondition;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTNamedArgumentList;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
-import org.jenkinsci.plugins.structs.describable.DescribableModel;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.addStep;
 

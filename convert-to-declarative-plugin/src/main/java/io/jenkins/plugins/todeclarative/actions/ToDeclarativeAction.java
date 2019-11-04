@@ -5,7 +5,7 @@ import hudson.model.Action;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
-import hudson.util.FormValidation;
+import hudson.security.Permission;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.Warning;
@@ -13,8 +13,6 @@ import io.jenkins.plugins.todeclarative.converter.freestyle.FreestyleToDeclarati
 import jenkins.model.Jenkins;
 import jenkins.model.TransientActionFactory;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.CheckForNull;
 import java.util.Arrays;
@@ -91,6 +89,7 @@ public class ToDeclarativeAction
     @Override
     public String getUrlName()
     {
+        this.job.checkPermission( Permission.CONFIGURE );
         return "todeclarative";
     }
 
@@ -132,21 +131,7 @@ public class ToDeclarativeAction
     public static final class ToDeclarativeActionDescriptor
         extends Descriptor<ToDeclarativeAction>
     {
-
-        /**
-         * TODO Validate new name by checking if any existing job exists with same name at current level.
-         *
-         * @param newName Desired new name of new pipeline job.
-         * @return Form Validation response with error message if any.
-         */
-        public FormValidation doCheckNewName( @QueryParameter( "newName" ) String newName,
-                                              @AncestorInPath FreeStyleProject job )
-        {
-
-            return FormValidation.ok();
-        }
-
-
+        // no op
     }
 
 }
