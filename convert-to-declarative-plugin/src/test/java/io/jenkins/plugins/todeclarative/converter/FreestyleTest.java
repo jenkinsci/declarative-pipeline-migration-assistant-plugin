@@ -15,6 +15,7 @@ import hudson.model.FileParameterDefinition;
 import hudson.model.FreeStyleProject;
 import hudson.model.JDK;
 import hudson.model.Job;
+import hudson.model.Label;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Result;
@@ -89,12 +90,13 @@ public class FreestyleTest
     public void freestyle_conversion()
         throws Exception
     {
-
+        String nodeName = "FOO_AGENT";
         Slave slave = j.createOnlineSlave();
-        slave.setLabelString( "FOO_AGENT" );
+        slave.setLabelString( nodeName );
 
         String projectName = Long.toString( System.currentTimeMillis() );
         FreeStyleProject p = j.createFreeStyleProject( projectName );
+        p.setAssignedLabel( Label.get( nodeName ) );
         p.addProperty( new GithubProjectProperty( "https://github.com/jenkinsci/foo" ) );
 
         { // git
@@ -245,7 +247,7 @@ public class FreestyleTest
         assertThat( groovy, containsString( "branch: 'master'" ) );
         assertThat( groovy, containsString( "url: 'https://github.com/jenkinsci/foo.git'" ) );
         assertThat( groovy, containsString( "credentialsId: 'credsId'" ) );
-
+        assertThat( groovy, containsString( "agent { label '"+ nodeName +"' }" ) );
 
     }
 
@@ -270,11 +272,9 @@ public class FreestyleTest
         throws Exception
     {
 
-        Slave slave = j.createOnlineSlave();
-        slave.setLabelString( "FOO_AGENT" );
-
         String projectName = Long.toString( System.currentTimeMillis() );
         FreeStyleProject p = j.createFreeStyleProject( projectName );
+
         p.addProperty( new GithubProjectProperty( "http://github.com/beer/paleale" ) );
 
         p.addProperty( new BuildDiscarderProperty(new NoOpBuildDiscarder() ));
@@ -378,6 +378,7 @@ public class FreestyleTest
 
         System.out.println( groovy );
 
+        assertThat( groovy, containsString( "agent any" ) );
         WorkflowJob job = j.jenkins.createProject( WorkflowJob.class, "singleStep" );
         job.setDefinition( new CpsFlowDefinition( groovy, true ) );
 

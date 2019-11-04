@@ -24,10 +24,14 @@ import io.jenkins.plugins.todeclarative.converter.api.scm.ScmConverter;
 import io.jenkins.plugins.todeclarative.converter.builder.NoConverterBuilder;
 import io.jenkins.plugins.todeclarative.converter.publisher.NoPublisherConverter;
 import jenkins.model.Jenkins;
+import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTAgent;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKeyValueOrMethodCallPair;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTMethodArg;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStages;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 
@@ -52,14 +56,15 @@ public class FreestyleToDeclarativeConverter
         convertBuildWrappers( converterRequest, converterResult, freeStyleProject.getBuildWrappersList() );
 
         { // label
-            Label label = freeStyleProject.getAssignedLabel();
-            if ( label != null )
+            String label = freeStyleProject.getAssignedLabelString();
+            if ( StringUtils.isNotBlank(label) )
             {
                 ModelASTAgent agent = new ModelASTAgent( this );
-                ModelASTKey agentKey = new ModelASTKey( this );
-                agentKey.setKey( "'" + label.getName() + "'" );
+                ModelASTKey agentType = new ModelASTKey( this );
 
-                agent.setAgentType( agentKey );
+                // to avoid NPE in ModelASTAgent...
+                agentType.setKey( "{ label '"+ label +"' }" );
+                agent.setAgentType( agentType );
                 converterResult.getModelASTPipelineDef().setAgent( agent );
             }
             else
