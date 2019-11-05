@@ -19,10 +19,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.jenkinsci.plugins.variant.OptionalExtension;
 
 import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.buildKeyPairArg;
 
-@Extension(optional = true)
+@OptionalExtension(requirePlugins = { "build-timeout" })
 public class BuildTimeoutWrapperConverter
     implements BuildWrapperConverter
 {

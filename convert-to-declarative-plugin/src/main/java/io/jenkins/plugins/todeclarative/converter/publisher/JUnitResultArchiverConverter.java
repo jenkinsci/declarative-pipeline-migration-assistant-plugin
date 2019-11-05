@@ -1,6 +1,5 @@
 package io.jenkins.plugins.todeclarative.converter.publisher;
 
-import hudson.Extension;
 import hudson.tasks.Publisher;
 import hudson.tasks.junit.JUnitResultArchiver;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
@@ -11,8 +10,9 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildCondition;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
+import org.jenkinsci.plugins.variant.OptionalExtension;
 
-@Extension
+@OptionalExtension(requirePlugins = { "junit" })
 public class JUnitResultArchiverConverter
     implements PublisherConverter
 {

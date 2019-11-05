@@ -1,17 +1,16 @@
 package io.jenkins.plugins.todeclarative.converter.jobproperty;
 
-import hudson.Extension;
+import com.coravy.hudson.plugins.github.GithubProjectProperty;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.jobproperty.JobPropertyConverter;
+import org.jenkinsci.plugins.variant.OptionalExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-
-@Extension
+@OptionalExtension(requirePlugins = { "github" })
 public class GithubJobPropertyConverter implements JobPropertyConverter
 {
 
@@ -32,6 +31,6 @@ public class GithubJobPropertyConverter implements JobPropertyConverter
     public boolean canConvert( JobPropertyDescriptor jobPropertyDescriptor,
                                JobProperty jobProperty )
     {
-        return jobProperty instanceof com.coravy.hudson.plugins.github.GithubProjectProperty;
+        return jobProperty instanceof GithubProjectProperty;
     }
 }
