@@ -47,6 +47,7 @@ import jenkins.model.BuildDiscarderProperty;
 import jenkins.model.Jenkins;
 import jenkins.triggers.ReverseBuildTrigger;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hamcrest.CoreMatchers;
 import org.jenkins.plugins.lockableresources.RequiredResourcesProperty;
 import org.jenkinsci.lib.configprovider.ConfigProvider;
@@ -120,7 +121,6 @@ public class FreestyleTest
             RequiredResourcesProperty requiredResourcesProperty =
                 new RequiredResourcesProperty( "beer", null, null, "labelName", null );
             p.addProperty( requiredResourcesProperty );
-            p.addProperty( new RequiredResourcesProperty( null, null, null, null, null ) );
         }
 
         {
@@ -248,6 +248,10 @@ public class FreestyleTest
         assertThat( groovy, containsString( "url: 'https://github.com/jenkinsci/foo.git'" ) );
         assertThat( groovy, containsString( "credentialsId: 'credsId'" ) );
         assertThat( groovy, containsString( "agent { label '"+ nodeName +"' }" ) );
+
+        assertThat( groovy, containsString( "lock" ) );
+        assertThat( groovy, containsString( "resource: 'beer'" ) );
+        assertThat( groovy, containsString( "label: 'labelName'" ) );
 
     }
 
@@ -530,25 +534,31 @@ public class FreestyleTest
         p.getBuildWrappersList().add( new FakeBuildWrapper() );
         p.getPublishersList().add( new FakeRecorder() );
 
+
+
+        { // general settings
+            p.setConcurrentBuild( false );
+            p.setDisabled( true );
+        }
         ConverterRequest request = new ConverterRequest().job( p );
         ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
 
         FreestyleToDeclarativeConverter converter =
             Jenkins.get().getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
         converter.convert( request, converterResult );
-        assertEquals( converterResult.getWarnings().toString(), 3, converterResult.getWarnings().size() );
+        assertEquals( converterResult.getWarnings().toString(), 5, converterResult.getWarnings().size() );
 
         assertEquals( 1, converterResult.getWarnings().stream() //
-            .filter( warning -> warning.getPluginClassName().equals( FakeBuilder.class.getName() ) ) //
-            .collect( Collectors.toList() ).size() );
+            .filter( warning -> StringUtils.equals( warning.getPluginClassName(), FakeBuilder.class.getName() ) ) //
+            .count());
 
         assertEquals( 1, converterResult.getWarnings().stream() //
-            .filter( warning -> warning.getPluginClassName().equals( FakeBuildWrapper.class.getName() ) ) //
-            .collect( Collectors.toList() ).size() );
+            .filter( warning -> StringUtils.equals( warning.getPluginClassName(), FakeBuildWrapper.class.getName() ) ) //
+            .count());
 
         assertEquals( 1, converterResult.getWarnings().stream() //
-            .filter( warning -> warning.getPluginClassName().equals( FakeRecorder.class.getName() ) ) //
-            .collect( Collectors.toList() ).size() );
+            .filter( warning -> StringUtils.equals( warning.getPluginClassName(), FakeRecorder.class.getName() ) ) //
+            .count());
 
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
 

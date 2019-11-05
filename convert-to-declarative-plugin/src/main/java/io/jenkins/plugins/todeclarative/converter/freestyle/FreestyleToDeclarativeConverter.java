@@ -45,6 +45,16 @@ public class FreestyleToDeclarativeConverter
 
         FreeStyleProject freeStyleProject = (FreeStyleProject) converterRequest.getJob();
 
+        {
+            // manage general warning
+            if(freeStyleProject.isDisabled()){
+                converterResult.addWarning( new Warning( "Current Freestyle project is disable", null ) );
+            }
+            if(!freeStyleProject.isConcurrentBuild()){
+                converterResult.addWarning( new Warning( "Current Freestyle project is marked as no concurrent build but it is default option for pipeline", null ) );
+            }
+        }
+
         convertBuildWrappers( converterRequest, converterResult, freeStyleProject.getBuildWrappersList() );
 
         { // label
@@ -239,7 +249,7 @@ public class FreestyleToDeclarativeConverter
                 {
                     // we ignore this one as it is not removed when removing jira publishers
                     // so we avoid false positive
-                    break;
+                    continue;
                 }
                 converterResult.addWarning(
                     new Warning( "Converter not found", entry.getKey().getClass().getName() ) );
