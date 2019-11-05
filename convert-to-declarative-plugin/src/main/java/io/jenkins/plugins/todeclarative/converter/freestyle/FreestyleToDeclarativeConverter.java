@@ -57,27 +57,50 @@ public class FreestyleToDeclarativeConverter
 
         convertBuildWrappers( converterRequest, converterResult, freeStyleProject.getBuildWrappersList() );
 
-        { // label
+        { // label customWorkspace etc...
             String label = freeStyleProject.getAssignedLabelString();
-            if ( StringUtils.isNotBlank(label) )
-            {
-                ModelASTAgent agent = new ModelASTAgent( this );
-                ModelASTKey agentType = new ModelASTKey( this );
+            ModelASTAgent agent = new ModelASTAgent( this );
 
-                // to avoid NPE in ModelASTAgent...
-                agentType.setKey( "{ label '"+ label +"' }" );
-                agent.setAgentType( agentType );
-                converterResult.getModelASTPipelineDef().setAgent( agent );
-            }
-            else
-            {
-                ModelASTAgent agent = new ModelASTAgent( this );
+            String customWorkspace = freeStyleProject.getCustomWorkspace();
+
+            if(StringUtils.isBlank( label ) && StringUtils.isBlank( customWorkspace )) {
                 ModelASTKey agentKey = new ModelASTKey( this );
                 agentKey.setKey( "any" );
-
                 agent.setAgentType( agentKey );
-                converterResult.getModelASTPipelineDef().setAgent( agent );
+            } else
+            {
+
+//            agent {
+//                node {
+//                    label 'my-defined-label'
+//                    customWorkspace '/some/other/path'
+//                }
+//            }
+
+                ModelASTKey agentType = new ModelASTKey( this ){
+                    // so ugly to avoid NPE in ModelASTAgent...
+                    @Override
+                    public String toGroovy()
+                    {
+                        StringBuilder groovy = new StringBuilder( "{\n node { \n" );
+                        if(StringUtils.isNotBlank( label )){
+                            groovy.append( "    label '" + label + "'\n" );
+                        } else {
+                            groovy.append( "    label ''\n" );
+                        }
+                        if(StringUtils.isNotBlank( customWorkspace )){
+                            groovy.append( "    customWorkspace '" + customWorkspace + "'\n" );
+                        }
+                        groovy.append( "    } \n}" );
+                        return groovy.toString();
+                    }
+                };
+
+                agent.setAgentType( agentType );
+
             }
+
+            converterResult.getModelASTPipelineDef().setAgent( agent );
         }
 
         { // scm

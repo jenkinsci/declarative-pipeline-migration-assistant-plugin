@@ -46,6 +46,7 @@ import jenkins.model.BuildDiscarder;
 import jenkins.model.BuildDiscarderProperty;
 import jenkins.model.Jenkins;
 import jenkins.triggers.ReverseBuildTrigger;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hamcrest.CoreMatchers;
@@ -69,8 +70,11 @@ import org.jvnet.hudson.test.ExtractResourceSCM;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.ToolInstallations;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -99,6 +103,8 @@ public class FreestyleTest
         FreeStyleProject p = j.createFreeStyleProject( projectName );
         p.setAssignedLabel( Label.get( nodeName ) );
         p.addProperty( new GithubProjectProperty( "https://github.com/jenkinsci/foo" ) );
+        File f = new File( "./target");
+        p.setCustomWorkspace( f.getAbsolutePath() );
 
         { // git
             List<UserRemoteConfig> repoList = new ArrayList<>();
@@ -247,7 +253,14 @@ public class FreestyleTest
         assertThat( groovy, containsString( "branch: 'master'" ) );
         assertThat( groovy, containsString( "url: 'https://github.com/jenkinsci/foo.git'" ) );
         assertThat( groovy, containsString( "credentialsId: 'credsId'" ) );
-        assertThat( groovy, containsString( "agent { label '"+ nodeName +"' }" ) );
+//        agent {
+//            node {
+//                label ""
+//                customWorkspace "/blabla/blabla"
+//            }
+//        }
+        assertThat( groovy, containsString( "label 'FOO_AGENT'" ) );
+        assertThat( groovy, containsString( "customWorkspace '" + f.getAbsolutePath() + "'" ));
 
         assertThat( groovy, containsString( "lock" ) );
         assertThat( groovy, containsString( "resource: 'beer'" ) );
@@ -280,6 +293,14 @@ public class FreestyleTest
         FreeStyleProject p = j.createFreeStyleProject( projectName );
 
         p.addProperty( new GithubProjectProperty( "http://github.com/beer/paleale" ) );
+
+        File f = new File( "./target/ffoo/bar");
+        if (Files.exists(f.toPath()))
+        {
+            FileUtils.deleteDirectory( f );
+        }
+        Files.createDirectories( f.toPath() );
+        p.setCustomWorkspace( f.getAbsolutePath() );
 
         p.addProperty( new BuildDiscarderProperty(new NoOpBuildDiscarder() ));
 
@@ -382,13 +403,18 @@ public class FreestyleTest
 
         System.out.println( groovy );
 
-        assertThat( groovy, containsString( "agent any" ) );
+        assertThat( groovy, containsString( "agent" ) );
+        assertThat( groovy, containsString( "customWorkspace '" + f.getAbsolutePath() + "'"));
         WorkflowJob job = j.jenkins.createProject( WorkflowJob.class, "singleStep" );
         job.setDefinition( new CpsFlowDefinition( groovy, true ) );
 
-        FilePath ws = j.jenkins.getWorkspaceFor( job );
-        FilePath testFile = ws.child( "test-result.xml" );
-        testFile.copyFrom( Thread.currentThread().getContextClassLoader().getResourceAsStream( "junit-report.xml" ) );
+//        FilePath ws = j.jenkins.getWorkspaceFor( job );
+//        FilePath testFile = ws.child( "test-result.xml" );
+//        testFile.copyFrom( Thread.currentThread().getContextClassLoader().getResourceAsStream( "junit-report.xml" ) );
+
+        // copy the test file
+        Files.copy( Paths.get("src", "test", "resources", "junit-report.xml"),
+                    new File(f,"test-result.xml").toPath());
 
         WorkflowRun run = job.scheduleBuild2( 0 ).get();
 
