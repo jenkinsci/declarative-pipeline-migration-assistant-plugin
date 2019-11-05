@@ -36,7 +36,7 @@ public class BuildTimeoutWrapperConverter
 
         if(!(strategy instanceof AbsoluteTimeOutStrategy)){
             converterResult.addWarning( new Warning( "we can only convert Absolute timeout and not "
-                                                                         + strategy.getDescriptor().clazz,
+                                                                         + strategy.getDescriptor().getDisplayName(),
                                                      BuildTimeOutStrategy.class.getName() ));
             return null;
         }

@@ -1,6 +1,8 @@
 package io.jenkins.plugins.todeclarative.converter.freestyle;
 
 import hudson.Extension;
+import hudson.model.Describable;
+import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
 import hudson.model.Job;
 import hudson.model.JobProperty;
@@ -144,7 +146,7 @@ public class FreestyleToDeclarativeConverter
             }
             else
             {
-                converterResult.addWarning( new Warning( "Converter not found", wrapper.getClass().getName() ) );
+                converterResult.addWarning( new Warning( "Converter not found '" + getDisplayName(wrapper) + "'", wrapper.getClass().getName() ) );
             }
         }
     }
@@ -180,11 +182,27 @@ public class FreestyleToDeclarativeConverter
             else
             {
                 converterResult.addWarning(
-                    new Warning( "Converter not found", publisher.getClass().getName() ) );
+                    new Warning( "Converter not found '" + getDisplayName(publisher) + "'", publisher.getClass().getName() ) );
                 // add fake post with commented step named with the plugin class name
                 Jenkins.get().getExtensionList( NoPublisherConverter.class ).iterator()
                     .next().convert( converterRequest, converterResult, publisher );
             }
+        }
+    }
+
+    /**
+     *
+     * @param describable the {@link Describable} instance to find displayName
+     * @return the displayName or empty String
+     */
+    private String getDisplayName( Describable describable ) {
+        try
+        {
+            return describable.getDescriptor() == null ? "" : describable.getDescriptor().getDisplayName();
+        }
+        catch ( Throwable e )
+        {
+            return "";
         }
     }
 
@@ -199,7 +217,7 @@ public class FreestyleToDeclarativeConverter
         }
         else
         {
-            converterResult.addWarning( new Warning( "SCM Converter not found", scm.getClass().getName() ) );
+            converterResult.addWarning( new Warning( "SCM Converter not found '" + getDisplayName(scm) + "'", scm.getClass().getName() ) );
         }
     }
 
@@ -240,7 +258,7 @@ public class FreestyleToDeclarativeConverter
                 else
                 {
                     converterResult.addWarning(
-                        new Warning( "Builder Converter not found", builder.getClass().getName() ) );
+                        new Warning( "Builder Converter not found '" + getDisplayName(builder)+ "'", builder.getClass().getName() ) );
                     // add fake stage with commented step named with the plugin class name
                     ModelASTStage stage = Jenkins.get().getExtensionList( NoConverterBuilder.class ).iterator()
                         .next().convert( converterRequest, converterResult, builder );
@@ -275,7 +293,7 @@ public class FreestyleToDeclarativeConverter
                     continue;
                 }
                 converterResult.addWarning(
-                    new Warning( "Converter not found", entry.getKey().getClass().getName() ) );
+                    new Warning( "Converter not found '" + entry.getKey().getDisplayName() + "'", entry.getKey().getClass().getName() ) );
 
             }
         }

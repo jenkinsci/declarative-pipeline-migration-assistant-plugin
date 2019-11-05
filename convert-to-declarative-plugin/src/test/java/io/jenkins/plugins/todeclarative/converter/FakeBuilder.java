@@ -3,9 +3,15 @@ package io.jenkins.plugins.todeclarative.converter;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
+import hudson.model.Descriptor;
+import hudson.plugins.jira.JiraIssueUpdater;
+import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
+import org.jenkinsci.Symbol;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 @Extension
@@ -16,5 +22,16 @@ public class FakeBuilder extends Builder
         throws InterruptedException, IOException
     {
         return super.perform( build, launcher, listener );
+    }
+
+    @Extension
+    public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
+
+    public static class DescriptorImpl extends BuildStepDescriptor<Builder> {
+        @Override
+        public boolean isApplicable( Class<? extends AbstractProject> aClass )
+        {
+            return true;
+        }
     }
 }
