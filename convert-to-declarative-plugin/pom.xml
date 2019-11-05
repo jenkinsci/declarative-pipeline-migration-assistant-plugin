@@ -67,14 +67,15 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>htmlpublisher</artifactId>
-      <version>1.18</version>
+      <version>1.21</version>
+      <!-- non mandatory plugin  -->
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>build-timeout</artifactId>
       <version>1.18</version>
-      <optional>true</optional>
+      <!-- non mandatory plugin <optional>true</optional> -->
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
