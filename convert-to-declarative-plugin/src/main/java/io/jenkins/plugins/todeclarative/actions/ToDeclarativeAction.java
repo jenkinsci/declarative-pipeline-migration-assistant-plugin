@@ -5,6 +5,7 @@ import hudson.model.Action;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
+import hudson.model.Job;
 import hudson.security.Permission;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
@@ -39,6 +40,7 @@ public class ToDeclarativeAction
     public String doConvert()
         throws Exception
     {
+        job.checkPermission(Job.CONFIGURE);
         try
         {
             FreestyleToDeclarativeConverter converter = Jenkins.get().getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
@@ -88,7 +90,6 @@ public class ToDeclarativeAction
     @Override
     public String getUrlName()
     {
-        this.job.checkPermission( Permission.CONFIGURE );
         return "todeclarative";
     }
 
