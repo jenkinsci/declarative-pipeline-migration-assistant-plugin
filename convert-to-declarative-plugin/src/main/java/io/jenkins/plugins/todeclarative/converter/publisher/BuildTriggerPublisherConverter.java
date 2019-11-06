@@ -1,6 +1,5 @@
 package io.jenkins.plugins.todeclarative.converter.publisher;
 
-import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.tasks.BuildTrigger;
 import hudson.tasks.Publisher;
@@ -18,8 +17,9 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.jenkinsci.plugins.variant.OptionalExtension;
 
-@Extension(optional = true)
+@OptionalExtension(requirePlugins = { "pipeline-build-step" })
 public class BuildTriggerPublisherConverter
     implements PublisherConverter
 {

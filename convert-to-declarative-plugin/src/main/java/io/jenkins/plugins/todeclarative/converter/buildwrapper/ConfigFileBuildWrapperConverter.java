@@ -1,6 +1,5 @@
 package io.jenkins.plugins.todeclarative.converter.buildwrapper;
 
-import hudson.Extension;
 import hudson.tasks.BuildWrapper;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
@@ -11,10 +10,11 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTSingleArgument
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTreeStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
+import org.jenkinsci.plugins.variant.OptionalExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Extension(optional = true)
+@OptionalExtension(requirePlugins = { "config-file-provider" })
 public class ConfigFileBuildWrapperConverter
     implements BuildWrapperConverter
 {

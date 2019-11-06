@@ -1,5 +1,6 @@
 package io.jenkins.plugins.todeclarative.converter.api.publisher;
 
+import hudson.ExtensionPoint;
 import hudson.tasks.Publisher;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
@@ -17,7 +18,7 @@ import java.util.Map;
  * All implementations of this extension will be used to convert {@link Publisher}.
  * Your extension can either return a {@link ModelASTStage} or modify the model from the {@link ConverterResult} instance.
  */
-public interface PublisherConverter
+public interface PublisherConverter extends ExtensionPoint
 {
     ModelASTStage convert( ConverterRequest request, ConverterResult result, Publisher publisher );
 
