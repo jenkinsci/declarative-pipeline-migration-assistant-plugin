@@ -91,7 +91,7 @@ public class FreestyleToDeclarativeConverter
                             groovy.append( "    label ''\n" );
                         }
                         if(StringUtils.isNotBlank( customWorkspace )){
-                            groovy.append( "    customWorkspace '" + customWorkspace + "'\n" );
+                            groovy.append( "    customWorkspace \"" + customWorkspace + "\"\n" );
                         }
                         groovy.append( "    } \n}" );
                         return groovy.toString();
@@ -112,6 +112,7 @@ public class FreestyleToDeclarativeConverter
                 convertScm( converterRequest, converterResult, scm );
             }
         }
+
         convertJobProperties( converterRequest, converterResult, freeStyleProject.getProperties() );
 
         convertBuilders( converterRequest, converterResult, freeStyleProject.getBuilders() );

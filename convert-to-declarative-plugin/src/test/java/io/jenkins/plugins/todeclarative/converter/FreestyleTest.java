@@ -260,7 +260,7 @@ public class FreestyleTest
 //            }
 //        }
         assertThat( groovy, containsString( "label 'FOO_AGENT'" ) );
-        assertThat( groovy, containsString( "customWorkspace '" + f.getAbsolutePath() + "'" ));
+        assertThat( groovy, containsString( "customWorkspace \"" + f.getAbsolutePath() + "\"" ));
 
         assertThat( groovy, containsString( "lock" ) );
         assertThat( groovy, containsString( "resource: 'beer'" ) );
@@ -404,7 +404,7 @@ public class FreestyleTest
         System.out.println( groovy );
 
         assertThat( groovy, containsString( "agent" ) );
-        assertThat( groovy, containsString( "customWorkspace '" + f.getAbsolutePath() + "'"));
+        assertThat( groovy, containsString( "customWorkspace \"" + f.getAbsolutePath() + "\""));
         WorkflowJob job = j.jenkins.createProject( WorkflowJob.class, "singleStep" );
         job.setDefinition( new CpsFlowDefinition( groovy, true ) );
 
