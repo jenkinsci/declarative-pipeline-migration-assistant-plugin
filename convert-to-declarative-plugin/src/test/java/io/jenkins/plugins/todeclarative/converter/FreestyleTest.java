@@ -74,6 +74,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -414,8 +415,9 @@ public class FreestyleTest
 //        testFile.copyFrom( Thread.currentThread().getContextClassLoader().getResourceAsStream( "junit-report.xml" ) );
 
         // copy the test file
-        Files.copy( Paths.get("src", "test", "resources", "junit-report.xml"),
-                    new File(workspace,"test-result.xml").toPath());
+        Path destination = new File(workspace,"test-result.xml").toPath();
+        Files.copy( Paths.get("src", "test", "resources", "junit-report.xml"), destination );
+        destination.toFile().setLastModified( System.currentTimeMillis() -1 );
 
         WorkflowRun run = job.scheduleBuild2( 0 ).get();
 
