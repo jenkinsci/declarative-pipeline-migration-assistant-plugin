@@ -294,7 +294,7 @@ public class FreestyleTest
 
         p.addProperty( new GithubProjectProperty( "http://github.com/beer/paleale" ) );
 
-        File f = new File( "./target/ffoo/bar");
+        File f = new File( "target/ffoo/bar");
         if (Files.exists(f.toPath()))
         {
             FileUtils.deleteDirectory( f );
