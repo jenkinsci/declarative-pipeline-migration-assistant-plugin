@@ -300,7 +300,8 @@ public class FreestyleTest
             FileUtils.deleteDirectory( f );
         }
         Files.createDirectories( f.toPath() );
-        p.setCustomWorkspace( f.getAbsolutePath() );
+        String workspace = Functions.isWindows() ? StringUtils.replace(f.getAbsolutePath(), "\\", "\\\\" ):f.getAbsolutePath();
+        p.setCustomWorkspace( workspace );
 
         p.addProperty( new BuildDiscarderProperty(new NoOpBuildDiscarder() ));
 
@@ -404,7 +405,7 @@ public class FreestyleTest
         System.out.println( groovy );
 
         assertThat( groovy, containsString( "agent" ) );
-        assertThat( groovy, containsString( "customWorkspace \"" + f.getAbsolutePath() + "\""));
+        assertThat( groovy, containsString( "customWorkspace \"" + workspace + "\""));
         WorkflowJob job = j.jenkins.createProject( WorkflowJob.class, "singleStep" );
         job.setDefinition( new CpsFlowDefinition( groovy, true ) );
 
