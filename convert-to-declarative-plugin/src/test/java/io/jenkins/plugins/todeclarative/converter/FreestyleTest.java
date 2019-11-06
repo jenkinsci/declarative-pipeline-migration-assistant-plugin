@@ -74,6 +74,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -260,7 +261,7 @@ public class FreestyleTest
 //            }
 //        }
         assertThat( groovy, containsString( "label 'FOO_AGENT'" ) );
-        assertThat( groovy, containsString( "customWorkspace '" + f.getAbsolutePath() + "'" ));
+        assertThat( groovy, containsString( "customWorkspace \"" + f.getAbsolutePath() + "\"" ));
 
         assertThat( groovy, containsString( "lock" ) );
         assertThat( groovy, containsString( "resource: 'beer'" ) );
@@ -294,13 +295,14 @@ public class FreestyleTest
 
         p.addProperty( new GithubProjectProperty( "http://github.com/beer/paleale" ) );
 
-        File f = new File( "./target/ffoo/bar");
+        File f = new File( "target/ffoo/bar");
         if (Files.exists(f.toPath()))
         {
             FileUtils.deleteDirectory( f );
         }
         Files.createDirectories( f.toPath() );
-        p.setCustomWorkspace( f.getAbsolutePath() );
+        String workspace = Functions.isWindows() ? StringUtils.replace(f.getAbsolutePath(), "\\", "\\\\" ):f.getAbsolutePath();
+        p.setCustomWorkspace( workspace );
 
         p.addProperty( new BuildDiscarderProperty(new NoOpBuildDiscarder() ));
 
@@ -404,7 +406,7 @@ public class FreestyleTest
         System.out.println( groovy );
 
         assertThat( groovy, containsString( "agent" ) );
-        assertThat( groovy, containsString( "customWorkspace '" + f.getAbsolutePath() + "'"));
+        assertThat( groovy, containsString( "customWorkspace \"" + workspace + "\""));
         WorkflowJob job = j.jenkins.createProject( WorkflowJob.class, "singleStep" );
         job.setDefinition( new CpsFlowDefinition( groovy, true ) );
 
@@ -413,8 +415,9 @@ public class FreestyleTest
 //        testFile.copyFrom( Thread.currentThread().getContextClassLoader().getResourceAsStream( "junit-report.xml" ) );
 
         // copy the test file
-        Files.copy( Paths.get("src", "test", "resources", "junit-report.xml"),
-                    new File(f,"test-result.xml").toPath());
+        Path destination = new File(workspace,"test-result.xml").toPath();
+        Files.copy( Paths.get("src", "test", "resources", "junit-report.xml"), destination );
+        destination.toFile().setLastModified( System.currentTimeMillis() -1 );
 
         WorkflowRun run = job.scheduleBuild2( 0 ).get();
 

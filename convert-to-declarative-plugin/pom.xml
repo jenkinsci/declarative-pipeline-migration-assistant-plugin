@@ -66,56 +66,13 @@
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>htmlpublisher</artifactId>
-      <version>1.21</version>
-      <!-- non mandatory plugin  -->
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>build-timeout</artifactId>
-      <version>1.18</version>
-      <!-- non mandatory plugin <optional>true</optional> -->
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>credentials</artifactId>
-      <version>2.1.18</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>display-url-api</artifactId>
       <version>2.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.main</groupId>
-      <artifactId>maven-plugin</artifactId>
-      <version>3.2</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.6wind.jenkins</groupId>
-      <artifactId>lockable-resources</artifactId>
-      <version>2.5</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>com.coravy.hudson.plugins.github</groupId>
-      <artifactId>github</artifactId>
-      <version>1.29.2</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>apache-httpcomponents-client-4-api</artifactId>
       <version>4.5.5-3.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>matrix-project</artifactId>
-      <version>1.7.1</version>
-      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.kohsuke</groupId>
@@ -140,11 +97,6 @@
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>config-file-provider</artifactId>
-      <version>3.5</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>mailer</artifactId>
       <version>1.22</version>
     </dependency>
@@ -154,10 +106,54 @@
       <version>1.50</version>
     </dependency>
     <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-step-api</artifactId>
-      <scope>test</scope>
+        <groupId>org.jenkins-ci.plugins</groupId>
+        <artifactId>variant</artifactId>
+        <version>1.3</version>
     </dependency>
+    <!-- Optional plugins -->
+    <dependency>
+      <groupId>com.coravy.hudson.plugins.github</groupId>
+      <artifactId>github</artifactId>
+      <version>1.29.2</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.6wind.jenkins</groupId>
+      <artifactId>lockable-resources</artifactId>
+      <version>2.5</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>build-timeout</artifactId>
+      <version>1.18</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>config-file-provider</artifactId>
+      <version>3.5</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>htmlpublisher</artifactId>
+      <version>1.21</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>junit</artifactId>
+      <version>1.3</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>matrix-project</artifactId>
+      <version>1.7.1</version>
+      <optional>true</optional>
+    </dependency>
+    <!-- Test scope plugins -->
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-basic-steps</artifactId>
@@ -168,12 +164,6 @@
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-durable-task-step</artifactId>
       <version>2.26</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-support</artifactId>
-      <version>3.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -210,6 +200,18 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>ssh-credentials</artifactId>
       <version>1.13</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>pipeline-build-step</artifactId>
+      <version>2.9</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-support</artifactId>
+      <version>3.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

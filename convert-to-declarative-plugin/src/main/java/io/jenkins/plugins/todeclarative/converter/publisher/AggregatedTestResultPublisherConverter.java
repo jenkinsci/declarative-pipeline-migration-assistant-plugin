@@ -1,6 +1,5 @@
 package io.jenkins.plugins.todeclarative.converter.publisher;
 
-import hudson.Extension;
 import hudson.tasks.Publisher;
 import hudson.tasks.test.AggregatedTestResultPublisher;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
@@ -8,10 +7,11 @@ import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.Warning;
 import io.jenkins.plugins.todeclarative.converter.api.publisher.PublisherConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
+import org.jenkinsci.plugins.variant.OptionalExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Extension
+@OptionalExtension(requirePlugins = { "junit" })
 public class AggregatedTestResultPublisherConverter implements PublisherConverter
 {
 

@@ -1,6 +1,6 @@
 package io.jenkins.plugins.todeclarative.converter.publisher;
 
-import hudson.Extension;
+import htmlpublisher.HtmlPublisher;
 import hudson.tasks.Publisher;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
@@ -16,8 +16,9 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.jenkinsci.plugins.variant.OptionalExtension;
 
-@Extension(optional = true)
+@OptionalExtension(requirePlugins = { "htmlpublisher" })
 public class HTMLPublisherConverter
     implements PublisherConverter
 {
@@ -29,7 +30,7 @@ public class HTMLPublisherConverter
     @Override
     public ModelASTStage convert( ConverterRequest request, ConverterResult result, Publisher publisher )
     {
-        htmlpublisher.HtmlPublisher htmlPublisher = (htmlpublisher.HtmlPublisher) publisher;
+        HtmlPublisher htmlPublisher = (HtmlPublisher) publisher;
         // FIXME must depends on Threshold
         //buildTrigger.getThreshold()
         ModelASTBuildCondition buildCondition =
@@ -104,6 +105,6 @@ public class HTMLPublisherConverter
     @Override
     public boolean canConvert( Publisher publisher )
     {
-        return publisher instanceof htmlpublisher.HtmlPublisher;
+        return publisher instanceof HtmlPublisher;
     }
 }

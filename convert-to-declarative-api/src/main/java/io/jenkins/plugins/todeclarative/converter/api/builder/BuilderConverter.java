@@ -1,5 +1,6 @@
 package io.jenkins.plugins.todeclarative.converter.api.builder;
 
+import hudson.ExtensionPoint;
 import hudson.tasks.Builder;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
@@ -16,7 +17,7 @@ import java.util.function.Supplier;
  * All implementation of this extension will be used to convert {@link Builder}.
  * Your extension can either return a {@link ModelASTStage} or modify the model from the {@link ConverterResult} instance
  */
-public interface BuilderConverter
+public interface BuilderConverter extends ExtensionPoint
 {
     ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, Builder builder );
 

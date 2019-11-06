@@ -42,4 +42,28 @@ public class RequiredResourcesPropertyConverterTest
         assertThat( groovy, containsString( "resource: 'beer'" ) );
         assertThat( groovy, containsString( "label: 'labelName'" ) );
     }
+
+    @Test
+    public void simpletest_empty_values()
+        throws Exception
+    {
+        String projectName = Long.toString( System.currentTimeMillis() );
+        FreeStyleProject p = j.createFreeStyleProject( projectName );
+
+        RequiredResourcesProperty requiredResourcesProperty =
+            new RequiredResourcesProperty( "", null, null, "", null );
+        p.addProperty( requiredResourcesProperty );
+        p.addProperty( requiredResourcesProperty );
+
+        RequiredResourcesPropertyConverter converter =
+            j.jenkins.getExtensionList( RequiredResourcesPropertyConverter.class ).get( 0 );
+
+        assertTrue( converter.canConvert( null, requiredResourcesProperty ) );
+        ConverterResult result = new ConverterResult();
+        converter.convert( new ConverterRequest(), result, null, requiredResourcesProperty );
+        ModelASTOptions options = result.getModelASTPipelineDef().getOptions();
+        assertEquals( 1, options.getOptions().size() );
+        String groovy = options.toGroovy();
+        assertThat( groovy, containsString( "lock" ) );
+    }
 }
