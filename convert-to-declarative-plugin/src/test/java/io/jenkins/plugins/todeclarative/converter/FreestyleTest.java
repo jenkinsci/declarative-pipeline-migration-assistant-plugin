@@ -415,7 +415,7 @@ public class FreestyleTest
 
         // copy the test file
         Files.copy( Paths.get("src", "test", "resources", "junit-report.xml"),
-                    new File(f,"test-result.xml").toPath());
+                    new File(workspace,"test-result.xml").toPath());
 
         WorkflowRun run = job.scheduleBuild2( 0 ).get();
 
