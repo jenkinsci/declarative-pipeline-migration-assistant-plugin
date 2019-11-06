@@ -25,8 +25,7 @@ THE SOFTWARE.
 
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:h="/lib/hudson" xmlns:l="/lib/layout">
-    <j:set var="icon" value="${action.iconClassName != null ? action.iconClassName + ' icon-md' : action.iconFileName}"/>
-    <l:task icon="${icon}" title="${action.displayName}"
+    <l:task icon="${action.iconFileName}" title="${action.displayName}"
             href="${h.getActionUrl(it.url,action)}" 
             contextMenu="${h.isContextMenuVisible(action)}" 
             permission="${it.CONFIGURE}"/>
