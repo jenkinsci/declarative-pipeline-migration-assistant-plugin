@@ -10,13 +10,18 @@ import htmlpublisher.HtmlPublisherTarget;
 import hudson.Functions;
 import hudson.model.BooleanParameterDefinition;
 import hudson.model.FreeStyleProject;
+import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Slave;
 import hudson.model.StringParameterDefinition;
+import hudson.model.User;
 import hudson.plugins.build_timeout.BuildTimeoutWrapper;
 import hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy;
 import hudson.plugins.build_timeout.operations.FailOperation;
+import hudson.security.ACL;
+import hudson.security.ACLContext;
+import hudson.security.AccessDeniedException2;
 import hudson.tasks.ArtifactArchiver;
 import hudson.tasks.BatchFile;
 import hudson.tasks.LogRotator;
@@ -25,6 +30,7 @@ import hudson.tasks.junit.JUnitResultArchiver;
 import hudson.tasks.test.AggregatedTestResultPublisher;
 import io.jenkins.plugins.todeclarative.actions.ToDeclarativeAction;
 import jenkins.model.BuildDiscarderProperty;
+import jenkins.model.Jenkins;
 import org.jenkinsci.lib.configprovider.ConfigProvider;
 import org.jenkinsci.plugins.configfiles.GlobalConfigFiles;
 import org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper;
@@ -34,6 +40,7 @@ import org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper;
 import org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding;
 import org.junit.Rule;
 import org.junit.Test;
+import org.jvnet.hudson.test.MockAuthorizationStrategy;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import java.util.ArrayList;
@@ -41,6 +48,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
 public class ToDeclarativeActionTest
@@ -165,6 +174,27 @@ public class ToDeclarativeActionTest
 
         assertEquals( 1, actionInjector.createFor( p ).size() );
 
+    }
+
+    @Test
+    public void requires_configure_permission() throws Exception {
+        j.jenkins.setSecurityRealm(j.createDummySecurityRealm());
+        j.jenkins.setAuthorizationStrategy(new MockAuthorizationStrategy()
+                .grant(Jenkins.ADMINISTER).everywhere().to("alice")
+                .grant(Jenkins.READ).everywhere().to("bob")
+                .grant(Job.READ).everywhere().to("bob"));
+        FreeStyleProject p = j.createProject(FreeStyleProject.class);
+        ToDeclarativeAction a = p.getAction(ToDeclarativeAction.class);
+        try (ACLContext unused = ACL.as(User.getOrCreateByIdOrFullName("bob"))) {
+            a.doConvert();
+            fail("Users without Job/Configure should not be able to convert jobs");
+        } catch (Exception e) {
+            assertThat(e, instanceOf(AccessDeniedException2.class));
+            assertThat(e.getMessage(), containsString("Job/Configure"));
+        }
+        try (ACLContext unused = ACL.as(User.getOrCreateByIdOrFullName("alice"))) {
+            a.doConvert(); // No exception
+        }
     }
 
 }
