@@ -43,22 +43,29 @@ public class BuildTriggerPublisherConverter
             }
             // build job: 'PayloadJob'
             // TODO parameters from the main project??
-            ModelASTStep build = new ModelASTStep( this );
+            ModelASTStep build = new ModelASTStep( this ){
+                @Override
+                public String toGroovy()
+                {
+                    // we need very simple build(job: 'foo')
+                    return "build(job: '"+abstractProject.getName()+"')";
+                }
+            };
             build.setName( "build" );
             branch.getSteps().add( build );
-
-            Map<ModelASTKey, ModelASTValue> args = new HashMap<>();
-
-            ModelASTKey job = new ModelASTKey( this );
-            job.setKey( "job" );
-            ModelASTValue urlValue = ModelASTValue.fromConstant( abstractProject.getName(), this );
-            args.put( job, urlValue );
-
-            ModelASTNamedArgumentList stepArgs = new ModelASTNamedArgumentList( null);
-            stepArgs.setArguments( args );
-            build.setArgs( stepArgs );
-
-
+//
+//            Map<ModelASTKey, ModelASTValue> args = new HashMap<>();
+//
+//            ModelASTKey job = new ModelASTKey( this );
+//            job.setKey( "job" );
+//            ModelASTValue jobName = ModelASTValue.fromConstant( abstractProject.getName(), this );
+//            args.put( job, jobName );
+//
+//            ModelASTNamedArgumentList stepArgs = new ModelASTNamedArgumentList( null);
+//            stepArgs.setArguments( args );
+//            build.setArgs( stepArgs );
+//            String groovy = build.toGroovy();
+//            System.out.println( groovy );
         } );
         return null;
     }
