@@ -1,5 +1,6 @@
 package io.jenkins.plugins.todeclarative.converter.jobproperty;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.model.BooleanParameterDefinition;
 import hudson.model.ChoiceParameterDefinition;
@@ -77,7 +78,7 @@ public class ParameterPropertyConverter
             ModelASTBuildParameter parameter = new ModelASTBuildParameter(this);
             parameter.setName( "booleanParam" );
             args.add( ModelASTUtils.buildKeyPairArg( "name", parameterDefinition.getName()));
-            args.add( ModelASTUtils.buildKeyPairArg( "defaultValue", ((BooleanParameterDefinition)parameterDefinition).getDefaultParameterValue().value));
+            args.add( ModelASTUtils.buildKeyPairArg( "defaultValue", getDefaultBooleanParameterValue((BooleanParameterDefinition)parameterDefinition)));
             args.add( ModelASTUtils.buildKeyPairArg( "description", parameterDefinition.getDescription()));
             parameter.setArgs( args );
             return parameter;
@@ -88,7 +89,10 @@ public class ParameterPropertyConverter
         return null;
     }
 
-
+    @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", justification = "Superclass method is @CheckForNull, but subclass impl never returns null")
+    private boolean getDefaultBooleanParameterValue(BooleanParameterDefinition def) {
+        return def.getDefaultParameterValue().value;
+    }
 
     @Override
     public boolean canConvert( JobPropertyDescriptor jobPropertyDescriptor, JobProperty jobProperty )

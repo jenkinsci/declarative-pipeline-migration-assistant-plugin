@@ -11,10 +11,6 @@
   <artifactId>convert-to-declarative</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
-  <properties>
-    <!-- maybe fix this.. -->
-    <findbugs.failOnError>false</findbugs.failOnError>
-  </properties>
   <name>Convert To Declarative :: Plugin</name>
   <description>TODO</description>
 
@@ -206,12 +202,6 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>pipeline-build-step</artifactId>
       <version>2.9</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-support</artifactId>
-      <version>3.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

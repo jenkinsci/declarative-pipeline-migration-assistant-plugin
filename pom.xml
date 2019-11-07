@@ -28,7 +28,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>3.28</version>
+    <version>3.51</version>
     <relativePath></relativePath>
   </parent>
 
@@ -112,6 +112,11 @@
         <groupId>org.jenkins-ci.plugins.workflow</groupId>
         <artifactId>workflow-step-api</artifactId>
         <version>2.20</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jenkins-ci.plugins.workflow</groupId>
+        <artifactId>workflow-support</artifactId>
+        <version>3.1</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
