@@ -12,6 +12,8 @@ import hudson.tasks.BuildWrapper;
 import hudson.tasks.Builder;
 import hudson.tasks.Maven;
 import hudson.tasks.Publisher;
+import hudson.triggers.Trigger;
+import hudson.triggers.TriggerDescriptor;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterException;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
@@ -22,6 +24,7 @@ import io.jenkins.plugins.todeclarative.converter.api.buildwrapper.BuildWrapperC
 import io.jenkins.plugins.todeclarative.converter.api.jobproperty.JobPropertyConverter;
 import io.jenkins.plugins.todeclarative.converter.api.publisher.PublisherConverter;
 import io.jenkins.plugins.todeclarative.converter.api.scm.ScmConverter;
+import io.jenkins.plugins.todeclarative.converter.api.trigger.TriggerConverter;
 import io.jenkins.plugins.todeclarative.converter.builder.NoConverterBuilder;
 import io.jenkins.plugins.todeclarative.converter.publisher.NoPublisherConverter;
 import jenkins.model.Jenkins;
@@ -113,12 +116,38 @@ public class FreestyleToDeclarativeConverter
             }
         }
 
+        convertBuildTriggers( converterRequest, converterResult, freeStyleProject.getTriggers() );
+
         convertJobProperties( converterRequest, converterResult, freeStyleProject.getProperties() );
 
         convertBuilders( converterRequest, converterResult, freeStyleProject.getBuilders() );
 
         convertPublishers( converterRequest, converterResult, freeStyleProject.getPublishersList() );
 
+    }
+
+    protected void convertBuildTriggers( ConverterRequest converterRequest, ConverterResult converterResult,
+                                         Map<TriggerDescriptor, Trigger<?>> triggers )
+        throws ConverterException
+    {
+
+        for ( Map.Entry<TriggerDescriptor, Trigger<?>> entry : triggers.entrySet() )
+        {
+            List<TriggerConverter> converters = findTriggerConverters( entry.getKey(), entry.getValue() );
+            if ( !converters.isEmpty() )
+            {
+                converters.stream().forEach( triggerConverter ->
+                    triggerConverter.convert( converterRequest, converterResult, entry.getKey(), entry.getValue() )
+                );
+            }
+            else
+            {
+                converterResult.addWarning( new Warning( "Converter not found '" +
+                                                             getDisplayName(entry.getValue()) +
+                                                             "'",
+                                                         entry.getValue().getClass().getName() ) );
+            }
+        }
     }
 
     protected void convertBuildWrappers( ConverterRequest converterRequest, ConverterResult converterResult,
@@ -299,6 +328,13 @@ public class FreestyleToDeclarativeConverter
             }
         }
 
+    }
+
+    protected List<TriggerConverter> findTriggerConverters( TriggerDescriptor triggerDescriptor, Trigger<?> trigger )
+    {
+        List<TriggerConverter> converters = Jenkins.get().getExtensionList( TriggerConverter.class );
+        return converters.stream().filter(
+            converter -> converter.canConvert( triggerDescriptor, trigger ) ).collect( Collectors.toList() );
     }
 
     protected List<JobPropertyConverter> findJobPropertyConverters( JobPropertyDescriptor jobPropertyDescriptor,

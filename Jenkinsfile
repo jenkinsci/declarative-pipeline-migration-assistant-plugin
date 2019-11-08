@@ -38,19 +38,6 @@ pipeline {
         post {
             always {
                 echo "--> We are finished with ${currentBuild.fullDisplayName}"
-//                archiveArtifacts "target/site/jacoco/jacoco.xml"
-//                jacoco (
-//                    classPattern: 'target/classes',
-//                    deltaBranchCoverage: '5',
-//                    deltaClassCoverage: '5',
-//                    deltaComplexityCoverage: '5',
-//                    deltaInstructionCoverage: '5',
-//                    deltaLineCoverage: '5',
-//                    deltaMethodCoverage: '5',
-//                    execPattern: 'target/jacoco.exec',
-//                    sourceInclusionPattern: '',
-//                    sourcePattern: 'src'
-//                )
             }
             success {
                 echo "--> SUCCESS: ${currentBuild.fullDisplayName}"

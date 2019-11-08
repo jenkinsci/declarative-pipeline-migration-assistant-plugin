@@ -313,6 +313,14 @@ public class FreestyleTest
             new ParametersDefinitionProperty( parametersDefinitions );
         p.addProperty( parametersDefinitionProperty );
 
+        { // triggers
+            p.addTrigger( new TimerTrigger( "@daily" ) );
+            p.addTrigger( new SCMTrigger( "H */4 * * 1-5" ) );
+            ReverseBuildTrigger trigger = new ReverseBuildTrigger( "foo" );
+            trigger.setThreshold( Result.FAILURE );
+            p.addTrigger( trigger );
+        }
+
         if ( Functions.isWindows() )
         {
             p.getBuildersList().add( new BatchFile( "cmd" ) );
@@ -389,7 +397,7 @@ public class FreestyleTest
             p.getPublishersList().add( jUnitResultArchiver );
         }
 
-        j.createFreeStyleProject( "foo" );
+        FreeStyleProject foo = j.createFreeStyleProject( "foo" );
         p.getPublishersList().add( new AggregatedTestResultPublisher( "foo", true ) );
 
         FreestyleToDeclarativeConverter converter =
@@ -407,6 +415,18 @@ public class FreestyleTest
 
         assertThat( groovy, containsString( "agent" ) );
         assertThat( groovy, containsString( "customWorkspace \"" + workspace + "\""));
+
+        { // triggers
+            assertThat( groovy, containsString( "cron" ) );
+            assertThat( groovy, containsString( "@daily" ) );
+            assertThat( groovy, containsString( "pollSCM" ) );
+            assertThat( groovy, containsString( "H */4 * * 1-5" ) );
+            assertThat( groovy, containsString( "foo" ) );
+            assertThat( groovy, containsString( "upstreamProjects" ) );
+            assertThat( groovy, containsString( "threshold" ) );
+            assertThat( groovy, containsString( "hudson.model.Result.FAILURE" ) );
+        }
+
         WorkflowJob job = j.jenkins.createProject( WorkflowJob.class, "singleStep" );
         job.setDefinition( new CpsFlowDefinition( groovy, true ) );
 
@@ -423,6 +443,7 @@ public class FreestyleTest
 
         j.waitForCompletion( run );
         j.assertBuildStatus( Result.SUCCESS, run );
+        int size = job.getBuilds().size();
     }
 
     @Test

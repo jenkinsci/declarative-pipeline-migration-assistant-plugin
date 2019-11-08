@@ -12,6 +12,8 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStages;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTools;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTrigger;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTriggers;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 
 import java.util.Optional;
@@ -84,6 +86,17 @@ public class ModelASTUtils
             modelASTPipelineDef.setTools( tools );
         }
         tools.getTools().put( key, value );
+    }
+
+    public static void addTrigger(ModelASTPipelineDef modelASTPipelineDef, ModelASTTrigger trigger) {
+        ModelASTTriggers modelASTTriggers = modelASTPipelineDef.getTriggers();
+        if ( modelASTTriggers == null )
+        {
+            modelASTTriggers = new ModelASTTriggers( modelASTPipelineDef );
+            modelASTPipelineDef.setTriggers( modelASTTriggers );
+
+        }
+        modelASTTriggers.getTriggers().add( trigger );
     }
 
 }
