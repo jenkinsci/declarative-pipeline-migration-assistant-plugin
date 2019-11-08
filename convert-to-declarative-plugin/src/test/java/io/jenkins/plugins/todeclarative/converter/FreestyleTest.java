@@ -584,7 +584,13 @@ public class FreestyleTest
         p.getBuildWrappersList().add( new FakeBuildWrapper() );
         p.getPublishersList().add( new FakeRecorder() );
 
-
+        { // triggers
+            p.addTrigger( new TimerTrigger( "@daily" ) );
+            p.addTrigger( new SCMTrigger( "H */4 * * 1-5" ) );
+            ReverseBuildTrigger trigger = new ReverseBuildTrigger( "foo" );
+            trigger.setThreshold( Result.FAILURE );
+            p.addTrigger( trigger );
+        }
 
         { // general settings
             p.setConcurrentBuild( false );

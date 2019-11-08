@@ -11,8 +11,23 @@ Some interfaces define some extension of the conversion:
 - JobPropertyConverter: convert JobProperty
 - PublisherConverter: convert Publisher
 - ScmConverter: convert SCM
+- TriggerConverter: convert BuildTriggers
 
-To have a plugin participating to the conversion, just create your extension as it:
+To have a plugin participating to the conversion.
+
+#### Add converter api dependency
+
+```
+
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.convert-to-declarative</groupId>
+      <artifactId>convert-to-declarative-api</artifactId>
+      <version></version>  
+    </dependency>
+
+``` 
+ 
+#### Create your extension as it:
 
 ```
 @Extension
