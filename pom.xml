@@ -34,7 +34,7 @@
 
   <groupId>org.jenkins-ci.plugins.convert-to-declarative</groupId>
   <artifactId>convert-to-declarative-parent</artifactId>
-  <version>1.0.0-beta-1</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Convert To Declarative</name>
   <!--
@@ -44,7 +44,7 @@
     <connection>scm:git:git://github.com/jenkinsci/convert-to-declarative.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/convert-to-declarative.git</developerConnection>
     <url>https://github.com/jenkinsci/convert-to-declarative</url>
-    <tag>convert-to-declarative-1.0.0-beta-1</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <licenses>
