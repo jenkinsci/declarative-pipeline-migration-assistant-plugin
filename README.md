@@ -1,4 +1,4 @@
-## To Declarative Converter Plugin 
+## Declarative Pipeline Migration Assistant 
 This project can convert freestyle projects to declarative pipeline.
 There is two modules in the project:
 - The API (the base of extension points to convert different parts of freestyle project)
