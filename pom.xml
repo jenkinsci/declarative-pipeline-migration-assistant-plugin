@@ -32,18 +32,18 @@
     <relativePath />
   </parent>
 
-  <groupId>org.jenkins-ci.plugins.convert-to-declarative</groupId>
-  <artifactId>convert-to-declarative-parent</artifactId>
+  <groupId>org.jenkins-ci.plugins.to-declarative</groupId>
+  <artifactId>declarative-pipeline-migration-assistant-parent</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>Convert To Declarative</name>
+  <name>Declarative Pipeline Migration Assistant</name>
   <!--
   <url>https://wiki.jenkins-ci.org/display/JENKINS/TODO</url>
   -->
   <scm>
-    <connection>scm:git:git://github.com/jenkinsci/convert-to-declarative.git</connection>
-    <developerConnection>scm:git:git@github.com:jenkinsci/convert-to-declarative.git</developerConnection>
-    <url>https://github.com/jenkinsci/convert-to-declarative</url>
+    <connection>scm:git:git://github.com/jenkinsci/declarative-pipeline-migration-assistant-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:jenkinsci/declarative-pipeline-migration-assistant-plugin.git</developerConnection>
+    <url>https://github.com/jenkinsci/declarative-pipeline-migration-assistant-plugin</url>
     <tag>HEAD</tag>
   </scm>
 
@@ -77,15 +77,15 @@
   </pluginRepositories>
 
   <modules>
-    <module>convert-to-declarative-api</module>
-    <module>convert-to-declarative-plugin</module>
+    <module>declarative-pipeline-migration-assistant-api</module>
+    <module>declarative-pipeline-migration-assistant-plugin</module>
   </modules>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.jenkins-ci.plugins.convert-to-declarative</groupId>
-        <artifactId>convert-to-declarative-api</artifactId>
+        <groupId>org.jenkins-ci.plugins.to-declarative</groupId>
+        <artifactId>declarative-pipeline-migration-assistant-api</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

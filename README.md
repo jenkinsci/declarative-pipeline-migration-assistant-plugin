@@ -20,8 +20,8 @@ To have a plugin participating to the conversion.
 ```
 
     <dependency>
-      <groupId>org.jenkins-ci.plugins.convert-to-declarative</groupId>
-      <artifactId>convert-to-declarative-api</artifactId>
+      <groupId>org.jenkins-ci.plugins.to-declarative</groupId>
+      <artifactId>declarative-pipeline-migration-assistant-api</artifactId>
       <version></version>  
     </dependency>
 
