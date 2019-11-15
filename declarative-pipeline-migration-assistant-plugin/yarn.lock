@@ -97,8 +97,10 @@ asn1@0.1.11:
   resolved "https://repo.jenkins-ci.org/api/npm/npm/asn1/-/asn1-0.1.11.tgz#559be18376d08a4ec4dbe80877d27818639b2df7"
 
 asn1@~0.2.3:
-  version "0.2.3"
-  resolved "https://repo.jenkins-ci.org/api/npm/npm/asn1/-/asn1-0.2.3.tgz#dac8787713c9966849fc8180777ebe9c1ddf3b86"
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/asn1/-/asn1-0.2.4.tgz#8d2475dfab553bb33e77b54e59e880bb8ce23136"
+  dependencies:
+    safer-buffer "~2.1.0"
 
 assert-plus@1.0.0, assert-plus@^1.0.0:
   version "1.0.0"
@@ -157,8 +159,8 @@ base64-js@0.0.8:
   resolved "https://repo.jenkins-ci.org/api/npm/npm/base64-js/-/base64-js-0.0.8.tgz#1101e9544f4a76b1bc3b26d452ca96d7a35e7978"
 
 bcrypt-pbkdf@^1.0.0:
-  version "1.0.1"
-  resolved "https://repo.jenkins-ci.org/api/npm/npm/bcrypt-pbkdf/-/bcrypt-pbkdf-1.0.1.tgz#63bc5dcb61331b92bc05fd528953c33462a06f8d"
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/bcrypt-pbkdf/-/bcrypt-pbkdf-1.0.2.tgz#a4301d389b6a43f9b67ff3ca11a3f6637e360e9e"
   dependencies:
     tweetnacl "^0.14.3"
 
@@ -549,7 +551,7 @@ ctype@0.5.3:
 
 dashdash@^1.12.0:
   version "1.14.1"
-  resolved "https://repo.jenkins-ci.org/api/npm/npm/dashdash/-/dashdash-1.14.1.tgz#853cfa0f7cbe2fed5de20326b8dd581035f6e2f0"
+  resolved "https://registry.yarnpkg.com/dashdash/-/dashdash-1.14.1.tgz#853cfa0f7cbe2fed5de20326b8dd581035f6e2f0"
   dependencies:
     assert-plus "^1.0.0"
 
@@ -676,10 +678,11 @@ duplexer2@0.0.2, duplexer2@~0.0.2:
     readable-stream "~1.1.9"
 
 ecc-jsbn@~0.1.1:
-  version "0.1.1"
-  resolved "https://repo.jenkins-ci.org/api/npm/npm/ecc-jsbn/-/ecc-jsbn-0.1.1.tgz#0fc73a9ed5f0d53c38193398523ef7e543777505"
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/ecc-jsbn/-/ecc-jsbn-0.1.2.tgz#3a83a904e54353287874c564b7549386849a98c9"
   dependencies:
     jsbn "~0.1.0"
+    safer-buffer "^2.1.0"
 
 elliptic@^6.0.0:
   version "6.4.0"
@@ -905,7 +908,7 @@ gaze@^0.5.1:
 
 getpass@^0.1.1:
   version "0.1.7"
-  resolved "https://repo.jenkins-ci.org/api/npm/npm/getpass/-/getpass-0.1.7.tgz#5eff8e3e684d569ae4cb2b1282604e8ba62149fa"
+  resolved "https://registry.yarnpkg.com/getpass/-/getpass-0.1.7.tgz#5eff8e3e684d569ae4cb2b1282604e8ba62149fa"
   dependencies:
     assert-plus "^1.0.0"
 
@@ -1489,12 +1492,6 @@ jenkins-js-test@0.0.15:
     underscore.string "^3.1.1"
     window-handle "0.0.6"
 
-jodid25519@^1.0.0:
-  version "1.0.2"
-  resolved "https://repo.jenkins-ci.org/api/npm/npm/jodid25519/-/jodid25519-1.0.2.tgz#06d4912255093419477d425633606e0e90782967"
-  dependencies:
-    jsbn "~0.1.0"
-
 jquery-detached-2.1.4@^2.1.4-v2:
   version "2.1.4-v2"
   resolved "https://repo.jenkins-ci.org/api/npm/npm/jquery-detached-2.1.4/-/jquery-detached-2.1.4-2.1.4-v2.tgz#449019725c1b5185862797701aa2c85fccf0cc7b"
@@ -1523,7 +1520,7 @@ jqueryui-detached@^1.11.4-v8, jqueryui-detached@^1.11.4-v9:
 
 jsbn@~0.1.0:
   version "0.1.1"
-  resolved "https://repo.jenkins-ci.org/api/npm/npm/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
+  resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
 
 jsdom@^5.6.1:
   version "5.6.1"
@@ -2348,6 +2345,10 @@ safe-buffer@^5.0.1:
   version "5.0.1"
   resolved "https://repo.jenkins-ci.org/api/npm/npm/safe-buffer/-/safe-buffer-5.0.1.tgz#d263ca54696cd8a306b5ca6551e92de57918fbe7"
 
+safer-buffer@^2.0.2, safer-buffer@^2.1.0, safer-buffer@~2.1.0:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
+
 sax@>=0.6.0:
   version "1.2.2"
   resolved "https://repo.jenkins-ci.org/api/npm/npm/sax/-/sax-1.2.2.tgz#fd8631a23bc7826bef5d871bdb87378c95647828"
@@ -2428,18 +2429,17 @@ sprintf-js@^1.0.3:
   resolved "https://repo.jenkins-ci.org/api/npm/npm/sprintf-js/-/sprintf-js-1.1.0.tgz#cffcaf702daf65ea39bb4e0fa2b299cec1a1be46"
 
 sshpk@^1.7.0:
-  version "1.13.0"
-  resolved "https://repo.jenkins-ci.org/api/npm/npm/sshpk/-/sshpk-1.13.0.tgz#ff2a3e4fd04497555fed97b39a0fd82fafb3a33c"
+  version "1.16.1"
+  resolved "https://registry.yarnpkg.com/sshpk/-/sshpk-1.16.1.tgz#fb661c0bef29b39db40769ee39fa70093d6f6877"
   dependencies:
     asn1 "~0.2.3"
     assert-plus "^1.0.0"
-    dashdash "^1.12.0"
-    getpass "^0.1.1"
-  optionalDependencies:
     bcrypt-pbkdf "^1.0.0"
+    dashdash "^1.12.0"
     ecc-jsbn "~0.1.1"
-    jodid25519 "^1.0.0"
+    getpass "^0.1.1"
     jsbn "~0.1.0"
+    safer-buffer "^2.0.2"
     tweetnacl "~0.14.0"
 
 stream-browserify@^1.0.0:
@@ -2592,7 +2592,7 @@ tunnel-agent@~0.4.0:
 
 tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   version "0.14.5"
-  resolved "https://repo.jenkins-ci.org/api/npm/npm/tweetnacl/-/tweetnacl-0.14.5.tgz#5ae68177f192d4456269d108afa93ff8743f4f64"
+  resolved "https://registry.yarnpkg.com/tweetnacl/-/tweetnacl-0.14.5.tgz#5ae68177f192d4456269d108afa93ff8743f4f64"
 
 type-check@~0.3.2:
   version "0.3.2"
