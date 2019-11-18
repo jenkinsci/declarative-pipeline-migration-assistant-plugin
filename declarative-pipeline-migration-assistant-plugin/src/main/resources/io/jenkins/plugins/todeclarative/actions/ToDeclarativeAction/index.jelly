@@ -18,7 +18,7 @@
             <div class="conversion-success">
               <div class="rectangle-conversion-success">
                 <div class="icons-converter-ui">
-                  <img src="${rootURL}/plugin/convert-to-declarative/img/warning.svg"/>
+                  <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant/img/warning.svg"/>
                 </div>
                 <div class="conversion-warning-title">
                   ${%warnings.section.title}
@@ -49,7 +49,7 @@
             <div class="conversion-success">
               <div class="rectangle-conversion-success">
                 <div class="icons-converter-ui">
-                  <img src="${rootURL}/plugin/convert-to-declarative/img/success.svg"/>
+                  <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant/img/success.svg"/>
                 </div>
                 <div class="conversion-success-title">
                   ${%success.section.title}
@@ -76,14 +76,14 @@
 
                 <div class="rectangle-copy">
                   <div class="icons-converter-ui">
-                    <img src="${rootURL}/plugin/convert-to-declarative/img/copy.svg"/>
+                    <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant/img/copy.svg"/>
                   </div>
                   <div class="copy">Copy</div>
                 </div>
 
                 <div class="rectangle-download">
                     <div class="icons-converter-ui">
-                      <img src="${rootURL}/plugin/convert-to-declarative/img/download.svg"/>
+                      <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant/img/download.svg"/>
                     </div>
                     <div class="download">Download</div>
                 </div>
@@ -106,7 +106,7 @@
 <!--            <div class="conversion-error">-->
 <!--              <div class="rectangle-conversion-error">-->
 <!--                <div class="icons-converter-ui">-->
-<!--                  <img src="${rootURL}/plugin/convert-to-declarative/img/error.svg"/>-->
+<!--                  <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant/img/error.svg"/>-->
 <!--                </div>-->
 <!--                <div class="conversion-error-title">-->
 <!--                  ${%error.section.title}-->
@@ -130,7 +130,7 @@
             <div class="conversion-error">
               <div class="rectangle-conversion-error">
                 <div class="icons-converter-ui">
-                  <img src="${rootURL}/plugin/convert-to-declarative/img/error.svg"/>
+                  <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant/img/error.svg"/>
                 </div>
                 <div class="conversion-error-title">
                   ${%error.section.title}
@@ -163,7 +163,7 @@
 
 <!--              <div class="rectangle-copy-modal">-->
 <!--                <div class="icons-converter-ui">-->
-<!--                  <img src="${rootURL}/plugin/convert-to-declarative/img/copy.svg"/>-->
+<!--                  <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant/img/copy.svg"/>-->
 <!--                </div>-->
 <!--                <div class="copy-modal">Copy</div>-->
 <!--              </div>-->
@@ -171,7 +171,7 @@
 
 <!--              <div class="rectangle-minimize">-->
 <!--                <div class="icons-converter-ui">-->
-<!--                  <img src="${rootURL}/plugin/convert-to-declarative/img/minimize.svg"/>-->
+<!--                  <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant/img/minimize.svg"/>-->
 <!--                </div>-->
 <!--                <div class="minimize">Minimize</div>-->
 <!--              </div>-->

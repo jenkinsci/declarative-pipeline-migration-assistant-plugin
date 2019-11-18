@@ -1,8 +1,8 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core">
-	<link rel="stylesheet" type="text/css" href="${rootURL}/plugin/convert-to-declarative/css/todeclarative.css"/>
+	<link rel="stylesheet" type="text/css" href="${rootURL}/plugin/declarative-pipeline-migration-assistant/css/todeclarative.css"/>
 	<script language="javascript" type="text/javascript"
-					src="${rootURL}/plugin/convert-to-declarative/js/convert-to-declarative.js"></script>
+					src="${rootURL}/plugin/declarative-pipeline-migration-assistant/js/declarative-pipeline-migration-assistant.js"></script>
 </j:jelly>
 
 
