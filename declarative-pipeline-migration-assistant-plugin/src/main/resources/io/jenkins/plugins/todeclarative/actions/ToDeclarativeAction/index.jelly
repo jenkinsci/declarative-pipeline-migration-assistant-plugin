@@ -8,9 +8,9 @@
         <j:set var="Jenkinsfile" value="${it.doConvert()}"/>
         <j:set var="warnings" value="${it.warnings}"/>
         <j:set var="error" value="${it.error}"/>
-        <div class="main-title">
-          Convert to Declarative Pipeline
-        </div>
+<!--        <div class="main-title">-->
+<!--          Convert to Declarative Pipeline-->
+<!--        </div>-->
 
         <!-- warnings part -->
         <j:if test="${!warnings.isEmpty() and error==null}">
@@ -31,7 +31,7 @@
                     <li>${w.message} (${w.pluginClassName})</li>
                   </j:forEach>
                 </ul>
-                ${%success.section.text}
+                ${%warnings.section.create.text}
                 <div class="result-links">
                   <div><a href="${%jenkinsfile.help.scm.link}" target="_blank">${%jenkinsfile.help.scm}</a></div>
                   <div><a href="${%jenkinsfile.help.multibranch.link}" target="_blank">${%jenkinsfile.help.multibranch}</a></div>
