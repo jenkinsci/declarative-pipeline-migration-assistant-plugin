@@ -94,12 +94,6 @@ public class FreestyleTest
     @Rule
     public JenkinsRule j = new JenkinsRule();
 
-    @Before
-    public void init() {
-        // TODO: Adapt tests to run on Windows
-        Assume.assumeFalse(Functions.isWindows());
-    }
-
     @Test
     public void freestyle_conversion()
         throws Exception
