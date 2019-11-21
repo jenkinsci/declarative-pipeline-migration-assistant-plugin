@@ -64,6 +64,8 @@ import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Assert;
+import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.ExtractResourceSCM;
@@ -91,6 +93,12 @@ public class FreestyleTest
 
     @Rule
     public JenkinsRule j = new JenkinsRule();
+
+    @Before
+    public void init() {
+        // TODO: Adapt tests to run on Windows
+        Assume.assumeFalse(Functions.isWindows());
+    }
 
     @Test
     public void freestyle_conversion()
