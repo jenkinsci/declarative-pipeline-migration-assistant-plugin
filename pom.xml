@@ -78,7 +78,7 @@
 
   <modules>
     <module>declarative-pipeline-migration-assistant-api</module>
-    <module>declarative-pipeline-migration-assistant-plugin</module>
+    <module>declarative-pipeline-migration-assistant</module>
   </modules>
 
   <dependencyManagement>

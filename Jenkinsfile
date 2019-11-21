@@ -1,53 +1,7 @@
-pipeline {
-    agent any
-    parameters {
-        booleanParam defaultValue: true, description: 'Build fails if coverage falls below value set in project property jacoco.coverage.target<br><li>True (default): Enables this behavior<li>False: Disables this behavior', name: 'failIfCoverageNotMet'
-    }
-    stages {
-        stage("Parallel Stage") {
-            parallel {
-                stage("linux build"){
-                    agent { node { label 'linux' } }
-                    steps {
-                        timeout( time: 180, unit: 'MINUTES' ) {
-                            withMaven(
-                                maven: 'maven3.6.1',
-                                publisherStrategy: 'EXPLICIT',
-                                options: [junitPublisher(disabled: false),jacocoPublisher(disabled: false)]) {
-                                sh "mvn -Penable-jacoco -Djacoco.haltOnFailure=${params.failIfCoverageNotMet} -V -B clean install -e -Dmaven.test.failure.ignore=true"
-                            }  
-                        }
-                    }    
-                }
-                stage("windows build"){
-                    agent { node { label 'windows' } }
-                    steps {
-                        timeout( time: 180, unit: 'MINUTES' ) {
-                            withMaven(
-                                maven: 'maven3.6.1',
-                                publisherStrategy: 'EXPLICIT',
-                                options: [junitPublisher(disabled: false)]) {
-                                sh "mvn -Penable-jacoco -Djacoco.haltOnFailure=${params.failIfCoverageNotMet} -V -B clean install -e -Dmaven.test.failure.ignore=true"
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-        post {
-            always {
-                echo "--> We are finished with ${currentBuild.fullDisplayName}"
-            }
-            success {
-                echo "--> SUCCESS: ${currentBuild.fullDisplayName}"
-            }
-            unstable {
-                echo "--> UNSTABLE: ${currentBuild.fullDisplayName}"
-            }
-            failure {
-                echo "--> FAILURE: ${currentBuild.fullDisplayName}"
-            }
-        }
-}
-
+// TODO: Run tests on Windows
+// NOTE: Cannot use ACI agents because build requires `unzip` to be available
+buildPlugin(configurations: [
+  [ platform: 'linux', jdk: '8', jenkins: null ],
+  [ platform: 'linux', jdk: '8', jenkins: '2.164.1', javaLevel: '8' ]])
+  // TODO: Some test tries to build a Maven project with source 1.5, and 1.6 is the oldest support by Java 11 apparently.
+  //[ platform: 'linux', jdk: '11', jenkins: '2.164.1', javaLevel: '8' ])

@@ -6,10 +6,10 @@
     <artifactId>declarative-pipeline-migration-assistant-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
-  <artifactId>declarative-pipeline-migration-assistant-plugin</artifactId>
+  <artifactId>declarative-pipeline-migration-assistant</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
-  <name>Declarative Pipeline Migration Assistant :: Plugin</name>
+  <name>Declarative Pipeline Migration Assistant</name>
 
   <dependencies>
     <dependency>

@@ -9,7 +9,7 @@
   <artifactId>declarative-pipeline-migration-assistant-api</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
-  <name>Declarative Pipeline Migration Assistant :: Api</name>
+  <name>Declarative Pipeline Migration Assistant API</name>
   <description>TODO</description>
 
   <dependencies>
