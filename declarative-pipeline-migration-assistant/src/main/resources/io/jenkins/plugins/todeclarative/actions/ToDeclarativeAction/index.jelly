@@ -18,7 +18,7 @@
             <div class="conversion-success">
               <div class="rectangle-conversion-success">
                 <div class="icons-converter-ui">
-                  <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant-plugin/img/warning.svg"/>
+                  <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant/img/warning.svg"/>
                 </div>
                 <div class="conversion-warning-title">
                   ${%warnings.section.title}
@@ -49,7 +49,7 @@
             <div class="conversion-success">
               <div class="rectangle-conversion-success">
                 <div class="icons-converter-ui">
-                  <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant-plugin/img/success.svg"/>
+                  <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant/img/success.svg"/>
                 </div>
                 <div class="conversion-success-title">
                   ${%success.section.title}
@@ -76,14 +76,14 @@
 
                 <div class="rectangle-copy">
                   <div class="icons-converter-ui">
-                    <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant-plugin/img/copy.svg"/>
+                    <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant/img/copy.svg"/>
                   </div>
                   <div class="copy">Copy</div>
                 </div>
 
                 <div class="rectangle-download">
                     <div class="icons-converter-ui">
-                      <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant-plugin/img/download.svg"/>
+                      <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant/img/download.svg"/>
                     </div>
                     <div class="download">Download</div>
                 </div>
@@ -92,45 +92,20 @@
             </div>
           </div>
 
-            <div class="jenkinsfile-editor-wrapper" id="jenkinsfile-editor-original" style="display: none; position: relative">
-              <f:textarea value="${Jenkinsfile}" readonly="readonly" id="jenkinsfile-content"/>
-              <div class="pane-frame editor" style="height: 500px;width: 1200px"/>
-            </div>
-            <st:adjunct includes="io.jenkins.plugins.todeclarative.ui.jenkinsfile-editor"/>
+          <div class="jenkinsfile-editor-wrapper" id="jenkinsfile-editor-original" style="display: none; position: relative">
+            <f:textarea value="${Jenkinsfile}" readonly="readonly" id="jenkinsfile-content"/>
+            <div class="pane-frame editor" style="height: 500px;width: 1200px"/>
+          </div>
+          <st:adjunct includes="io.jenkins.plugins.todeclarative.ui.jenkinsfile-editor"/>
 
         </j:if>
 
         <j:if test="${error!=null}">
-
-<!--          <div class="result-top-title">-->
-<!--            <div class="conversion-error">-->
-<!--              <div class="rectangle-conversion-error">-->
-<!--                <div class="icons-converter-ui">-->
-<!--                  <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant-plugin/img/error.svg"/>-->
-<!--                </div>-->
-<!--                <div class="conversion-error-title">-->
-<!--                  ${%error.section.title}-->
-<!--                </div>-->
-<!--              </div>-->
-<!--              <div class="result-text">-->
-<!--                ${%error.section.text}-->
-<!--                <ul>-->
-<!--                  <li>${error.message}</li>-->
-<!--                </ul>-->
-<!--                <div class="result-links">-->
-<!--                  <div><a href="https://jenkins.io/doc/book/pipeline/" target="_blank">${%jenkinsfile.help.scm}</a></div>-->
-<!--                  <div><a href="https://jenkins.io/doc/tutorials/build-a-multibranch-pipeline-project/" target="_blank">${%jenkinsfile.help.multibranch}</a></div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-
-
           <div class="result-top-title">
             <div class="conversion-error">
               <div class="rectangle-conversion-error">
                 <div class="icons-converter-ui">
-                  <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant-plugin/img/error.svg"/>
+                  <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant/img/error.svg"/>
                 </div>
                 <div class="conversion-error-title">
                   ${%error.section.title}
@@ -148,43 +123,8 @@
               </div>
             </div>
           </div>
-
-
         </j:if>
       </div>
-
-<!--      <div id="modal" class="modal-content">-->
-<!--        <div class="review-converted-top-title-modal">-->
-<!--          <div class="review-converted-panel">-->
-<!--            <div class="review-converted-row">-->
-<!--              <div class="review-converted">-->
-<!--                ${%jenkinsfile.section.title}-->
-<!--              </div>-->
-
-<!--              <div class="rectangle-copy-modal">-->
-<!--                <div class="icons-converter-ui">-->
-<!--                  <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant-plugin/img/copy.svg"/>-->
-<!--                </div>-->
-<!--                <div class="copy-modal">Copy</div>-->
-<!--              </div>-->
-
-
-<!--              <div class="rectangle-minimize">-->
-<!--                <div class="icons-converter-ui">-->
-<!--                  <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant-plugin/img/minimize.svg"/>-->
-<!--                </div>-->
-<!--                <div class="minimize">Minimize</div>-->
-<!--              </div>-->
-
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <div class="jenkinsfile-editor-wrapper-copy" id="jenkinsfile-editor-copy" style="display: none;">-->
-<!--          <f:textarea value="${Jenkinsfile}" readonly="readonly" />-->
-<!--          <div class="pane-frame editor" style="height: 800px;width: 1400px;"/>-->
-<!--        </div>-->
-<!--        <st:adjunct includes="io.jenkins.plugins.todeclarative.ui.jenkinsfile-editor"/>-->
-<!--      </div>-->
 
     </l:main-panel>
 

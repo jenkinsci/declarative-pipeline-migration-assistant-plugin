@@ -1,3 +1,13 @@
+@media (min-width: 1170px) {
+    body.two-column #side-panel {
+        width: 150px;
+    }
+
+    body.two-column #main-panel {
+        margin-left: 150px;
+    }
+}
+
 .converter-panel {
     display: table;
 }
