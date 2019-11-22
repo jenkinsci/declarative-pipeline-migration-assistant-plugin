@@ -8,9 +8,6 @@
         <j:set var="Jenkinsfile" value="${it.doConvert()}"/>
         <j:set var="warnings" value="${it.warnings}"/>
         <j:set var="error" value="${it.error}"/>
-<!--        <div class="main-title">-->
-<!--          Convert to Declarative Pipeline-->
-<!--        </div>-->
 
         <!-- warnings part -->
         <j:if test="${!warnings.isEmpty() and error==null}">
@@ -33,8 +30,7 @@
                 </ul>
                 ${%warnings.section.create.text}
                 <div class="result-links">
-                  <div><a href="${%jenkinsfile.help.scm.link}" target="_blank">${%jenkinsfile.help.scm}</a></div>
-                  <div><a href="${%jenkinsfile.help.multibranch.link}" target="_blank">${%jenkinsfile.help.multibranch}</a></div>
+                  <div><a href="${%jenkinsfile.help.convert.link}" target="_blank">${%jenkinsfile.help.convert}</a></div>
                 </div>
               </div>
             </div>
@@ -58,8 +54,7 @@
               <div class="result-text">
                 ${%success.section.text}
                 <div class="result-links">
-                  <div><a href="${%jenkinsfile.help.scm.link}" target="_blank">${%jenkinsfile.help.scm}</a></div>
-                  <div><a href="${%jenkinsfile.help.multibranch.link}" target="_blank">${%jenkinsfile.help.multibranch}</a></div>
+                  <div><a href="${%jenkinsfile.help.convert.link}" target="_blank">${%jenkinsfile.help.convert}</a></div>
                 </div>
               </div>
             </div>
@@ -117,8 +112,7 @@
                   <li>${error.message}</li>
                 </ul>
                 <div class="result-links">
-                  <div><a href="https://jenkins.io/doc/book/pipeline/" target="_blank">${%jenkinsfile.help.scm}</a></div>
-                  <div><a href="https://jenkins.io/doc/tutorials/build-a-multibranch-pipeline-project/" target="_blank">${%jenkinsfile.help.multibranch}</a></div>
+                  <div><a href="${%jenkinsfile.help.convert.link}" target="_blank">${%jenkinsfile.help.convert}</a></div>
                 </div>
               </div>
             </div>
