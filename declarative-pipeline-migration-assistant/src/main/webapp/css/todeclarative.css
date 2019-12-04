@@ -1,14 +1,15 @@
 @media (min-width: 1170px) {
     body.two-column #side-panel {
-        width: 150px;
+        width: 10px;
     }
 
     body.two-column #main-panel {
-        margin-left: 150px;
+        margin-left: 10px;
     }
 }
 
 .converter-panel {
+    align-content: center;
     display: table;
 }
 
@@ -207,7 +208,7 @@
     background-color: #4B758B;
     display: table-cell;
     margin-top: 10px;
-    margin-left: 800px;
+    margin-left: 1120px;
 }
 
 .rectangle-copy:hover {

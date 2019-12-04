@@ -1,6 +1,5 @@
 package io.jenkins.plugins.todeclarative.converter.buildwrapper;
 
-import hudson.Extension;
 import hudson.plugins.build_timeout.BuildTimeOutStrategy;
 import hudson.plugins.build_timeout.BuildTimeoutWrapper;
 import hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy;

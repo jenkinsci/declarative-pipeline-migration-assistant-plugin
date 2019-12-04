@@ -89,7 +89,7 @@
 
           <div class="jenkinsfile-editor-wrapper" id="jenkinsfile-editor-original" style="display: none; position: relative">
             <f:textarea value="${Jenkinsfile}" readonly="readonly" id="jenkinsfile-content"/>
-            <div class="pane-frame editor" style="height: 500px;width: 1200px"/>
+            <div class="pane-frame editor" style="height: 1000px;width: 1400px"/>
           </div>
           <st:adjunct includes="io.jenkins.plugins.todeclarative.ui.jenkinsfile-editor"/>
 

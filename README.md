@@ -50,6 +50,9 @@ public class ShellConverter implements BuilderConverter
 Here the commented code to convert the Shell script freestyle step
 
 ```
+@Extension
+public class ShellConverter implements BuilderConverter
+    ....
     public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, Builder builder )
     {
         Shell shell = (Shell) builder;
@@ -82,6 +85,8 @@ Here the commented code to convert the ArtifactArchiver freestyle post build ste
 This conversion do not return a stage but modify the model to add some build condition.
 
 ```
+@Extension
+public class ArtifactArchiverConverter implements PublisherConverter
 
     public ModelASTStage convert( ConverterRequest request, ConverterResult result, Publisher publisher )
     {
@@ -116,4 +121,137 @@ This conversion do not return a stage but modify the model to add some build con
     }
 
 ``` 
+
+
+#### Example Build Wrapper conversion
+
+Here the commented code to convert the Config File freestyle wrapper build.
+This conversion do not return a stage but use a helper method to add wrapper around all future build step conversion.
+
+```
+@OptionalExtension(requirePlugins = { "config-file-provider" })
+This was to not have the config-file-provider plugin as a required dependency
+But you can use (as your use your plugin) 
+@Extension 
+public class ConfigFileBuildWrapperConverter
+    implements BuildWrapperConverter
+    @Override
+    public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, BuildWrapper wrapper )
+    {
+        ConfigFileBuildWrapper configFileBuildWrapper = (ConfigFileBuildWrapper)wrapper;
+        if(configFileBuildWrapper.getManagedFiles() == null || configFileBuildWrapper.getManagedFiles().isEmpty() )
+        {
+            return null;
+        }
+        // return a lambda which will be called to wrap build step branches conversion 
+        // see Build Step conversion which use it
+        converterResult.addWrappingTreeStep( () -> build( request, configFileBuildWrapper ) );
+        return null;
+    }
+
+    private ModelASTTreeStep build(ConverterRequest request, ConfigFileBuildWrapper configFileBuildWrapper) {
+        ModelASTTreeStep configFileProvider = new ModelASTTreeStep( this );
+
+        configFileProvider.setName( "configFileProvider" );
+        ModelASTSingleArgument singleArgument = new ModelASTSingleArgument( null);
+        configFileProvider.setArgs( singleArgument );
+
+        // only the 1st one
+        ManagedFile managedFile = configFileBuildWrapper.getManagedFiles().get( 0 );
+        // we simply generate to groovy code
+        //configFileProvider([configFile(fileId: 'yup', targetLocation: 'myfile.txt')])
+        StringBuilder gstring = new StringBuilder( "[configFile(fileId:'" );
+        gstring.append( managedFile.getFileId());
+        gstring.append( "', targetLocation: '" );
+        gstring.append( managedFile.getTargetLocation() );
+        gstring.append( "')]" );
+        singleArgument.setValue( ModelASTValue.fromGString( gstring.toString(), this ) );
+
+        //}
+        return configFileProvider;
+    }
+
+``` 
+
+#### Example SCM conversion
+
+Here the commented code to convert the Git scm.
+This conversion add a stage to the pipeline model
+
+```
+@Extension
+public class GitScmConverter implements ScmConverter
+    ...
+    public void convert( ConverterRequest request, ConverterResult converterResult, SCM scm )
+    {
+        List<UserRemoteConfig> repoList = ( (GitSCM) scm ).getUserRemoteConfigs();
+        if(repoList.isEmpty()){
+            return;
+        }
+        // create the new stage
+        ModelASTStage stage = new ModelASTStage( this );
+        stage.setName( "Checkout Scm" );
+        // what will be generated as step
+        //git url: "", branch: '',changelog: '', credentialsId: '', pool: ''
+        List<ModelASTStep> steps = new ArrayList<>();
+        // a step will be created per remote repository
+        for( UserRemoteConfig userRemoteConfig : repoList)
+        {
+            // create the git step 
+            ModelASTStep git = new ModelASTStep( null );
+            git.setName( "git" );
+
+            Map<ModelASTKey, ModelASTValue> args = new HashMap<>();
+            // add parameters
+            { // url
+                ModelASTKey url = new ModelASTKey( this );
+                url.setKey( "url" );
+                ModelASTValue urlValue = ModelASTValue.fromConstant( userRemoteConfig.getUrl(), this );
+                args.put( url, urlValue );
+            }
+
+            // more parameters in the original code
+            
+            // configure args of the step
+            ModelASTNamedArgumentList stepArgs = new ModelASTNamedArgumentList( null);
+            stepArgs.setArguments( args );
+            git.setArgs( stepArgs );
+            steps.add( git );
+        }
+
+        // create a branch for the stage
+        ModelASTBranch branch = new ModelASTBranch( this );
+        branch.setSteps(steps);
+        stage.setBranches( Arrays.asList( branch ) );
+        // use an utility method to add the stage to the pipeline model
+        addStage(converterResult.getModelASTPipelineDef(), stage );
+    }
+
+```
+
+#### Example Build Trigger conversion
+
+Here the commented code to convert the cron trigger.
+This conversion modify the pipeline mode to add a trigger property via an utility method
+
+```
+@Extension
+public class TimerTriggerConverter implements TriggerConverter
+    ...
+    @Override
+    public void convert( ConverterRequest request, ConverterResult converterResult, TriggerDescriptor triggerDescriptor,
+                         Trigger<?> trigger )
+    {
+        TimerTrigger timerTrigger = (TimerTrigger) trigger;
+
+        String cronValue = timerTrigger.getSpec();
+        // simply create the cron option 
+        ModelASTTrigger modelASTTrigger = new ModelASTTrigger( this );
+        modelASTTrigger.setName( "cron" );
+        modelASTTrigger.setArgs( Arrays.asList(ModelASTValue.fromConstant( cronValue, this )) );
+        // add the option to the model
+        ModelASTUtils.addTrigger( converterResult.getModelASTPipelineDef(), modelASTTrigger );
+    }
+
+```
 
