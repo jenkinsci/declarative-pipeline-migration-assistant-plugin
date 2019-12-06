@@ -1,19 +1,25 @@
 ## Declarative Pipeline Migration Assistant 
-This project can convert freestyle projects to declarative pipeline.
-There is two modules in the project:
-- The API (the base of extension points to convert different parts of freestyle project)
-- The plugin which uses the API to convert a freestyle project
+This project includes a plugin that uses details from a Freestyle project to generate a starting Jenkinsfile.The Declarative Pipeline Migration Assistant plugin uses a “best effort” approach during generation, which means supported configurations in Freestyle projects will be automatically converted, and placeholder stages will be created for plugins that are not yet supported.
+
+There are two modules in the project:
+- The plugin which uses the API to generate a Jenkinsfile based on a Freestyle project
+- The API (the base of extension points to convert different parts of a Freestyle project)
+
+### The plugin
+For further details on using the plugin, please see Converting a Freestyle project to a Declarative Pipeline.
 
 ### API 
-Some interfaces define some extension of the conversion:
-- BuilderConverter: convert Builder
-- BuildWrapperConverter: convert BuildWrapper
-- JobPropertyConverter: convert JobProperty
-- PublisherConverter: convert Publisher
-- ScmConverter: convert SCM
-- TriggerConverter: convert BuildTriggers
+Interfaces that define extension of the conversion:
+- **BuilderConverter:** convert Builder
+- **BuildWrapperConverter:** convert BuildWrapper
+- **JobPropertyConverter:** convert JobProperty
+- **PublisherConverter:** convert Publisher
+- **ScmConverter:** convert SCM
+- **TriggerConverter:** convert BuildTriggers
 
-To have a plugin participating to the conversion.
+The Declarative Pipeline Migration Assistant plugin currently supports a limited number of plugins. See the documentation for details. 
+
+If you want to add support for a specific plugin that is not currently supported, the process includes the following steps:
 
 #### Add converter api dependency
 
@@ -27,7 +33,7 @@ To have a plugin participating to the conversion.
 
 ``` 
  
-#### Create your extension as it:
+#### Create your extension
 
 ```
 @Extension
@@ -47,7 +53,7 @@ public class ShellConverter implements BuilderConverter
 
 #### Example Build Step conversion
 
-Here the commented code to convert the Shell script freestyle step
+The following is an example with comments to convert a Shell script freestyle step using the API.
 
 ```
 @Extension
@@ -81,8 +87,8 @@ public class ShellConverter implements BuilderConverter
 
 #### Example Publisher conversion
 
-Here the commented code to convert the ArtifactArchiver freestyle post build step.
-This conversion do not return a stage but modify the model to add some build condition.
+The following is an example with comments to convert the ArtifactArchiver freestyle post build step using the API.
+This conversion does not return a stage, but modifies the model to add some build conditions.
 
 ```
 @Extension
@@ -125,8 +131,8 @@ public class ArtifactArchiverConverter implements PublisherConverter
 
 #### Example Build Wrapper conversion
 
-Here the commented code to convert the Config File freestyle wrapper build.
-This conversion do not return a stage but use a helper method to add wrapper around all future build step conversion.
+The following is an example with comments to convert the Config File freestyle wrapper build using the API.
+This conversion does not return a stage, but uses a helper method to add a wrapper around all future build step conversions.
 
 ```
 @OptionalExtension(requirePlugins = { "config-file-provider" })
@@ -175,8 +181,8 @@ public class ConfigFileBuildWrapperConverter
 
 #### Example SCM conversion
 
-Here the commented code to convert the Git scm.
-This conversion add a stage to the pipeline model
+The following is an example with comments to convert the Git SCM freestyle stage using the API.
+This conversion adds a stage to the pipeline model.
 
 ```
 @Extension
@@ -231,8 +237,8 @@ public class GitScmConverter implements ScmConverter
 
 #### Example Build Trigger conversion
 
-Here the commented code to convert the cron trigger.
-This conversion modify the pipeline mode to add a trigger property via an utility method
+The following is an example with comments to convert the cron trigger using the API.
+This conversion modifies the pipeline mode to add a trigger property via an utility method.
 
 ```
 @Extension
