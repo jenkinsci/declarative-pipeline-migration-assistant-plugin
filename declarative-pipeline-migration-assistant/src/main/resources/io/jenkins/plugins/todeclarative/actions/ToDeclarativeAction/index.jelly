@@ -68,31 +68,12 @@
                 <div class="review-converted">
                   ${%jenkinsfile.section.title}
                 </div>
-
-                <div class="rectangle-copy">
-                  <div class="icons-converter-ui">
-                    <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant/img/copy.svg"/>
-                  </div>
-                  <div class="copy">Copy</div>
-                </div>
-
-                <div class="rectangle-download">
-                    <div class="icons-converter-ui">
-                      <img src="${rootURL}/plugin/declarative-pipeline-migration-assistant/img/download.svg"/>
-                    </div>
-                    <div class="download">Download</div>
-                </div>
-
               </div>
             </div>
           </div>
-
-          <div class="jenkinsfile-editor-wrapper" id="jenkinsfile-editor-original" style="display: none; position: relative">
-            <f:textarea value="${Jenkinsfile}" readonly="readonly" id="jenkinsfile-content"/>
-            <div class="pane-frame editor" style="height: 1000px;width: 1400px"/>
-          </div>
-          <st:adjunct includes="io.jenkins.plugins.todeclarative.ui.jenkinsfile-editor"/>
-
+          <pre>
+            <textarea readonly="true" class="prism-live language-js" style="--max-height: 30em;display: none" id="jenkinsfile-content">${Jenkinsfile}</textarea>
+          </pre>
         </j:if>
 
         <j:if test="${error!=null}">

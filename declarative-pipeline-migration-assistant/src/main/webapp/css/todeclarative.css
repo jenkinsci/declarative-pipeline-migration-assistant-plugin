@@ -1,16 +1,17 @@
-@media (min-width: 1170px) {
-    body.two-column #side-panel {
-        width: 10px;
-    }
 
-    body.two-column #main-panel {
-        margin-left: 10px;
-    }
+body.two-column #side-panel {
+    width: 0px;
+}
+
+body.two-column #main-panel {
+    width: 100%;
+    margin-left: 0px;
 }
 
 .converter-panel {
     align-content: center;
     display: table;
+    width: 95%;
 }
 
 .main-title {
@@ -293,7 +294,7 @@
 .review-converted-top-title-modal {
     box-sizing: border-box;
     height: 56px;
-    width: 1400px;
+    width: 100%;
     border: 1px solid #CCCCCC;
     border-radius: 3px 3px 0 0;
     background-color: #F9F9F9;
@@ -303,10 +304,6 @@
     vertical-align: top;
 }
 
-.modal-content {
-    width: 1400px;
-    height: 800px;
-}
 .rectangle-copy-modal {
     float: right;
     height: 34px;
