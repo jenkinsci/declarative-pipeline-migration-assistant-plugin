@@ -71,7 +71,7 @@
               </div>
             </div>
           </div>
-          <pre>
+          <pre class="line-numbers">
             <textarea readonly="true" class="prism-live language-js" style="--max-height: 30em;display: none" id="jenkinsfile-content">${Jenkinsfile}</textarea>
           </pre>
         </j:if>
