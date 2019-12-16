@@ -14,18 +14,6 @@ body.two-column #main-panel {
     width: 95%;
 }
 
-.main-title {
-    height: 5%;
-    width: 100%;
-    color: #323232;
-    font-family: "Helvetica Neue";
-    font-size: 28.5px;
-    font-weight: bold;
-    letter-spacing: -0.3px;
-    line-height: 35px;
-    margin-bottom: 10px;
-}
-
 .result-top-title {
     display: table-row;
 }
@@ -42,7 +30,7 @@ body.two-column #main-panel {
     height: 16px;
     width: 350px;
     color: #323232;
-    font-family: Helvetica;
+    font-family: Arial,Helvetica;
     font-size: 13px;
     font-weight: bold;
     letter-spacing: -0.1px;
@@ -56,7 +44,7 @@ body.two-column #main-panel {
     height: 16px;
     width: 127px;
     color: #323232;
-    font-family: Helvetica;
+    font-family: Arial,Helvetica;
     font-size: 13px;
     font-weight: bold;
     letter-spacing: -0.1px;
@@ -67,7 +55,7 @@ body.two-column #main-panel {
 
 .rectangle-conversion-error{
     color: #323232;
-    font-family: Helvetica;
+    font-family: Arial,Helvetica;
     font-size: 13px;
     font-weight: bold;
     letter-spacing: -0.1px;
@@ -86,7 +74,7 @@ body.two-column #main-panel {
 
 .rectangle-conversion-success{
     color: #323232;
-    font-family: Helvetica;
+    font-family: Arial,Helvetica;
     font-size: 13px;
     font-weight: bold;
     letter-spacing: -0.1px;
@@ -108,7 +96,7 @@ body.two-column #main-panel {
     height: 16px;
     width: 127px;
     color: #323232;
-    font-family: Helvetica;
+    font-family: Arial,Helvetica;
     font-size: 13px;
     font-weight: bold;
     letter-spacing: -0.1px;
@@ -141,14 +129,6 @@ body.two-column #main-panel {
 .result-links {
     margin: 1px;
     margin-top: 8px;
-}
-
-.ace_gutter-cell {
-    height: 20px;
-    width: 8px;
-    font-family: Monaco;
-    font-size: 13px;
-    line-height: 20px;
 }
 
 .review-converted-top-title {
@@ -190,7 +170,7 @@ body.two-column #main-panel {
 
 .review-converted {
     color: #323232;
-    font-family: Helvetica;
+    font-family: Arial,Helvetica;
     font-size: 13px;
     font-weight: bold;
     letter-spacing: -0.1px;
@@ -221,7 +201,7 @@ body.two-column #main-panel {
     height: 14px;
     width: 30px;
     color: #FFFFFF;
-    font-family: Helvetica;
+    font-family: Arial,Helvetica;
     font-size: 12px;
     font-weight: bold;
     letter-spacing: -0.09px;
@@ -266,7 +246,7 @@ body.two-column #main-panel {
     height: 14px;
     width: 54px;
     color: #FFFFFF;
-    font-family: Helvetica;
+    font-family: Arial,Helvetica;
     font-size: 12px;
     font-weight: bold;
     letter-spacing: -0.09px;
@@ -281,7 +261,7 @@ body.two-column #main-panel {
     height: 14px;
     width: 43px;
     color: #FFFFFF;
-    font-family: Helvetica;
+    font-family: Arial,Helvetica;
     font-size: 12px;
     font-weight: bold;
     letter-spacing: -0.09px;
@@ -338,7 +318,7 @@ body.two-column #main-panel {
     height: 14px;
     width: 50px;
     color: #FFFFFF;
-    font-family: Helvetica;
+    font-family: Arial,Helvetica;
     font-size: 12px;
     font-weight: bold;
     letter-spacing: -0.09px;
@@ -353,7 +333,7 @@ body.two-column #main-panel {
     height: 14px;
     width: 30px;
     color: #FFFFFF;
-    font-family: Helvetica;
+    font-family: Arial,Helvetica;
     font-size: 12px;
     font-weight: bold;
     letter-spacing: -0.09px;
