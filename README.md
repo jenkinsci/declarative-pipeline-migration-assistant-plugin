@@ -172,8 +172,6 @@ public class ConfigFileBuildWrapperConverter
         gstring.append( managedFile.getTargetLocation() );
         gstring.append( "')]" );
         singleArgument.setValue( ModelASTValue.fromGString( gstring.toString(), this ) );
-
-        //}
         return configFileProvider;
     }
 
