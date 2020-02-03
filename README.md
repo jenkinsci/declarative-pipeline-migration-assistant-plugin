@@ -5,6 +5,8 @@ There are two modules in the project:
 - The plugin which uses the API to generate a Jenkinsfile based on a Freestyle project
 - The API (the base of extension points to convert different parts of a Freestyle project)
 
+You can find more documentation on the Cloudbees documentation site [http://cloudbees.com/r/declarative-pipeline-migration-assistant](http://cloudbees.com/r/declarative-pipeline-migration-assistant)
+
 ### The plugin
 For further details on using the plugin, please see Converting a Freestyle project to a Declarative Pipeline.
 
