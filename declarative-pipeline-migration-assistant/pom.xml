@@ -10,6 +10,7 @@
   <version>1.0.1-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Declarative Pipeline Migration Assistant</name>
+  <description>The plugin which uses the API to generate a Jenkinsfile based on a Freestyle project</description>
 
   <dependencies>
     <dependency>

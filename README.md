@@ -1,11 +1,16 @@
 ## Declarative Pipeline Migration Assistant 
+
+[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/declarative-pipeline-migration-assistant)](https://plugins.jenkins.io/declarative-pipeline-migration-assistant)
+[![Changelog](https://img.shields.io/github/v/tag/jenkinsci/declarative-pipeline-migration-assistant?label=changelog)](https://github.com/jenkinsci/declarative-pipeline-migration-assistant/blob/master/CHANGELOG.md)
+[![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/declarative-pipeline-migration-assistant?color=blue)](https://plugins.jenkins.io/declarative-pipeline-migration-assistant)
+[![Contributors](https://img.shields.io/github/contributors/jenkinsci/declarative-pipeline-migration-assistant.svg)](https://github.com/jenkinsci/declarative-pipeline-migration-assistant/contributors)
 This project includes a plugin that uses details from a Freestyle project to generate a starting Jenkinsfile.The Declarative Pipeline Migration Assistant plugin uses a “best effort” approach during generation, which means supported configurations in Freestyle projects will be automatically converted, and placeholder stages will be created for plugins that are not yet supported.
 
 There are two modules in the project:
 - The plugin which uses the API to generate a Jenkinsfile based on a Freestyle project
 - The API (the base of extension points to convert different parts of a Freestyle project)
 
-You can find more documentation on the Cloudbees documentation site [http://cloudbees.com/r/declarative-pipeline-migration-assistant](http://cloudbees.com/r/declarative-pipeline-migration-assistant)
+Documentation for this plugin is hosted on [https://docs.cloudbees.com/docs/admin-resources/latest/pipelines-user-guide/declarative-pipeline-migration-assistant](the Cloudbees documentation site).
 
 ### The plugin
 For further details on using the plugin, please see Converting a Freestyle project to a Declarative Pipeline.

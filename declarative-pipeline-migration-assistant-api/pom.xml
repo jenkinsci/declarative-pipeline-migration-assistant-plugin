@@ -10,7 +10,7 @@
   <version>1.0.1-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Declarative Pipeline Migration Assistant API</name>
-  <description>TODO</description>
+  <description>Extension points to convert different parts of a Freestyle project</description>
 
   <dependencies>
     <dependency>
