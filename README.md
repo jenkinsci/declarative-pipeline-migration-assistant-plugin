@@ -1,9 +1,9 @@
 ## Declarative Pipeline Migration Assistant 
 
 [![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/declarative-pipeline-migration-assistant)](https://plugins.jenkins.io/declarative-pipeline-migration-assistant)
-[![Changelog](https://img.shields.io/github/v/tag/jenkinsci/convert-to-declarative?label=changelog)](https://github.com/jenkinsci/convert-to-declarative/blob/master/CHANGELOG.md)
+[![Changelog](https://img.shields.io/github/v/tag/jenkinsci/convert-to-declarative?label=changelog)](https://github.com/jenkinsci/declarative-pipeline-migration-assistant-plugin/releases)
 [![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/declarative-pipeline-migration-assistant?color=blue)](https://plugins.jenkins.io/declarative-pipeline-migration-assistant)
-[![Contributors](https://img.shields.io/github/contributors/jenkinsci/declarative-pipeline-migration-assistant.svg)](https://github.com/jenkinsci/convert-to-declarative/contributors)
+[![Contributors](https://img.shields.io/github/contributors/jenkinsci/declarative-pipeline-migration-assistant.svg)](https://github.com/jenkinsci/declarative-pipeline-migration-assistant/contributors)
 This project includes a plugin that uses details from a Freestyle project to generate a starting Jenkinsfile.The Declarative Pipeline Migration Assistant plugin uses a “best effort” approach during generation, which means supported configurations in Freestyle projects will be automatically converted, and placeholder stages will be created for plugins that are not yet supported.
 
 There are two modules in the project:
