@@ -1,4 +1,4 @@
 <?jelly escape-by-default='true'?>
 <div>
-    Declarative Pipeline Migration Assistant API (this plugin contains API used to convert jobs to declarative pipeline).
+    Declarative Pipeline Migration Assistant API (this plugin contains APIs used to convert Freestyle Jobs into Declarative Pipelines).
 </div>
