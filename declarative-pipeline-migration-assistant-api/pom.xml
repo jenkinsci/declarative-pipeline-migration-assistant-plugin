@@ -10,7 +10,7 @@
   <version>1.0.1-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Declarative Pipeline Migration Assistant API</name>
-  <description>TODO</description>
+  <description>Declarative Pipeline Migration Assistant API (this plugin contains APIs used to convert Freestyle Jobs into Declarative Pipelines).</description>
 
   <dependencies>
     <dependency>
