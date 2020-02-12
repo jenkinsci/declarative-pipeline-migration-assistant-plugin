@@ -12,6 +12,8 @@
   <name>Declarative Pipeline Migration Assistant</name>
   <description>Declarative Pipeline Migration Assistant Plugin.</description>
 
+  <url>https://github.com/jenkinsci/declarative-pipeline-migration-assistant-plugin</url>
+
   <dependencies>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
