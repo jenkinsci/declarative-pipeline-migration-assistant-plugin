@@ -15,6 +15,7 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStages;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
+import org.jenkinsci.plugins.variant.OptionalExtension;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +25,7 @@ import java.util.Map;
 
 import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.addStage;
 
-@Extension
+@OptionalExtension(requirePlugins = { "git" })
 public class GitScmConverter implements ScmConverter
 {
     @Override
