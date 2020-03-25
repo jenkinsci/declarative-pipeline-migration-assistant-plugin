@@ -2,7 +2,6 @@ package io.jenkins.plugins.todeclarative.converter.freestyle;
 
 import hudson.Extension;
 import hudson.model.Describable;
-import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
 import hudson.model.Job;
 import hudson.model.JobProperty;
@@ -17,6 +16,7 @@ import hudson.triggers.TriggerDescriptor;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterException;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
+import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
 import io.jenkins.plugins.todeclarative.converter.api.ToDeclarativeConverter;
 import io.jenkins.plugins.todeclarative.converter.api.Warning;
 import io.jenkins.plugins.todeclarative.converter.api.builder.BuilderConverter;
@@ -131,13 +131,19 @@ public class FreestyleToDeclarativeConverter
         throws ConverterException
     {
 
+        List<Warning> warnings = converterResult.getWarnings();
         for ( Map.Entry<TriggerDescriptor, Trigger<?>> entry : triggers.entrySet() )
         {
             List<TriggerConverter> converters = findTriggerConverters( entry.getKey(), entry.getValue() );
             if ( !converters.isEmpty() )
             {
-                converters.stream().forEach( triggerConverter ->
-                    triggerConverter.convert( converterRequest, converterResult, entry.getKey(), entry.getValue() )
+                converters.stream().forEach( triggerConverter -> {
+                    int numWarnings = warnings.size();
+                    triggerConverter.convert(converterRequest, converterResult, entry.getKey(), entry.getValue());
+                    if (warnings.size() == numWarnings) {
+                        converterResult.addConvertedPlugin(triggerConverter.getClass().getName());
+                    }
+                        }
                 );
             }
             else
@@ -154,6 +160,7 @@ public class FreestyleToDeclarativeConverter
                                          List<BuildWrapper> wrappers )
         throws ConverterException
     {
+        List<Warning> warnings = converterResult.getWarnings();
         ModelASTStages stages = converterResult.getModelASTPipelineDef().getStages();
         if ( stages == null )
         {
@@ -166,11 +173,15 @@ public class FreestyleToDeclarativeConverter
             if ( !converters.isEmpty() )
             {
                 converters.stream().forEach( buildWrapperConverterConverter -> {
+                    int numWarnings = warnings.size();
                     ModelASTStage stage =
                         buildWrapperConverterConverter.convert( converterRequest, converterResult, wrapper );
                     if ( stage != null )
                     {
-                        converterResult.getModelASTPipelineDef().getStages().getStages().add( stage );
+                        ModelASTUtils.addStage(converterResult.getModelASTPipelineDef(), stage);
+                    }
+                    if (warnings.size() == numWarnings) {
+                        converterResult.addConvertedPlugin(buildWrapperConverterConverter.getClass().getName());
                     }
                 } );
             }
@@ -190,6 +201,7 @@ public class FreestyleToDeclarativeConverter
             return;
         }
 
+        List<Warning> warnings = converterResult.getWarnings();
         ModelASTStages stages = converterResult.getModelASTPipelineDef().getStages();
         if ( stages == null )
         {
@@ -201,11 +213,15 @@ public class FreestyleToDeclarativeConverter
             List<PublisherConverter> converters = findPublisherConverters( publisher );
             if ( !converters.isEmpty() )
             {
-                converters.stream().forEach( converter -> {
-                    ModelASTStage stage = converter.convert( converterRequest, converterResult, publisher );
+                converters.stream().forEach( publisherConverter -> {
+                    int numWarnings = warnings.size();
+                    ModelASTStage stage = publisherConverter.convert( converterRequest, converterResult, publisher );
                     if ( stage != null )
                     {
-                        converterResult.getModelASTPipelineDef().getStages().getStages().add( stage );
+                        ModelASTUtils.addStage(converterResult.getModelASTPipelineDef(), stage);
+                    }
+                    if (warnings.size() == numWarnings) {
+                        converterResult.addConvertedPlugin(publisherConverter.getClass().getName());
                     }
                 } );
             }
@@ -242,8 +258,14 @@ public class FreestyleToDeclarativeConverter
         List<ScmConverter> converters = findBuildScmConverters( scm );
         if ( !converters.isEmpty() )
         {
-            converters.stream() //
-                .forEach( scmConverter -> scmConverter.convert( converterRequest, converterResult, scm ) );
+            List<Warning> warnings = converterResult.getWarnings();
+            converters.stream().forEach( scmConverter -> {
+                int numWarnings = warnings.size();
+                scmConverter.convert( converterRequest, converterResult, scm );
+                if (warnings.size() == numWarnings) {
+                    converterResult.addConvertedPlugin(scmConverter.getClass().getName());
+                }
+            } );
         }
         else
         {
@@ -255,6 +277,7 @@ public class FreestyleToDeclarativeConverter
                                     List<Builder> builders )
         throws ConverterException
     {
+        List<Warning> warnings = converterResult.getWarnings();
         ModelASTStages stages = converterResult.getModelASTPipelineDef().getStages();
         if ( stages == null )
         {
@@ -264,10 +287,14 @@ public class FreestyleToDeclarativeConverter
         for ( Builder builder : builders )
         {
             Consumer<? super BuilderConverter> consumer = builderConverter -> {
+                int  numWarnings = warnings.size();
                 ModelASTStage stage = builderConverter.convert( converterRequest, converterResult, builder );
                 if ( stage != null )
                 {
-                    converterResult.getModelASTPipelineDef().getStages().getStages().add( stage );
+                    ModelASTUtils.addStage(converterResult.getModelASTPipelineDef(), stage);
+                }
+                if (warnings.size() == numWarnings) {
+                    converterResult.addConvertedPlugin(builderConverter.getClass().getName());
                 }
             };
             if ( builder instanceof Maven ) // Maven is a special one and we can apply only one converter so we pick the first one
@@ -292,7 +319,7 @@ public class FreestyleToDeclarativeConverter
                     // add fake stage with commented step named with the plugin class name
                     ModelASTStage stage = Jenkins.get().getExtensionList( NoConverterBuilder.class ).iterator()
                         .next().convert( converterRequest, converterResult, builder );
-                    converterResult.getModelASTPipelineDef().getStages().getStages().add( stage );
+                    ModelASTUtils.addStage(converterResult.getModelASTPipelineDef(), stage);
                 }
             }
         }
@@ -302,17 +329,20 @@ public class FreestyleToDeclarativeConverter
                                          Map<JobPropertyDescriptor, JobProperty<? super FreeStyleProject>> map )
     {
 
+        List<Warning> warnings = converterResult.getWarnings();
         for ( Map.Entry<JobPropertyDescriptor, JobProperty<? super FreeStyleProject>> entry : map.entrySet() )
         {
             List<JobPropertyConverter> converters = findJobPropertyConverters( entry.getKey(), entry.getValue() );
             // if any special converters we used them otherwise simply copy the property
             if ( !converters.isEmpty() )
             {
-                converters.stream().forEach(
-                    jobPropertyConverter -> jobPropertyConverter.convert( converterRequest, converterResult, //
-                                                                          entry.getKey(), entry.getValue() )
-
-                );
+                converters.stream().forEach(jobPropertyConverter -> {
+                    int numWarnings = warnings.size();
+                    jobPropertyConverter.convert( converterRequest, converterResult, entry.getKey(), entry.getValue() );
+                    if (warnings.size() == numWarnings) {
+                        converterResult.addConvertedPlugin(entry.getKey().getClass().getName());
+                    }
+                        });
             }
             else
             {
