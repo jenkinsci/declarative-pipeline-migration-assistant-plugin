@@ -70,11 +70,10 @@ public class ConverterResult
         return warnings;
     }
 
-    // TODO: not used. Remove?
-//    public void setWarnings( List<Warning> warnings )
-//    {
-//        this.warnings = warnings;
-//    }
+    public void setWarnings( List<Warning> warnings )
+    {
+        this.warnings = warnings;
+    }
 
     public void addWarning( Warning warning )
     {
