@@ -40,10 +40,10 @@ public class ParameterPropertyConverterTest
             new ParametersDefinitionProperty( parametersDefinitions );
         p.addProperty( parametersDefinitionProperty );
         ParameterPropertyConverter converter = j.jenkins.getExtensionList( ParameterPropertyConverter.class ).get( 0 );
-        assertTrue( converter.canConvert( null, parametersDefinitionProperty ) );
+        assertTrue( converter.canConvert( parametersDefinitionProperty ) );
 
         ConverterResult result = new ConverterResult();
-        converter.convert( new ConverterRequest(), result, null, parametersDefinitionProperty );
+        converter.convert( new ConverterRequest(), result, parametersDefinitionProperty );
         ModelASTBuildParameters parameters = result.getModelASTPipelineDef().getParameters();
         assertEquals( 3, parameters.getParameters().size() );
         String groovy = parameters.toGroovy();

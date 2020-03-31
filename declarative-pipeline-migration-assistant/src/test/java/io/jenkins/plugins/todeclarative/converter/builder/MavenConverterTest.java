@@ -21,6 +21,8 @@ import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.ToolInstallations;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 public class MavenConverterTest
@@ -66,13 +68,14 @@ public class MavenConverterTest
         Assert.assertTrue( mavenConverter.canConvert( maven ) );
         ConverterRequest request = new ConverterRequest().job( p );
         ConverterResult result = new ConverterResult();
-        ModelASTStage stage = mavenConverter.convert( request, result, maven );
-        assertNotNull( stage );
+        assertTrue(mavenConverter.convert( request, result, maven ));
+        List<ModelASTStage> stages = result.getModelASTPipelineDef().getStages().getStages();
+        assertNotNull( stages );
 
         String toolsGroovy = result.getModelASTPipelineDef().getTools().toGroovy();
         System.out.println( "tools: " + toolsGroovy );
 
-        String stageGroovy = stage.toGroovy();
+        String stageGroovy = stages.get(0).toGroovy();
         System.out.println( "groovy: " + stageGroovy );
 
         assertThat( toolsGroovy, CoreMatchers.containsString( "tools" ) );
@@ -123,12 +126,13 @@ public class MavenConverterTest
         assertTrue( mavenConverter.canConvert( maven ) );
         ConverterRequest request = new ConverterRequest().job( p );
         ConverterResult result = new ConverterResult();
-        ModelASTStage stage = mavenConverter.convert( request, result, maven );
-        assertNotNull( stage );
+        assertTrue(mavenConverter.convert( request, result, maven ));
+        List<ModelASTStage> stages = result.getModelASTPipelineDef().getStages().getStages();
+        assertNotNull( stages );
 
         assertNull( result.getModelASTPipelineDef().getTools() );
 
-        String stageGroovy = stage.toGroovy();
+        String stageGroovy = stages.get(0).toGroovy();
         System.out.println( "groovy: " + stageGroovy );
 
         assertThat( stageGroovy, CoreMatchers.containsString( "mvn" ) );
@@ -175,12 +179,13 @@ public class MavenConverterTest
         assertTrue( mavenConverter.canConvert( maven ) );
         ConverterRequest request = new ConverterRequest().job( p );
         ConverterResult result = new ConverterResult();
-        ModelASTStage stage = mavenConverter.convert( request, result, maven );
-        assertNotNull( stage );
+        assertTrue(mavenConverter.convert( request, result, maven ));
+        List<ModelASTStage> stages = result.getModelASTPipelineDef().getStages().getStages();
+        assertNotNull( stages );
 
         assertNull( result.getModelASTPipelineDef().getTools() );
 
-        String stageGroovy = stage.toGroovy();
+        String stageGroovy = stages.get(0).toGroovy();
         System.out.println( "groovy: " + stageGroovy );
 
         assertThat( stageGroovy, CoreMatchers.containsString( "mvn" ) );

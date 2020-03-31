@@ -1,6 +1,7 @@
 package io.jenkins.plugins.todeclarative.converter.freestyle;
 
 import hudson.Extension;
+import hudson.ExtensionList;
 import hudson.model.Describable;
 import hudson.model.FreeStyleProject;
 import hudson.model.Job;
@@ -13,10 +14,12 @@ import hudson.tasks.Maven;
 import hudson.tasks.Publisher;
 import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
+import io.jenkins.plugins.todeclarative.converter.api.BaseConverter;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterException;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import io.jenkins.plugins.todeclarative.converter.api.ToDeclarativeConverter;
 import io.jenkins.plugins.todeclarative.converter.api.Warning;
 import io.jenkins.plugins.todeclarative.converter.api.builder.BuilderConverter;
@@ -25,7 +28,7 @@ import io.jenkins.plugins.todeclarative.converter.api.jobproperty.JobPropertyCon
 import io.jenkins.plugins.todeclarative.converter.api.publisher.PublisherConverter;
 import io.jenkins.plugins.todeclarative.converter.api.scm.ScmConverter;
 import io.jenkins.plugins.todeclarative.converter.api.trigger.TriggerConverter;
-import io.jenkins.plugins.todeclarative.converter.builder.NoConverterBuilder;
+import io.jenkins.plugins.todeclarative.converter.builder.NoBuilderConverter;
 import io.jenkins.plugins.todeclarative.converter.publisher.NoPublisherConverter;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
@@ -34,9 +37,10 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStages;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Extension
@@ -60,7 +64,8 @@ public class FreestyleToDeclarativeConverter
             }
         }
 
-        convertBuildWrappers( converterRequest, converterResult, freeStyleProject.getBuildWrappersList() );
+        ExtensionList<BaseConverter> converterList = BaseConverter.all();
+        convertTypeList(converterRequest, converterResult, converterList, freeStyleProject.getBuildWrappersList());
 
         { // label customWorkspace etc...
             String label = freeStyleProject.getAssignedLabelString();
@@ -74,13 +79,6 @@ public class FreestyleToDeclarativeConverter
                 agent.setAgentType( agentKey );
             } else
             {
-
-//            agent {
-//                node {
-//                    label 'my-defined-label'
-//                    customWorkspace '/some/other/path'
-//                }
-//            }
 
                 ModelASTKey agentType = new ModelASTKey( this ){
                     // so ugly to avoid NPE in ModelASTAgent...
@@ -112,18 +110,65 @@ public class FreestyleToDeclarativeConverter
             SCM scm = freeStyleProject.getScm();
             if ( scm != null )
             {
-                convertScm( converterRequest, converterResult, scm );
+                convertTypeList(converterRequest, converterResult, converterList, Arrays.asList(scm));
             }
         }
 
-        convertBuildTriggers( converterRequest, converterResult, freeStyleProject.getTriggers() );
+        convertTypeList(converterRequest, converterResult, converterList, freeStyleProject.getTriggers().values());
+        Map<JobPropertyDescriptor, JobProperty<? super FreeStyleProject>> projectProperties = freeStyleProject.getProperties();
+        // ignore JiraProjectProperty as it is not removed when removing jira publishers so we avoid false positive
+        projectProperties.entrySet().removeIf(entry -> entry.getKey().clazz.getName().equals("hudson.plugins.jira.JiraProjectProperty"));
+        convertTypeList(converterRequest, converterResult, converterList, projectProperties.values());
+        convertTypeList(converterRequest, converterResult, converterList, freeStyleProject.getBuilders());
+        convertTypeList(converterRequest, converterResult, converterList, freeStyleProject.getPublishersList());
+    }
 
-        convertJobProperties( converterRequest, converterResult, freeStyleProject.getProperties() );
-
-        convertBuilders( converterRequest, converterResult, freeStyleProject.getBuilders() );
-
-        convertPublishers( converterRequest, converterResult, freeStyleProject.getPublishersList() );
-
+    protected <T> void convertTypeList(ConverterRequest request, ConverterResult result, ExtensionList<BaseConverter> converterList, Collection<T> typeList) throws ConverterException {
+        ModelASTStages stages = result.getModelASTPipelineDef().getStages();
+        if ( stages == null )
+        {
+            stages = new ModelASTStages( this );
+            result.getModelASTPipelineDef().setStages( stages );
+        }
+        for ( T type : typeList )
+        {
+            boolean matched = false;
+            for ( BaseConverter converter : converterList )
+            {
+                if ( converter.canConvert(type) )
+                {
+                    matched = true;
+                    if ( converter.convert(request, result, type) )
+                    {
+                        result.addConvertedType(type.getClass().getName());
+                    } else
+                    {
+                        // TODO add to failed conversion, but get more detailed info?
+                    }
+                    if ( type instanceof Maven ) {
+                        // Maven is a special one and we can apply only one converter so we pick the first one
+                        break;
+                    }
+                }
+            }
+            if ( !matched )
+            {
+                result.addWarning( new Warning( "Converter not found '" + getDisplayName((Describable) type) + "'", type.getClass().getName() ) );
+                SingleTypedConverter noConverter = null;
+                if ( type instanceof Builder )
+                {
+                    noConverter = Jenkins.get().getExtensionList( NoBuilderConverter.class ).get(0);
+                } else if ( type instanceof Publisher )
+                {
+                    noConverter = Jenkins.get().getExtensionList( NoPublisherConverter.class ).get(0);
+                }
+                if ( noConverter != null )
+                {
+                    noConverter.convert( request, result,type );
+                }
+                // TODO add to failed conversion, but get more detailed info?
+            }
+        }
     }
 
     protected void convertBuildTriggers( ConverterRequest converterRequest, ConverterResult converterResult,
@@ -141,7 +186,7 @@ public class FreestyleToDeclarativeConverter
                     int numWarnings = warnings.size();
                     triggerConverter.convert(converterRequest, converterResult, entry.getKey(), entry.getValue());
                     if (warnings.size() == numWarnings) {
-                        converterResult.addConvertedPlugin(triggerConverter.getClass().getName());
+                        converterResult.addConvertedType(triggerConverter.getClass().getName());
                     }
                         }
                 );
@@ -181,7 +226,8 @@ public class FreestyleToDeclarativeConverter
                         ModelASTUtils.addStage(converterResult.getModelASTPipelineDef(), stage);
                     }
                     if (warnings.size() == numWarnings) {
-                        converterResult.addConvertedPlugin(buildWrapperConverterConverter.getClass().getName());
+                        // TODO: plugin -> converted type
+                        converterResult.addConvertedType(buildWrapperConverterConverter.getClass().getName());
                     }
                 } );
             }
@@ -221,7 +267,7 @@ public class FreestyleToDeclarativeConverter
                         ModelASTUtils.addStage(converterResult.getModelASTPipelineDef(), stage);
                     }
                     if (warnings.size() == numWarnings) {
-                        converterResult.addConvertedPlugin(publisherConverter.getClass().getName());
+                        converterResult.addConvertedType(publisherConverter.getClass().getName());
                     }
                 } );
             }
@@ -263,7 +309,7 @@ public class FreestyleToDeclarativeConverter
                 int numWarnings = warnings.size();
                 scmConverter.convert( converterRequest, converterResult, scm );
                 if (warnings.size() == numWarnings) {
-                    converterResult.addConvertedPlugin(scmConverter.getClass().getName());
+                    converterResult.addConvertedType(scmConverter.getClass().getName());
                 }
             } );
         }
@@ -273,57 +319,57 @@ public class FreestyleToDeclarativeConverter
         }
     }
 
-    protected void convertBuilders( ConverterRequest converterRequest, ConverterResult converterResult,
-                                    List<Builder> builders )
-        throws ConverterException
-    {
-        List<Warning> warnings = converterResult.getWarnings();
-        ModelASTStages stages = converterResult.getModelASTPipelineDef().getStages();
-        if ( stages == null )
-        {
-            stages = new ModelASTStages( this );
-            converterResult.getModelASTPipelineDef().setStages( stages );
-        }
-        for ( Builder builder : builders )
-        {
-            Consumer<? super BuilderConverter> consumer = builderConverter -> {
-                int  numWarnings = warnings.size();
-                ModelASTStage stage = builderConverter.convert( converterRequest, converterResult, builder );
-                if ( stage != null )
-                {
-                    ModelASTUtils.addStage(converterResult.getModelASTPipelineDef(), stage);
-                }
-                if (warnings.size() == numWarnings) {
-                    converterResult.addConvertedPlugin(builderConverter.getClass().getName());
-                }
-            };
-            if ( builder instanceof Maven ) // Maven is a special one and we can apply only one converter so we pick the first one
-            {
-                List<BuilderConverter> builderConverters = findBuilderConverters( builder );
-                if ( !builderConverters.isEmpty() )
-                {
-                    builderConverters.subList( 0, 1 ).stream().forEach( consumer );
-                }
-            }
-            else
-            {
-                List<BuilderConverter> converters = findBuilderConverters( builder );
-                if ( !converters.isEmpty() )
-                {
-                    converters.stream().forEach( consumer );
-                }
-                else
-                {
-                    converterResult.addWarning(
-                        new Warning( "Builder Converter not found '" + getDisplayName(builder)+ "'", builder.getClass().getName() ) );
-                    // add fake stage with commented step named with the plugin class name
-                    ModelASTStage stage = Jenkins.get().getExtensionList( NoConverterBuilder.class ).iterator()
-                        .next().convert( converterRequest, converterResult, builder );
-                    ModelASTUtils.addStage(converterResult.getModelASTPipelineDef(), stage);
-                }
-            }
-        }
-    }
+//    protected void convertBuilders( ConverterRequest converterRequest, ConverterResult converterResult,
+//                                    List<Builder> builders )
+//        throws ConverterException
+//    {
+//        List<Warning> warnings = converterResult.getWarnings();
+//        ModelASTStages stages = converterResult.getModelASTPipelineDef().getStages();
+//        if ( stages == null )
+//        {
+//            stages = new ModelASTStages( this );
+//            converterResult.getModelASTPipelineDef().setStages( stages );
+//        }
+//        for ( Builder builder : builders )
+//        {
+//            Consumer<? super BuilderConverter> consumer = builderConverter -> {
+//                int  numWarnings = warnings.size();
+//                ModelASTStage stage = builderConverter.convert( converterRequest, converterResult, builder );
+//                if ( stage != null )
+//                {
+//                    ModelASTUtils.addStage(converterResult.getModelASTPipelineDef(), stage);
+//                }
+//                if (warnings.size() == numWarnings) {
+//                    converterResult.addConvertedType(builderConverter.getClass().getName());
+//                }
+//            };
+//            if ( builder instanceof Maven ) // Maven is a special one and we can apply only one converter so we pick the first one
+//            {
+//                List<BuilderConverter> builderConverters = findBuilderConverters( builder );
+//                if ( !builderConverters.isEmpty() )
+//                {
+//                    builderConverters.subList( 0, 1 ).stream().forEach( consumer );
+//                }
+//            }
+//            else
+//            {
+//                List<BuilderConverter> converters = findBuilderConverters( builder );
+//                if ( !converters.isEmpty() )
+//                {
+//                    converters.stream().forEach( consumer );
+//                }
+//                else
+//                {
+//                    converterResult.addWarning(
+//                        new Warning( "Builder Converter not found '" + getDisplayName(builder)+ "'", builder.getClass().getName() ) );
+//                    // add fake stage with commented step named with the plugin class name
+//                    ModelASTStage stage = Jenkins.get().getExtensionList( NoBuilderConverter.class ).iterator()
+//                        .next().convert( converterRequest, converterResult, builder );
+//                    ModelASTUtils.addStage(converterResult.getModelASTPipelineDef(), stage);
+//                }
+//            }
+//        }
+//    }
 
     protected void convertJobProperties( ConverterRequest converterRequest, ConverterResult converterResult,
                                          Map<JobPropertyDescriptor, JobProperty<? super FreeStyleProject>> map )
@@ -340,7 +386,7 @@ public class FreestyleToDeclarativeConverter
                     int numWarnings = warnings.size();
                     jobPropertyConverter.convert( converterRequest, converterResult, entry.getKey(), entry.getValue() );
                     if (warnings.size() == numWarnings) {
-                        converterResult.addConvertedPlugin(entry.getKey().getClass().getName());
+                        converterResult.addConvertedType(entry.getKey().getClass().getName());
                     }
                         });
             }

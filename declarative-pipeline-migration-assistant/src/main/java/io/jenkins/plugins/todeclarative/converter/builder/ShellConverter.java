@@ -1,30 +1,28 @@
 package io.jenkins.plugins.todeclarative.converter.builder;
 
 import hudson.Extension;
-import hudson.tasks.Builder;
 import hudson.tasks.Shell;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
-import io.jenkins.plugins.todeclarative.converter.api.builder.BuilderConverter;
+import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTSingleArgument;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
-
 import java.util.Arrays;
 
-
 @Extension
-public class ShellConverter
-    implements BuilderConverter
+public class ShellConverter extends SingleTypedConverter<Shell>
 {
     public static final String SHELL_NUMBER_KEY = ShellConverter.class.getName() + ".shell.number";
 
+
     @Override
-    public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, Builder builder )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
-        Shell shell = (Shell) builder;
+        Shell shell = (Shell) target;
         ModelASTStage stage = new ModelASTStage( this );
         int stageNumber = request.getAndIncrement( SHELL_NUMBER_KEY );
         stage.setName( "Shell script " + stageNumber );
@@ -35,14 +33,9 @@ public class ShellConverter
         ModelASTSingleArgument singleArgument = new ModelASTSingleArgument( this );
         singleArgument.setValue( ModelASTValue.fromConstant( shell.getCommand(), this ) );
         step.setArgs( singleArgument );
-        wrapBranch(converterResult, step, branch);
+        ModelASTUtils.wrapBranch(result, step, branch);
+        ModelASTUtils.addStage(result.getModelASTPipelineDef(), stage);
 
-        return stage;
-    }
-
-    @Override
-    public boolean canConvert( Builder builder )
-    {
-        return builder.getClass().isAssignableFrom( Shell.class );
+        return true;
     }
 }

@@ -1,10 +1,9 @@
 package io.jenkins.plugins.todeclarative.converter.jobproperty;
 
-import hudson.model.JobProperty;
-import hudson.model.JobPropertyDescriptor;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
-import io.jenkins.plugins.todeclarative.converter.api.jobproperty.JobPropertyConverter;
+import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkins.plugins.lockableresources.RequiredResourcesProperty;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTMethodArg;
@@ -15,21 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.addOption;
 import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.buildKeyPairArg;
 
 @OptionalExtension(requirePlugins = { "lockable-resources" })
-public class RequiredResourcesPropertyConverter
-    implements JobPropertyConverter
+public class RequiredResourcesPropertyConverter extends SingleTypedConverter<RequiredResourcesProperty>
 {
     @Override
-    public void convert( ConverterRequest request, ConverterResult converterResult, //
-                         JobPropertyDescriptor jobPropertyDescriptor, //
-                         JobProperty jobProperty )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
 
-        RequiredResourcesProperty requiredResourcesProperty =
-            (org.jenkins.plugins.lockableresources.RequiredResourcesProperty) jobProperty;
+        RequiredResourcesProperty requiredResourcesProperty = (RequiredResourcesProperty) target;
 
         //lock(label: 'label', resource: 'resource')
         ModelASTOption option = new ModelASTOption( this );
@@ -47,12 +41,7 @@ public class RequiredResourcesPropertyConverter
 
         option.setArgs( lockArgs );
 
-        addOption(converterResult.getModelASTPipelineDef(), option );
-    }
-
-    @Override
-    public boolean canConvert( JobPropertyDescriptor jobPropertyDescriptor, JobProperty jobProperty )
-    {
-        return jobProperty.getClass().isAssignableFrom( RequiredResourcesProperty.class );
+        ModelASTUtils.addOption(result.getModelASTPipelineDef(), option );
+        return true;
     }
 }

@@ -2,25 +2,21 @@ package io.jenkins.plugins.todeclarative.converter.scm;
 
 import hudson.Extension;
 import hudson.scm.NullSCM;
-import hudson.scm.SCM;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
-import io.jenkins.plugins.todeclarative.converter.api.scm.ScmConverter;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 
+/**
+ * Unlike {@link io.jenkins.plugins.todeclarative.converter.publisher.NoPublisherConverter}, this converter is a valid.
+ */
 @Extension
-public class NullScmConverter
-    implements ScmConverter
+public class NullScmConverter extends SingleTypedConverter<NullSCM>
 {
     @Override
-    public void convert( ConverterRequest request, ConverterResult converterResult, SCM scm )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
         // nothing here
         // just no more warning
-    }
-
-    @Override
-    public boolean canConvert( SCM scm )
-    {
-        return scm instanceof NullSCM;
+        return true;
     }
 }

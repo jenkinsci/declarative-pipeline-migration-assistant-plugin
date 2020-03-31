@@ -2,27 +2,21 @@ package io.jenkins.plugins.todeclarative.converter.trigger;
 
 import hudson.Extension;
 import hudson.triggers.SCMTrigger;
-import hudson.triggers.TimerTrigger;
-import hudson.triggers.Trigger;
-import hudson.triggers.TriggerDescriptor;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
-import io.jenkins.plugins.todeclarative.converter.api.trigger.TriggerConverter;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTrigger;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
-
 import java.util.Arrays;
 
 @Extension
-public class SCMTriggerConverter
-    implements TriggerConverter
+public class SCMTriggerConverter extends SingleTypedConverter<SCMTrigger>
 {
     @Override
-    public void convert( ConverterRequest request, ConverterResult converterResult, TriggerDescriptor triggerDescriptor,
-                         Trigger<?> trigger )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
-        SCMTrigger scmTrigger = (SCMTrigger) trigger;
+        SCMTrigger scmTrigger = (SCMTrigger) target;
 
         String cronValue = scmTrigger.getSpec();
 
@@ -30,12 +24,7 @@ public class SCMTriggerConverter
         modelASTTrigger.setName( "pollSCM" );
         modelASTTrigger.setArgs( Arrays.asList(ModelASTValue.fromConstant( cronValue, this )) );
 
-        ModelASTUtils.addTrigger( converterResult.getModelASTPipelineDef(), modelASTTrigger );
-    }
-
-    @Override
-    public boolean canConvert( TriggerDescriptor triggerDescriptor, Trigger<?> trigger )
-    {
-        return trigger instanceof SCMTrigger;
+        ModelASTUtils.addTrigger( result.getModelASTPipelineDef(), modelASTTrigger );
+        return true;
     }
 }

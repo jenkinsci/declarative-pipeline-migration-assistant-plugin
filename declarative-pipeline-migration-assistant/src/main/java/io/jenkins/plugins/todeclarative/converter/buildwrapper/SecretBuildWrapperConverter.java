@@ -1,11 +1,10 @@
 package io.jenkins.plugins.todeclarative.converter.buildwrapper;
 
 import hudson.Extension;
-import hudson.tasks.BuildWrapper;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import io.jenkins.plugins.todeclarative.converter.api.Warning;
-import io.jenkins.plugins.todeclarative.converter.api.buildwrapper.BuildWrapperConverter;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.credentialsbinding.MultiBinding;
 import org.jenkinsci.plugins.credentialsbinding.impl.CertificateMultiBinding;
@@ -17,34 +16,36 @@ import org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordBinding;
 import org.jenkinsci.plugins.credentialsbinding.impl.UsernamePasswordMultiBinding;
 import org.jenkinsci.plugins.credentialsbinding.impl.ZipFileBinding;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTSingleArgument;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTreeStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
 @Extension
-public class SecretBuildWrapperConverter
-    implements BuildWrapperConverter
+public class SecretBuildWrapperConverter extends SingleTypedConverter<SecretBuildWrapper>
 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger( SecretBuildWrapperConverter.class );
 
     @Override
-    public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, BuildWrapper wrapper )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
-        SecretBuildWrapper secretBuildWrapper = SecretBuildWrapper.class.cast( wrapper );
+        SecretBuildWrapper secretBuildWrapper = SecretBuildWrapper.class.cast( target );
         if ( secretBuildWrapper.getBindings() == null || secretBuildWrapper.getBindings().isEmpty() )
         {
-            return null;
+            return true;
         }
 
-        converterResult.addWrappingTreeStep( () -> build( request, secretBuildWrapper, converterResult) );
-        return null;
+        int numWarnings = result.getWarnings().size();
+        result.addWrappingTreeStep( () -> build( request, secretBuildWrapper, result) );
+        if (result.getWarnings().size() > numWarnings)
+        {
+            return false;
+        }
+        return true;
     }
 
     // FIXME currently we manage only one binding
@@ -197,9 +198,9 @@ public class SecretBuildWrapperConverter
         return () -> generateString.toString();
     }
 
-    @Override
-    public boolean canConvert( BuildWrapper wrapper )
-    {
-        return wrapper instanceof SecretBuildWrapper;
-    }
+//    @Override
+//    public boolean canConvert( BuildWrapper wrapper )
+//    {
+//        return wrapper instanceof SecretBuildWrapper;
+//    }
 }

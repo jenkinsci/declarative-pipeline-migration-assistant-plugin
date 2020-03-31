@@ -2,36 +2,27 @@ package io.jenkins.plugins.todeclarative.converter.publisher;
 
 import hudson.model.AbstractProject;
 import hudson.tasks.BuildTrigger;
-import hudson.tasks.Publisher;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
-import io.jenkins.plugins.todeclarative.converter.api.publisher.PublisherConverter;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildCondition;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTNamedArgumentList;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
-
-import java.util.HashMap;
-import java.util.Map;
 import org.jenkinsci.plugins.variant.OptionalExtension;
 
 @OptionalExtension(requirePlugins = { "pipeline-build-step" })
-public class BuildTriggerPublisherConverter
-    implements PublisherConverter
+public class BuildTriggerPublisherConverter extends SingleTypedConverter<BuildTrigger>
 {
     @Override
-    public ModelASTStage convert( ConverterRequest request, ConverterResult result, Publisher publisher )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
-        BuildTrigger buildTrigger = (BuildTrigger) publisher;
+        BuildTrigger buildTrigger = (BuildTrigger) target;
         // FIXME must depends on Threshold
         //buildTrigger.getThreshold()
         if (buildTrigger.getChildJobs((AbstractProject<?, ?>) request.getJob()) == null ||
             buildTrigger.getChildJobs((AbstractProject<?, ?>) request.getJob()).isEmpty()) {
-            return null;
+            return true;
         }
         ModelASTBuildCondition buildCondition =
             ModelASTUtils.buildOrFindBuildCondition( result.getModelASTPipelineDef(), "always" );
@@ -67,12 +58,6 @@ public class BuildTriggerPublisherConverter
 //            String groovy = build.toGroovy();
 //            System.out.println( groovy );
         } );
-        return null;
-    }
-
-    @Override
-    public boolean canConvert( Publisher publisher )
-    {
-        return publisher instanceof BuildTrigger;
+        return true;
     }
 }

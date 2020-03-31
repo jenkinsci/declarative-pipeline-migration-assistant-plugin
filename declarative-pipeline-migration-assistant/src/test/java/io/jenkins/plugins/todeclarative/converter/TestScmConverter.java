@@ -1,10 +1,10 @@
 package io.jenkins.plugins.todeclarative.converter;
 
 import hudson.Extension;
-import hudson.scm.SCM;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
-import io.jenkins.plugins.todeclarative.converter.api.scm.ScmConverter;
+import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTSingleArgument;
@@ -12,7 +12,6 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 import org.jvnet.hudson.test.ExtractResourceSCM;
-
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
@@ -20,15 +19,14 @@ import java.util.Arrays;
 import java.util.List;
 
 @Extension
-public class TestScmConverter
-    implements ScmConverter
+public class TestScmConverter extends SingleTypedConverter<ExtractResourceSCM>
 {
     @Override
-    public void convert( ConverterRequest request, ConverterResult converterResult, SCM scm )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
         try
         {
-            ExtractResourceSCM extractResourceSCM = (ExtractResourceSCM) scm;
+            ExtractResourceSCM extractResourceSCM = (ExtractResourceSCM) target;
             URL urlZip = getZipUrl( extractResourceSCM );
             String filePath = urlZip.getFile();
 
@@ -48,8 +46,8 @@ public class TestScmConverter
             ModelASTBranch branch = new ModelASTBranch( this );
             branch.setSteps(steps);
             stage.setBranches( Arrays.asList( branch ) );
-            converterResult.getModelASTPipelineDef().getStages().getStages().add( stage );
-
+            ModelASTUtils.addStage(result.getModelASTPipelineDef(), stage);
+            return true;
         }
         catch ( Exception e )
         {
@@ -71,11 +69,5 @@ public class TestScmConverter
             }
         }
         return null;
-    }
-
-    @Override
-    public boolean canConvert( SCM scm )
-    {
-        return scm instanceof ExtractResourceSCM;
     }
 }

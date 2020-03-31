@@ -6,6 +6,7 @@ import hudson.tasks.Publisher;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import io.jenkins.plugins.todeclarative.converter.api.publisher.PublisherConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildCondition;
@@ -19,31 +20,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Extension
-public class MailerPublisherConverter
-    implements PublisherConverter
+public class MailerPublisherConverter extends SingleTypedConverter<Mailer>
+//    implements PublisherConverter
 {
     @Override
-    public ModelASTStage convert( ConverterRequest request, ConverterResult result, Publisher publisher )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
+//    public ModelASTStage convert( ConverterRequest request, ConverterResult result, Publisher publisher )
     {
-        Mailer mailer = (Mailer) publisher;
+        Mailer mailer = (Mailer) target;
         // FIXME must depends on Threshold
         // mailer.isNotifyEveryUnstableBuild()
 
         ModelASTBuildCondition buildCondition =
             ModelASTUtils.buildOrFindBuildCondition( result.getModelASTPipelineDef(), "always" );
 
-        ModelASTBranch branch = buildCondition.getBranch();
-        if(branch==null){
-            branch =new ModelASTBranch( this );
-            buildCondition.setBranch( branch );
-        }
+//        ModelASTBranch branch = buildCondition.getBranch();
+//        if(branch==null){
+//            branch =new ModelASTBranch( this );
+//            buildCondition.setBranch( branch );
+//        }
         // TODO maybe using Email Extension Plugin
         // mail bcc: 'bcc@foo.com', body: 'The body', cc: 'cc@foo.com', charset: 'Body Character Set',
         // from: 'from@foo.com', mimeType: 'Body MIME Type', replyTo: 'reply-to@foo.com', subject: 'The Subject', to: 'foo@ffo.com'
 
         ModelASTStep mail = new ModelASTStep( this );
         mail.setName( "mail" );
-        branch.getSteps().add( mail );
+//        branch.getSteps().add( mail );
+        ModelASTUtils.addStep(buildCondition, mail);
 
         Map<ModelASTKey, ModelASTValue> args = new HashMap<>();
         { // to
@@ -65,12 +68,12 @@ public class MailerPublisherConverter
         mail.setArgs( stepArgs );
 
 
-        return null;
+        return true;
     }
 
-    @Override
-    public boolean canConvert( Publisher publisher )
-    {
-        return publisher instanceof Mailer;
-    }
+//    @Override
+//    public boolean canConvert( Publisher publisher )
+//    {
+//        return publisher instanceof Mailer;
+//    }
 }

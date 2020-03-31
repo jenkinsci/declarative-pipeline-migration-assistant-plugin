@@ -32,9 +32,9 @@ public class RequiredResourcesPropertyConverterTest
         RequiredResourcesPropertyConverter converter =
             j.jenkins.getExtensionList( RequiredResourcesPropertyConverter.class ).get( 0 );
 
-        assertTrue( converter.canConvert( null, requiredResourcesProperty ) );
+        assertTrue( converter.canConvert( requiredResourcesProperty ) );
         ConverterResult result = new ConverterResult();
-        converter.convert( new ConverterRequest(), result, null, requiredResourcesProperty );
+        converter.convert( new ConverterRequest(), result, requiredResourcesProperty );
         ModelASTOptions options = result.getModelASTPipelineDef().getOptions();
         assertEquals( 1, options.getOptions().size() );
         String groovy = options.toGroovy();
@@ -58,9 +58,9 @@ public class RequiredResourcesPropertyConverterTest
         RequiredResourcesPropertyConverter converter =
             j.jenkins.getExtensionList( RequiredResourcesPropertyConverter.class ).get( 0 );
 
-        assertTrue( converter.canConvert( null, requiredResourcesProperty ) );
+        assertTrue( converter.canConvert( requiredResourcesProperty ) );
         ConverterResult result = new ConverterResult();
-        converter.convert( new ConverterRequest(), result, null, requiredResourcesProperty );
+        converter.convert( new ConverterRequest(), result, requiredResourcesProperty );
         ModelASTOptions options = result.getModelASTPipelineDef().getOptions();
         assertEquals( 1, options.getOptions().size() );
         String groovy = options.toGroovy();

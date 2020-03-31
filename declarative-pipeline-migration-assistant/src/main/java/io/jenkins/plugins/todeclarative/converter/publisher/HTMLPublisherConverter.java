@@ -1,16 +1,13 @@
 package io.jenkins.plugins.todeclarative.converter.publisher;
 
 import htmlpublisher.HtmlPublisher;
-import hudson.tasks.Publisher;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
-import io.jenkins.plugins.todeclarative.converter.api.publisher.PublisherConverter;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildCondition;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTNamedArgumentList;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 
@@ -19,28 +16,17 @@ import java.util.Map;
 import org.jenkinsci.plugins.variant.OptionalExtension;
 
 @OptionalExtension(requirePlugins = { "htmlpublisher" })
-public class HTMLPublisherConverter
-    implements PublisherConverter
+public class HTMLPublisherConverter extends SingleTypedConverter<HtmlPublisher>
 {
-    public HTMLPublisherConverter()
-    {
-        // no op
-    }
-
     @Override
-    public ModelASTStage convert( ConverterRequest request, ConverterResult result, Publisher publisher )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
-        HtmlPublisher htmlPublisher = (HtmlPublisher) publisher;
+        HtmlPublisher htmlPublisher = (HtmlPublisher) target;
         // FIXME must depends on Threshold
         //buildTrigger.getThreshold()
         ModelASTBuildCondition buildCondition =
             ModelASTUtils.buildOrFindBuildCondition( result.getModelASTPipelineDef(), "always" );
         htmlPublisher.getReportTargets().stream().forEach( reportTarget -> {
-            ModelASTBranch branch = buildCondition.getBranch();
-            if(branch==null){
-                branch =new ModelASTBranch( this );
-                buildCondition.setBranch( branch );
-            }
             // publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true,
             // reportDir: '/JTReport/html', reportFiles: 'report.html',
             // reportName: ' Report', reportTitles: ''])
@@ -48,7 +34,7 @@ public class HTMLPublisherConverter
             ModelASTStep publishHTML = new ModelASTStep( this );
             publishHTML.setName( "publishHTML" );
 
-            branch.getSteps().add( publishHTML );
+            ModelASTUtils.addStep(buildCondition, publishHTML);
 
             Map<ModelASTKey, ModelASTValue> args = new HashMap<>();
             { // allowMissing
@@ -99,12 +85,6 @@ public class HTMLPublisherConverter
 
 
         } );
-        return null;
-    }
-
-    @Override
-    public boolean canConvert( Publisher publisher )
-    {
-        return publisher instanceof HtmlPublisher;
+        return true;
     }
 }
