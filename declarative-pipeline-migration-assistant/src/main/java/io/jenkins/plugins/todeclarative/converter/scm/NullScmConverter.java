@@ -7,7 +7,8 @@ import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 
 /**
- * Unlike {@link io.jenkins.plugins.todeclarative.converter.publisher.NoPublisherConverter}, this converter is a valid.
+ * Unlike {@link io.jenkins.plugins.todeclarative.converter.publisher.NoPublisherConverter}, this converter is valid
+ * and not used for reporting warnings.
  */
 @Extension
 public class NullScmConverter extends SingleTypedConverter<NullSCM>
