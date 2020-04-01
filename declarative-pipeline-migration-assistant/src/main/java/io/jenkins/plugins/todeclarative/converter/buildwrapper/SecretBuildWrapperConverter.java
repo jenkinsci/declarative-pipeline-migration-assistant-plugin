@@ -197,10 +197,4 @@ public class SecretBuildWrapperConverter extends SingleTypedConverter<SecretBuil
         generateString.append( "')]" );
         return () -> generateString.toString();
     }
-
-//    @Override
-//    public boolean canConvert( BuildWrapper wrapper )
-//    {
-//        return wrapper instanceof SecretBuildWrapper;
-//    }
 }
