@@ -57,10 +57,10 @@ public class FreestyleToDeclarativeConverter
         {
             // manage general warning
             if(freeStyleProject.isDisabled()){
-                converterResult.addWarning( new Warning( "Current Freestyle project is disable", freeStyleProject.getClass() ) );
+                converterResult.addWarning( new Warning( "Current Freestyle project is disable", null ) );
             }
             if(!freeStyleProject.isConcurrentBuild()){
-                converterResult.addWarning( new Warning( "Current Freestyle project is marked as no concurrent build but it is default option for pipeline", freeStyleProject.getClass() ) );
+                converterResult.addWarning( new Warning( "Current Freestyle project is marked as no concurrent build but it is default option for pipeline", null ) );
             }
         }
 
@@ -143,7 +143,7 @@ public class FreestyleToDeclarativeConverter
                         result.addConvertedType(type.getClass().getName());
                     } else
                     {
-                        // TODO add to failed conversion, but get more detailed info?
+                        // TODO: log addition information for failed conversion?
                     }
                     if ( type instanceof Maven ) {
                         // Maven is a special one and we can apply only one converter so we pick the first one
@@ -166,7 +166,6 @@ public class FreestyleToDeclarativeConverter
                 {
                     noConverter.convert( request, result,type );
                 }
-                // TODO add to failed conversion, but get more detailed info?
             }
         }
     }
