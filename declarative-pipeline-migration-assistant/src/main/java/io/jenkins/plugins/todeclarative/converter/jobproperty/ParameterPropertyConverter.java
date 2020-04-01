@@ -86,7 +86,7 @@ public class ParameterPropertyConverter extends SingleTypedConverter<ParametersD
         }
 
         converterResult.addWarning( new Warning( "Cannot convert property of type: " + parameterDefinition.getType(),
-                                                 getClass().getName() ) );
+                                                 parameterDefinition.getClass() ) );
         return null;
     }
 

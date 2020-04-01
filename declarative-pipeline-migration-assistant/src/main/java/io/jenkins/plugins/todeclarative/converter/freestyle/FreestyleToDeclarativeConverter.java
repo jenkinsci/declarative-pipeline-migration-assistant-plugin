@@ -57,10 +57,10 @@ public class FreestyleToDeclarativeConverter
         {
             // manage general warning
             if(freeStyleProject.isDisabled()){
-                converterResult.addWarning( new Warning( "Current Freestyle project is disable", null ) );
+                converterResult.addWarning( new Warning( "Current Freestyle project is disable", freeStyleProject.getClass() ) );
             }
             if(!freeStyleProject.isConcurrentBuild()){
-                converterResult.addWarning( new Warning( "Current Freestyle project is marked as no concurrent build but it is default option for pipeline", null ) );
+                converterResult.addWarning( new Warning( "Current Freestyle project is marked as no concurrent build but it is default option for pipeline", freeStyleProject.getClass() ) );
             }
         }
 
@@ -153,7 +153,7 @@ public class FreestyleToDeclarativeConverter
             }
             if ( !matched )
             {
-                result.addWarning( new Warning( "Converter not found '" + getDisplayName((Describable) type) + "'", type.getClass().getName() ) );
+                result.addWarning( new Warning( "Converter not found '" + getDisplayName((Describable) type) + "'", type.getClass() ) );
                 SingleTypedConverter noConverter = null;
                 if ( type instanceof Builder )
                 {
@@ -196,7 +196,7 @@ public class FreestyleToDeclarativeConverter
                 converterResult.addWarning( new Warning( "Converter not found '" +
                                                              getDisplayName(entry.getValue()) +
                                                              "'",
-                                                         entry.getValue().getClass().getName() ) );
+                                                         entry.getValue().getClass() ) );
             }
         }
     }
@@ -233,7 +233,7 @@ public class FreestyleToDeclarativeConverter
             }
             else
             {
-                converterResult.addWarning( new Warning( "Converter not found '" + getDisplayName(wrapper) + "'", wrapper.getClass().getName() ) );
+                converterResult.addWarning( new Warning( "Converter not found '" + getDisplayName(wrapper) + "'", wrapper.getClass() ) );
             }
         }
     }
@@ -274,7 +274,7 @@ public class FreestyleToDeclarativeConverter
             else
             {
                 converterResult.addWarning(
-                    new Warning( "Converter not found '" + getDisplayName(publisher) + "'", publisher.getClass().getName() ) );
+                    new Warning( "Converter not found '" + getDisplayName(publisher) + "'", publisher.getClass() ) );
                 // add fake post with commented step named with the plugin class name
                 Jenkins.get().getExtensionList( NoPublisherConverter.class ).iterator()
                     .next().convert( converterRequest, converterResult, publisher );
@@ -315,7 +315,7 @@ public class FreestyleToDeclarativeConverter
         }
         else
         {
-            converterResult.addWarning( new Warning( "SCM Converter not found '" + getDisplayName(scm) + "'", scm.getClass().getName() ) );
+            converterResult.addWarning( new Warning( "SCM Converter not found '" + getDisplayName(scm) + "'", scm.getClass() ) );
         }
     }
 
@@ -399,7 +399,7 @@ public class FreestyleToDeclarativeConverter
                     continue;
                 }
                 converterResult.addWarning(
-                    new Warning( "Converter not found '" + entry.getKey().getDisplayName() + "'", entry.getKey().getClass().getName() ) );
+                    new Warning( "Converter not found '" + entry.getKey().getDisplayName() + "'", entry.getKey().getClass() ) );
 
             }
         }

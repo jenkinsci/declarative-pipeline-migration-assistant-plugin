@@ -19,7 +19,7 @@ public class AggregatedTestResultPublisherConverter extends SingleTypedConverter
     public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
         result.addWarning( new Warning( "Cannot convert publisher:" + target.getClass(),
-                                        AggregatedTestResultPublisher.class.getName() ));
+                                        AggregatedTestResultPublisher.class ));
         return false;
 
 

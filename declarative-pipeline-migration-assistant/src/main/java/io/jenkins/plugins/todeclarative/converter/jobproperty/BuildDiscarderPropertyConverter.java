@@ -30,7 +30,7 @@ public class BuildDiscarderPropertyConverter extends SingleTypedConverter<BuildD
             // nothing to do
             result.addWarning( new Warning( "We cannot convert BuildDiscarder strategy " +
                                             (buildDiscarder == null ? "'null'" : buildDiscarder.getClass().getName()),
-                                            getClass().getName() ) );
+                                            getClass() ) );
             return false;
         }
 

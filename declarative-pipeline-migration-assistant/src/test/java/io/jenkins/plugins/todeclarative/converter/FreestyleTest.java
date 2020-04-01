@@ -607,15 +607,15 @@ public class FreestyleTest
         assertEquals( converterResult.getWarnings().toString(), 5, converterResult.getWarnings().size() );
 
         assertEquals( 1, converterResult.getWarnings().stream() //
-            .filter( warning -> StringUtils.equals( warning.getPluginClassName(), FakeBuilder.class.getName() ) ) //
+            .filter( warning -> StringUtils.equals( warning.getTypeName(), FakeBuilder.class.getName() ) ) //
             .count());
 
         assertEquals( 1, converterResult.getWarnings().stream() //
-            .filter( warning -> StringUtils.equals( warning.getPluginClassName(), FakeBuildWrapper.class.getName() ) ) //
+            .filter( warning -> StringUtils.equals( warning.getTypeName(), FakeBuildWrapper.class.getName() ) ) //
             .count());
 
         assertEquals( 1, converterResult.getWarnings().stream() //
-            .filter( warning -> StringUtils.equals( warning.getPluginClassName(), FakeRecorder.class.getName() ) ) //
+            .filter( warning -> StringUtils.equals( warning.getTypeName(), FakeRecorder.class.getName() ) ) //
             .count());
 
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();

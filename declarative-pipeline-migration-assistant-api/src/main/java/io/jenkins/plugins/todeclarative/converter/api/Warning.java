@@ -1,20 +1,22 @@
 package io.jenkins.plugins.todeclarative.converter.api;
 
+import javax.annotation.CheckForNull;
+
 public class Warning
 {
     private String message;
 
-    private String pluginClassName;
+    private Class typeClass;
 
     public Warning()
     {
         // nop
     }
 
-    public Warning( String message, String pluginClassName )
+    public Warning( String message, Class typeClass)
     {
         this.message = message;
-        this.pluginClassName = pluginClassName;
+        this.typeClass = typeClass;
     }
 
     public String getMessage()
@@ -27,19 +29,31 @@ public class Warning
         this.message = message;
     }
 
-    public String getPluginClassName()
+    public void setTypeClass(Class typeClass)
     {
-        return pluginClassName;
+        this.typeClass = typeClass;
     }
 
-    public void setPluginClassName( String pluginClassName )
+    @CheckForNull
+    public Class getTypeClass()
     {
-        this.pluginClassName = pluginClassName;
+        return typeClass;
+    }
+
+    public String getTypeName()
+    {
+        if (typeClass != null)
+        {
+            return typeClass.getName();
+        } else
+        {
+            return "";
+        }
     }
 
     @Override
     public String toString()
     {
-        return "Warning{" + "message='" + message + '\'' + ", pluginClassName='" + pluginClassName + '\'' + '}';
+        return "Warning{" + "message='" + message + '\'' + ", typeClassName='" + getTypeName() + '\'' + '}';
     }
 }

@@ -33,7 +33,7 @@ public class BuildTimeoutWrapperConverter extends SingleTypedConverter<BuildTime
 
         if(!(strategy instanceof AbsoluteTimeOutStrategy)){
             result.addWarning( new Warning( "we can only convert Absolute timeout and not " + strategy.getDescriptor().getDisplayName(),
-                                           BuildTimeOutStrategy.class.getName() ));
+                                           BuildTimeOutStrategy.class ));
             return false;
         }
 

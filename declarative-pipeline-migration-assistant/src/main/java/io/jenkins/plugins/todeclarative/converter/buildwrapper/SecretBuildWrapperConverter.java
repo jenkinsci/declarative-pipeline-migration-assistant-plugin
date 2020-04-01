@@ -92,7 +92,7 @@ public class SecretBuildWrapperConverter extends SingleTypedConverter<SecretBuil
                     default:
                         LOGGER.warn( "credential binding, ignore symbol: {}",  symbol );
                         converterResult.addWarning( new Warning( "Cannot convert credential binding: '" + symbol + "'",
-                                                                 secretBuildWrapper.getClass().getName()) );
+                                                                 secretBuildWrapper.getClass()) );
 
                 }
             }
