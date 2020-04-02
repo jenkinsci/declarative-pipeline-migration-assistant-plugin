@@ -1,4 +1,4 @@
-package io.jenkins.plugins.todeclarative.listeners;
+package io.jenkins.plugins.todeclarative.listener;
 
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
