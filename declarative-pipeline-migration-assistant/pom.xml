@@ -7,7 +7,7 @@
     <version>${revision}${changelist}</version>
   </parent>
   <artifactId>declarative-pipeline-migration-assistant</artifactId>
-  <version>${project.version}</version>
+  <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
   <name>Declarative Pipeline Migration Assistant</name>
   <description>Declarative Pipeline Migration Assistant Plugin.</description>
