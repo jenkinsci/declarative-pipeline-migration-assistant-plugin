@@ -141,7 +141,7 @@ public class FreestyleToDeclarativeConverter
                     int numWarnings = warnings.size();
                     triggerConverter.convert(converterRequest, converterResult, entry.getKey(), entry.getValue());
                     if (warnings.size() == numWarnings) {
-                        converterResult.addConvertedPlugin(triggerConverter.getClass().getName());
+                        converterResult.addConvertedType(triggerConverter.getClass().getName());
                     }
                         }
                 );
@@ -181,7 +181,7 @@ public class FreestyleToDeclarativeConverter
                         ModelASTUtils.addStage(converterResult.getModelASTPipelineDef(), stage);
                     }
                     if (warnings.size() == numWarnings) {
-                        converterResult.addConvertedPlugin(buildWrapperConverterConverter.getClass().getName());
+                        converterResult.addConvertedType(buildWrapperConverterConverter.getClass().getName());
                     }
                 } );
             }
@@ -221,7 +221,7 @@ public class FreestyleToDeclarativeConverter
                         ModelASTUtils.addStage(converterResult.getModelASTPipelineDef(), stage);
                     }
                     if (warnings.size() == numWarnings) {
-                        converterResult.addConvertedPlugin(publisherConverter.getClass().getName());
+                        converterResult.addConvertedType(publisherConverter.getClass().getName());
                     }
                 } );
             }
@@ -263,7 +263,7 @@ public class FreestyleToDeclarativeConverter
                 int numWarnings = warnings.size();
                 scmConverter.convert( converterRequest, converterResult, scm );
                 if (warnings.size() == numWarnings) {
-                    converterResult.addConvertedPlugin(scmConverter.getClass().getName());
+                    converterResult.addConvertedType(scmConverter.getClass().getName());
                 }
             } );
         }
@@ -294,7 +294,7 @@ public class FreestyleToDeclarativeConverter
                     ModelASTUtils.addStage(converterResult.getModelASTPipelineDef(), stage);
                 }
                 if (warnings.size() == numWarnings) {
-                    converterResult.addConvertedPlugin(builderConverter.getClass().getName());
+                    converterResult.addConvertedType(builderConverter.getClass().getName());
                 }
             };
             if ( builder instanceof Maven ) // Maven is a special one and we can apply only one converter so we pick the first one
@@ -340,7 +340,7 @@ public class FreestyleToDeclarativeConverter
                     int numWarnings = warnings.size();
                     jobPropertyConverter.convert( converterRequest, converterResult, entry.getKey(), entry.getValue() );
                     if (warnings.size() == numWarnings) {
-                        converterResult.addConvertedPlugin(entry.getKey().getClass().getName());
+                        converterResult.addConvertedType(entry.getKey().getClass().getName());
                     }
                         });
             }
