@@ -45,14 +45,9 @@ public class ToDeclarativeAction
             FreestyleToDeclarativeConverter converter = Jenkins.get().getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
             ConverterRequest converterRequest = new ConverterRequest().job( job );
             ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
-            converter.convert( converterRequest, converterResult );
-//            if(true)
-//            {
-//                throw new Exception( "Something really bad happened with this conversion" );
-//            }
+            converter.convert( converterRequest, converterResult, job );
             this.jenkinsFile = converterResult.getModelASTPipelineDef().toPrettyGroovy();
             this.warnings = converterResult.getWarnings();
-            //this.warnings.add( new Warning( "Not supported plugin", "Awesome plugin class" ) );
             return jenkinsFile;
         } catch ( Exception e )
         {

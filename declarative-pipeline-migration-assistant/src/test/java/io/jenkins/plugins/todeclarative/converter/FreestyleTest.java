@@ -244,7 +244,7 @@ public class FreestyleTest
         ConverterRequest request = new ConverterRequest().job( p );
         ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
 
-        converter.convert( request, converterResult );
+        converter.convert( request, converterResult, p );
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
 
         System.out.println( groovy );
@@ -406,7 +406,7 @@ public class FreestyleTest
         ConverterRequest request = new ConverterRequest().job( p );
         ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
 
-        converter.convert( request, converterResult );
+        converter.convert( request, converterResult, p );
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
 
         System.out.println( groovy );
@@ -480,7 +480,7 @@ public class FreestyleTest
         ConverterRequest request = new ConverterRequest().job( p );
         ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
 
-        converter.convert( request, converterResult );
+        converter.convert( request, converterResult, p );
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
 
         System.out.println( groovy );
@@ -553,7 +553,7 @@ public class FreestyleTest
             new ConverterRequest().job( p );
         ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
 
-        converter.convert( request, converterResult );
+        converter.convert( request, converterResult, p );
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
 
         System.out.println( groovy );
@@ -599,7 +599,7 @@ public class FreestyleTest
 
         FreestyleToDeclarativeConverter converter =
             Jenkins.get().getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
-        converter.convert( request, converterResult );
+        converter.convert( request, converterResult, p );
         assertEquals( converterResult.getWarnings().toString(), 5, converterResult.getWarnings().size() );
 
         assertEquals( 1, converterResult.getWarnings().stream() //
