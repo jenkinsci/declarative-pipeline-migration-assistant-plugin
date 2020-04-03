@@ -12,7 +12,7 @@ import hudson.tasks.Shell;
 import io.jenkins.plugins.todeclarative.actions.ToDeclarativeAction;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.freestyle.FreestyleToDeclarativeConverter;
-import io.jenkins.plugins.todeclarative.converter.api.DeclarativeConverterListener;
+import io.jenkins.plugins.todeclarative.converter.api.ToDeclarativeConverterListener;
 import jenkins.model.Jenkins;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,7 +24,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class DeclarativeConverterListenerTest {
+public class ToDeclarativeConverterListenerTest {
     @Rule public JenkinsRule r = new JenkinsRule();
 
     @Test public void onConversion() throws Exception {
@@ -44,7 +44,7 @@ public class DeclarativeConverterListenerTest {
         assertTrue( converter.canConvert( p ) );
         ToDeclarativeAction action = new ToDeclarativeAction(p);
         String jenkinsfile = action.doConvert();
-        TestListener instance = ExtensionList.lookupSingleton(TestListener.class);
+        TestListenerTo instance = ExtensionList.lookupSingleton(TestListenerTo.class);
         assertTrue(instance.fired);
         assertThat(instance.job, equalTo(p));
         String resultGroovy = instance.result.getModelASTPipelineDef().toPrettyGroovy();
@@ -52,7 +52,7 @@ public class DeclarativeConverterListenerTest {
     }
 
     @Extension
-    public static class TestListener extends DeclarativeConverterListener {
+    public static class TestListenerTo extends ToDeclarativeConverterListener {
         boolean fired = false;
         FreeStyleProject job = null;
         ConverterResult result = null;

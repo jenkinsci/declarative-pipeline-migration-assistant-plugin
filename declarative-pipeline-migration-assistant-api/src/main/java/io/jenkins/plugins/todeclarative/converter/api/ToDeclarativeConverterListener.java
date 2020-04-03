@@ -7,7 +7,7 @@ import hudson.model.FreeStyleProject;
 /**
  * Receive notifications about conversions from freestyle projects to declarative pipelines
  */
-public abstract class DeclarativeConverterListener implements ExtensionPoint {
+public abstract class ToDeclarativeConverterListener implements ExtensionPoint {
 
     /**
      * Called when a freestyle job has been converted to a declarative pipeline
@@ -16,6 +16,6 @@ public abstract class DeclarativeConverterListener implements ExtensionPoint {
     }
 
     public static void fire(FreeStyleProject job, ConverterResult conversionResult) {
-        ExtensionList.lookup(DeclarativeConverterListener.class).forEach(listener -> {listener.onConversion(job, conversionResult);});
+        ExtensionList.lookup(ToDeclarativeConverterListener.class).forEach(listener -> {listener.onConversion(job, conversionResult);});
     }
 }
