@@ -18,6 +18,8 @@ public class ConverterResult
 
     private List<Supplier<ModelASTTreeStep>> wrappingTreeSteps = new ArrayList<>();
 
+    private List<String> convertedTypes = new ArrayList<>();
+
     private List<Warning> warnings = new ArrayList<>();
 
     public ConverterResult()
@@ -53,6 +55,14 @@ public class ConverterResult
     public List<Supplier<ModelASTTreeStep>> getWrappingTreeSteps()
     {
         return wrappingTreeSteps;
+    }
+
+    public List<String> getConvertedTypes() {
+        return convertedTypes;
+    }
+
+    public void addConvertedType(String pluginName) {
+        convertedTypes.add(pluginName);
     }
 
     public List<Warning> getWarnings()
