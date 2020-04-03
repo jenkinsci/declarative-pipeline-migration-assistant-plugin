@@ -34,7 +34,7 @@
 
   <groupId>org.jenkins-ci.plugins.to-declarative</groupId>
   <artifactId>declarative-pipeline-migration-assistant-parent</artifactId>
-  <version>1.0.4-SNAPSHOT</version>
+  <version>${revision}${changelist}</version>
   <packaging>pom</packaging>
   <name>Declarative Pipeline Migration Assistant</name>
   <description>Declarative Pipeline Migration Assistant Plugin.</description>
@@ -56,6 +56,8 @@
   </licenses>
 
   <properties>
+    <revision>1.04</revision>
+    <changelist>-SNAPSHOT</changelist>
     <java.level>8</java.level>
     <jenkins.version>2.150.1</jenkins.version>
     <workflow.version>2.0</workflow.version>
