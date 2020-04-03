@@ -10,6 +10,7 @@ import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.Warning;
 import io.jenkins.plugins.todeclarative.converter.freestyle.FreestyleToDeclarativeConverter;
+import io.jenkins.plugins.todeclarative.listener.DeclarativeConverterListener;
 import jenkins.model.Jenkins;
 import jenkins.model.TransientActionFactory;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
@@ -48,6 +49,7 @@ public class ToDeclarativeAction
             converter.convert( converterRequest, converterResult, job );
             this.jenkinsFile = converterResult.getModelASTPipelineDef().toPrettyGroovy();
             this.warnings = converterResult.getWarnings();
+            DeclarativeConverterListener.fire(job, converterResult);
             return jenkinsFile;
         } catch ( Exception e )
         {
