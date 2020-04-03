@@ -1,9 +1,8 @@
-package io.jenkins.plugins.todeclarative.listener;
+package io.jenkins.plugins.todeclarative.converter.api;
 
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 import hudson.model.FreeStyleProject;
-import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 
 /**
  * Receive notifications about conversions from freestyle projects to declarative pipelines

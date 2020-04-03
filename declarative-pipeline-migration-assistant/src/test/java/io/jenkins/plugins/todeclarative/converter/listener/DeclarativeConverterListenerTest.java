@@ -12,7 +12,7 @@ import hudson.tasks.Shell;
 import io.jenkins.plugins.todeclarative.actions.ToDeclarativeAction;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.freestyle.FreestyleToDeclarativeConverter;
-import io.jenkins.plugins.todeclarative.listener.DeclarativeConverterListener;
+import io.jenkins.plugins.todeclarative.converter.api.DeclarativeConverterListener;
 import jenkins.model.Jenkins;
 import org.junit.Rule;
 import org.junit.Test;

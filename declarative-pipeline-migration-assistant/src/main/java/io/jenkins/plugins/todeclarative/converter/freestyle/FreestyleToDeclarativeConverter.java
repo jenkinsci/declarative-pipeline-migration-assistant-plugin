@@ -15,7 +15,6 @@ import io.jenkins.plugins.todeclarative.converter.api.ConverterException;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
-import io.jenkins.plugins.todeclarative.converter.api.ToDeclarativeConverter;
 import io.jenkins.plugins.todeclarative.converter.api.Warning;
 import io.jenkins.plugins.todeclarative.converter.builder.NoBuilderConverter;
 import io.jenkins.plugins.todeclarative.converter.publisher.NoPublisherConverter;
