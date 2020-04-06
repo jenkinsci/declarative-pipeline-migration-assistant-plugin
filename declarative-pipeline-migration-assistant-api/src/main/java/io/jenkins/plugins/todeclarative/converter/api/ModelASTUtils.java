@@ -39,6 +39,13 @@ public class ModelASTUtils
         // no op
     }
 
+    /**
+     * Create a ModelASTKeyValueOrMethodCallPair
+     *
+     * @param key the key
+     * @param value the value
+     * @return ModelASTKeyValueorMethodCallPair
+     */
     public static ModelASTKeyValueOrMethodCallPair buildKeyPairArg( String key, Object value){
         ModelASTKey astKey = new ModelASTKey( ModelASTUtils.class);
         astKey.setKey(key);
@@ -48,6 +55,13 @@ public class ModelASTUtils
         return keyPairArg;
     }
 
+    /**
+     * Finds build condition or, if one does not exist, creates a new one
+     *
+     * @param modelASTPipelineDef the pipeline model to find or create the build condition
+     * @param condition the build condition to search
+     * @return ModelASTBuildCondition of the condtion
+     */
     public static ModelASTBuildCondition buildOrFindBuildCondition( ModelASTPipelineDef modelASTPipelineDef, String condition) {
         ModelASTPostBuild postBuild = modelASTPipelineDef.getPostBuild();
         if(postBuild==null){
@@ -66,6 +80,12 @@ public class ModelASTUtils
         return modelASTBuildCondition;
     }
 
+    /**
+     * Adds a stage to the pipeline model
+     *
+     * @param modelASTPipelineDef the pipeline model to modify
+     * @param stage the stage to add
+     */
     public static void addStage( ModelASTPipelineDef modelASTPipelineDef, ModelASTStage stage) {
         if(modelASTPipelineDef.getStages()==null){
             modelASTPipelineDef.setStages( new ModelASTStages( modelASTPipelineDef ) );
@@ -73,6 +93,12 @@ public class ModelASTUtils
         modelASTPipelineDef.getStages().getStages().add( stage );
     }
 
+    /**
+     * Adds a declarative option to the pipeline model
+     *
+     * @param modelASTPipelineDef the pipeline model to modify
+     * @param option the option to add
+     */
     public static void addOption(ModelASTPipelineDef modelASTPipelineDef, ModelASTOption option) {
         if(modelASTPipelineDef.getOptions()==null){
             modelASTPipelineDef.setOptions( new ModelASTOptions( modelASTPipelineDef ) );
@@ -80,6 +106,12 @@ public class ModelASTUtils
         modelASTPipelineDef.getOptions().getOptions().add( option );
     }
 
+    /**
+     * Add an individual step to the pipeline model
+     *
+     * @param buildCondition build that the step should belong to
+     * @param step the step to add
+     */
     public static void addStep(ModelASTBuildCondition buildCondition, ModelASTStep step) {
         ModelASTBranch branch = buildCondition.getBranch();
         if(branch==null){
@@ -89,6 +121,13 @@ public class ModelASTUtils
         branch.getSteps().add( step );
     }
 
+    /**
+     * Add a tool to the pipeline model
+     *
+     * @param modelASTPipelineDef the pipeline model to modify
+     * @param key tool type
+     * @param value tool name
+     */
     public static void addTool(ModelASTPipelineDef modelASTPipelineDef, ModelASTKey key, ModelASTValue value) {
         ModelASTTools tools = modelASTPipelineDef.getTools();
         if ( tools == null )
@@ -99,6 +138,12 @@ public class ModelASTUtils
         tools.getTools().put( key, value );
     }
 
+    /**
+     * Add a trigger to the pipeline model
+     *
+     * @param modelASTPipelineDef the pipeline model to modify
+     * @param trigger the trigger that will be added to the model
+     */
     public static void addTrigger(ModelASTPipelineDef modelASTPipelineDef, ModelASTTrigger trigger) {
         ModelASTTriggers modelASTTriggers = modelASTPipelineDef.getTriggers();
         if ( modelASTTriggers == null )
@@ -110,6 +155,12 @@ public class ModelASTUtils
         modelASTTriggers.getTriggers().add( trigger );
     }
 
+    /**
+     * Add a single build parameter to the pipeline model
+     *
+     * @param modelASTPipelineDef the pipeline model to modify
+     * @param parameter the parameter to add
+     */
     public static void addParameter(ModelASTPipelineDef modelASTPipelineDef, ModelASTBuildParameter parameter) {
         if( modelASTPipelineDef.getParameters() == null )
         {
@@ -146,6 +197,13 @@ public class ModelASTUtils
         }
     }
 
+    /**
+     * Create a generic step from a publisher
+     *
+     * @param publisher publisher to convert
+     * @param source source of the publisher
+     * @return ModelASTStep representation of the publisher
+     */
     public static ModelASTStep buildGenericStep(Publisher publisher, Object source)
     {
         Class<Publisher> actualPublisherClass = (Class<Publisher>)publisher.getClass();
