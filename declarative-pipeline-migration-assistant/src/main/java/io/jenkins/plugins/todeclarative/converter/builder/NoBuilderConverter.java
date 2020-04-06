@@ -4,23 +4,23 @@ import hudson.Extension;
 import hudson.tasks.Builder;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
-import io.jenkins.plugins.todeclarative.converter.api.builder.BuilderConverter;
+import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
-
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
-
 @Extension
-public class NoConverterBuilder
-    implements BuilderConverter
+public class NoBuilderConverter extends SingleTypedConverter<Builder>
 {
-    public static final String NO_BUILDER_NUMBER_KEY = NoConverterBuilder.class.getName() + ".step.number";
+    public static final String NO_BUILDER_NUMBER_KEY = NoBuilderConverter.class.getName() + ".step.number";
 
     @Override
-    public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, Builder builder )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
+        Builder builder = (Builder) target;
         ModelASTStage stage = new ModelASTStage( this );
         int stageNumber = request.getAndIncrement( NO_BUILDER_NUMBER_KEY );
         stage.setName( "No Converter-" + stageNumber );
@@ -36,14 +36,15 @@ public class NoConverterBuilder
         };
         step.setName( "echo 'No converter for Builder: " + builder.getClass().getName() + "'" );
         step.setArgs( null );
-        wrapBranch(converterResult, step, branch);
+        ModelASTUtils.wrapBranch(result, step, branch);
+        ModelASTUtils.addStage(result.getModelASTPipelineDef(), stage);
 
-        return stage;
+        // this is false because it's not really converting anything
+        return false;
     }
 
     @Override
-    public boolean canConvert( Builder builder )
-    {
+    public boolean canConvert(@Nonnull Object object) {
         return false;
     }
 }

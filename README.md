@@ -18,13 +18,7 @@ Documentation for this plugin is hosted on
 For further details on using the plugin, please see Converting a Freestyle project to a Declarative Pipeline.
 
 ### API 
-Interfaces that define extension of the conversion:
-- **BuilderConverter:** convert Builder
-- **BuildWrapperConverter:** convert BuildWrapper
-- **JobPropertyConverter:** convert JobProperty
-- **PublisherConverter:** convert Publisher
-- **ScmConverter:** convert SCM
-- **TriggerConverter:** convert BuildTriggers
+The abstract class `SingleTypedConverter<T>` defines the extension of the conversion.
 
 The Declarative Pipeline Migration Assistant plugin currently supports a limited number of plugins. See the documentation for details. 
 
@@ -46,17 +40,19 @@ If you want to add support for a specific plugin that is not currently supported
 
 ```
 @Extension
-public class ShellConverter implements BuilderConverter
+public class ShellConverter extends SingleTypedConverter<Shell>
     @Override
-    public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, Builder builder )
+    public boolean convert( ConverterRequest request, ConverterResult result, Object target )
     {
-       return the stage corresponding to the conversion or modify the model
-    }
+       Shell shell = (Shell) target;
+       /* Do some work to generate a new stage... */
+       ModelASTStage stage = new ModelASTStage( this );
 
-    @Override
-    public boolean canConvert( Builder builder )
-    {
-        return true if your implementation is able to convert the Builder passed as a parameter  
+       // use an utility method to add the stage to the pipeline model
+       ModelASTUtils.addStage(request.getModelASTPipelineDef(), stage);
+
+       // true for success, false for failure
+       return true;
     }
 ```
 
@@ -66,11 +62,12 @@ The following is an example with comments to convert a Shell script freestyle st
 
 ```
 @Extension
-public class ShellConverter implements BuilderConverter
-    ....
-    public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, Builder builder )
+public class ShellConverter extends SingleTypedConverter<Shell>
+{
+    @Override
+    public boolean convert( ConverterRequest request, ConverterResult result, Object target )
     {
-        Shell shell = (Shell) builder;
+        Shell shell = (Shell) target;
         ModelASTStage stage = new ModelASTStage( this );
         int stageNumber = request.getAndIncrement( SHELL_NUMBER_KEY );
         // names need to be unique for this we use a counter internal to the current conversion
@@ -88,52 +85,45 @@ public class ShellConverter implements BuilderConverter
         singleArgument.setValue( ModelASTValue.fromConstant( shell.getCommand(), this ) );
         step.setArgs( singleArgument );
         // we used some helper methods as we may have some wrapper around steps such credential, timeout, configfile etc...
-        wrapBranch(converterResult, step, branch);
+        ModelASTUtils.wrapBranch(result, step, branch);
+        // use an utility method to add the stage to the pipeline model
+        ModelASTUtils.addStage(result.getModelASTPipelineDef(), stage);
 
-        return stage;
+        return true;
     }
+}
 ```
 
 #### Example Publisher conversion
 
 The following is an example with comments to convert the ArtifactArchiver freestyle post build step using the API.
-This conversion does not return a stage, but modifies the model to add some build conditions.
+This conversion modifies the model to add some build conditions.
 
 ```
 @Extension
-public class ArtifactArchiverConverter implements PublisherConverter
+public class ArtifactArchiverConverter extends SingleTypedConverter<ArtifactArchiver> {
+    @Override
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target) {
 
-    public ModelASTStage convert( ConverterRequest request, ConverterResult result, Publisher publisher )
-    {
-        if (!(publisher instanceof ArtifactArchiver )) {
-            // can't use automatic conversion
-            return null;
-        }
-        ArtifactArchiver artifactArchiver = (ArtifactArchiver) publisher;
+        ArtifactArchiver artifactArchiver = (ArtifactArchiver) target;
         ModelASTBuildCondition buildCondition;
         // depending on which condition the artifact need to be executed
-        if(artifactArchiver.isOnlyIfSuccessful())
-        {
+        if(artifactArchiver.isOnlyIfSuccessful()) {
             buildCondition = ModelASTUtils.buildOrFindBuildCondition( result.getModelASTPipelineDef(), "success" );
         } else {
             buildCondition = ModelASTUtils.buildOrFindBuildCondition( result.getModelASTPipelineDef(), "always" );
         }
 
-        // we need to ensure there is a branch so a null check
-        ModelASTBranch branch = buildCondition.getBranch();
-        if(branch==null){
-            branch =new ModelASTBranch( this );
-            buildCondition.setBranch( branch );
-        }
-        
         // we use the helping method for basic generic publisher
         // NOTE your Publisher may not be able to be converted with this
         // in this case you need to code manually the step
-        ModelASTStep archiveArtifacts = buildGenericStep(publisher);
-        branch.getSteps().add( archiveArtifacts );
+        ModelASTStep archiveArtifacts = ModelASTUtils.buildGenericStep(artifactArchiver, this);
+        // we add the step to the build condition
+        ModelASTUtils.addStep(buildCondition, archiveArtifacts);
 
-        return null;
+        return true;
     }
+}
 
 ``` 
 
@@ -141,30 +131,31 @@ public class ArtifactArchiverConverter implements PublisherConverter
 #### Example Build Wrapper conversion
 
 The following is an example with comments to convert the Config File freestyle wrapper build using the API.
-This conversion does not return a stage, but uses a helper method to add a wrapper around all future build step conversions.
+This conversion uses a helper method to add a wrapper around all future build step conversions.
 
 ```
+// This was to not have the config-file-provider plugin as a required dependency
+// But you can use (as your use your plugin) 
 @OptionalExtension(requirePlugins = { "config-file-provider" })
-This was to not have the config-file-provider plugin as a required dependency
-But you can use (as your use your plugin) 
-@Extension 
-public class ConfigFileBuildWrapperConverter
-    implements BuildWrapperConverter
+public class ConfigFileBuildWrapperConverter extends SingleTypedConverter<ConfigFileBuildWrapper>
+{
+    private Logger LOGGER = LoggerFactory.getLogger( ConfigFileBuildWrapperConverter.class );
+
     @Override
-    public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, BuildWrapper wrapper )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
-        ConfigFileBuildWrapper configFileBuildWrapper = (ConfigFileBuildWrapper)wrapper;
+        ConfigFileBuildWrapper configFileBuildWrapper = (ConfigFileBuildWrapper) target;
         if(configFileBuildWrapper.getManagedFiles() == null || configFileBuildWrapper.getManagedFiles().isEmpty() )
         {
-            return null;
+            return true;
         }
         // return a lambda which will be called to wrap build step branches conversion 
         // see Build Step conversion which use it
-        converterResult.addWrappingTreeStep( () -> build( request, configFileBuildWrapper ) );
-        return null;
+        result.addWrappingTreeStep( () -> build( configFileBuildWrapper ) );
+        return true;
     }
 
-    private ModelASTTreeStep build(ConverterRequest request, ConfigFileBuildWrapper configFileBuildWrapper) {
+    private ModelASTTreeStep build(ConfigFileBuildWrapper configFileBuildWrapper) {
         ModelASTTreeStep configFileProvider = new ModelASTTreeStep( this );
 
         configFileProvider.setName( "configFileProvider" );
@@ -174,15 +165,16 @@ public class ConfigFileBuildWrapperConverter
         // only the 1st one
         ManagedFile managedFile = configFileBuildWrapper.getManagedFiles().get( 0 );
         // we simply generate to groovy code
-        //configFileProvider([configFile(fileId: 'yup', targetLocation: 'myfile.txt')])
         StringBuilder gstring = new StringBuilder( "[configFile(fileId:'" );
         gstring.append( managedFile.getFileId());
         gstring.append( "', targetLocation: '" );
         gstring.append( managedFile.getTargetLocation() );
         gstring.append( "')]" );
         singleArgument.setValue( ModelASTValue.fromGString( gstring.toString(), this ) );
+
         return configFileProvider;
     }
+}
 
 ``` 
 
@@ -192,14 +184,15 @@ The following is an example with comments to convert the Git SCM freestyle stage
 This conversion adds a stage to the pipeline model.
 
 ```
-@Extension
-public class GitScmConverter implements ScmConverter
-    ...
-    public void convert( ConverterRequest request, ConverterResult converterResult, SCM scm )
+@OptionalExtension(requirePlugins = { "git" })
+public class GitScmConverter extends SingleTypedConverter<GitSCM>
+{
+    @Override
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
-        List<UserRemoteConfig> repoList = ( (GitSCM) scm ).getUserRemoteConfigs();
+        List<UserRemoteConfig> repoList = ( (GitSCM) target ).getUserRemoteConfigs();
         if(repoList.isEmpty()){
-            return;
+            return true;
         }
         // create the new stage
         ModelASTStage stage = new ModelASTStage( this );
@@ -224,7 +217,8 @@ public class GitScmConverter implements ScmConverter
             }
 
             // more parameters in the original code
-            
+            ...
+
             // configure args of the step
             ModelASTNamedArgumentList stepArgs = new ModelASTNamedArgumentList( null);
             stepArgs.setArguments( args );
@@ -237,34 +231,38 @@ public class GitScmConverter implements ScmConverter
         branch.setSteps(steps);
         stage.setBranches( Arrays.asList( branch ) );
         // use an utility method to add the stage to the pipeline model
-        addStage(converterResult.getModelASTPipelineDef(), stage );
+        ModelASTUtils.addStage(result.getModelASTPipelineDef(), stage );
+        return true;
     }
-
+}
 ```
 
 #### Example Build Trigger conversion
 
 The following is an example with comments to convert the cron trigger using the API.
-This conversion modifies the pipeline mode to add a trigger property via an utility method.
+This conversion modifies the pipeline mode to add a trigger property via a utility method.
 
 ```
 @Extension
-public class TimerTriggerConverter implements TriggerConverter
-    ...
+public class TimerTriggerConverter extends SingleTypedConverter<TimerTrigger>
+{
     @Override
-    public void convert( ConverterRequest request, ConverterResult converterResult, TriggerDescriptor triggerDescriptor,
-                         Trigger<?> trigger )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
-        TimerTrigger timerTrigger = (TimerTrigger) trigger;
+        TimerTrigger timerTrigger = (TimerTrigger) target;
 
         String cronValue = timerTrigger.getSpec();
         // simply create the cron option 
+
         ModelASTTrigger modelASTTrigger = new ModelASTTrigger( this );
         modelASTTrigger.setName( "cron" );
         modelASTTrigger.setArgs( Arrays.asList(ModelASTValue.fromConstant( cronValue, this )) );
+
         // add the option to the model
-        ModelASTUtils.addTrigger( converterResult.getModelASTPipelineDef(), modelASTTrigger );
+        ModelASTUtils.addTrigger( result.getModelASTPipelineDef(), modelASTTrigger );
+        return true;
     }
+}
 
 ```
 

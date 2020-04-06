@@ -64,14 +64,11 @@ import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.ExtractResourceSCM;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.ToolInstallations;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -82,7 +79,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -248,7 +244,7 @@ public class FreestyleTest
         ConverterRequest request = new ConverterRequest().job( p );
         ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
 
-        converter.convert( request, converterResult );
+        converter.convert( request, converterResult, p );
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
 
         System.out.println( groovy );
@@ -410,7 +406,7 @@ public class FreestyleTest
         ConverterRequest request = new ConverterRequest().job( p );
         ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
 
-        converter.convert( request, converterResult );
+        converter.convert( request, converterResult, p );
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
 
         System.out.println( groovy );
@@ -484,7 +480,7 @@ public class FreestyleTest
         ConverterRequest request = new ConverterRequest().job( p );
         ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
 
-        converter.convert( request, converterResult );
+        converter.convert( request, converterResult, p );
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
 
         System.out.println( groovy );
@@ -557,7 +553,7 @@ public class FreestyleTest
             new ConverterRequest().job( p );
         ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
 
-        converter.convert( request, converterResult );
+        converter.convert( request, converterResult, p );
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
 
         System.out.println( groovy );
@@ -603,19 +599,19 @@ public class FreestyleTest
 
         FreestyleToDeclarativeConverter converter =
             Jenkins.get().getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
-        converter.convert( request, converterResult );
+        converter.convert( request, converterResult, p );
         assertEquals( converterResult.getWarnings().toString(), 5, converterResult.getWarnings().size() );
 
         assertEquals( 1, converterResult.getWarnings().stream() //
-            .filter( warning -> StringUtils.equals( warning.getPluginClassName(), FakeBuilder.class.getName() ) ) //
+            .filter( warning -> StringUtils.equals( warning.getTypeName(), FakeBuilder.class.getName() ) ) //
             .count());
 
         assertEquals( 1, converterResult.getWarnings().stream() //
-            .filter( warning -> StringUtils.equals( warning.getPluginClassName(), FakeBuildWrapper.class.getName() ) ) //
+            .filter( warning -> StringUtils.equals( warning.getTypeName(), FakeBuildWrapper.class.getName() ) ) //
             .count());
 
         assertEquals( 1, converterResult.getWarnings().stream() //
-            .filter( warning -> StringUtils.equals( warning.getPluginClassName(), FakeRecorder.class.getName() ) ) //
+            .filter( warning -> StringUtils.equals( warning.getTypeName(), FakeRecorder.class.getName() ) ) //
             .count());
 
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();

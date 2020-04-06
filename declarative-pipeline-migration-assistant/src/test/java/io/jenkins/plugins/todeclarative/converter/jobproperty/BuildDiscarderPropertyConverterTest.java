@@ -33,9 +33,9 @@ public class BuildDiscarderPropertyConverterTest
 
         BuildDiscarderPropertyConverter converter =
             j.jenkins.getExtensionList( BuildDiscarderPropertyConverter.class ).get( 0 );
-        assertTrue( converter.canConvert( null, buildDiscarderProperty ) );
+        assertTrue( converter.canConvert( buildDiscarderProperty ) );
         ConverterResult result = new ConverterResult();
-        converter.convert( new ConverterRequest(), result, null, buildDiscarderProperty );
+        converter.convert( new ConverterRequest(), result, buildDiscarderProperty );
         ModelASTOptions options = result.getModelASTPipelineDef().getOptions();
         assertEquals( 1, options.getOptions().size() );
         ModelASTOption option = options.getOptions().get( 0 );
@@ -60,9 +60,9 @@ public class BuildDiscarderPropertyConverterTest
 
         BuildDiscarderPropertyConverter converter =
             j.jenkins.getExtensionList( BuildDiscarderPropertyConverter.class ).get( 0 );
-        assertTrue( converter.canConvert( null, buildDiscarderProperty ) );
+        assertTrue( converter.canConvert( buildDiscarderProperty ) );
         ConverterResult result = new ConverterResult();
-        converter.convert( new ConverterRequest(), result, null, buildDiscarderProperty );
+        converter.convert( new ConverterRequest(), result, buildDiscarderProperty );
         assertEquals( 1, result.getWarnings().size() );
     }
 
@@ -80,9 +80,9 @@ public class BuildDiscarderPropertyConverterTest
 
         BuildDiscarderPropertyConverter converter =
             j.jenkins.getExtensionList( BuildDiscarderPropertyConverter.class ).get( 0 );
-        assertTrue( converter.canConvert( null, buildDiscarderProperty ) );
+        assertTrue( converter.canConvert( buildDiscarderProperty ) );
         ConverterResult result = new ConverterResult();
-        converter.convert( new ConverterRequest(), result, null, buildDiscarderProperty );
+        converter.convert( new ConverterRequest(), result, buildDiscarderProperty );
         ModelASTOptions options = result.getModelASTPipelineDef().getOptions();
         assertEquals( 1, options.getOptions().size() );
         ModelASTOption option = options.getOptions().get( 0 );

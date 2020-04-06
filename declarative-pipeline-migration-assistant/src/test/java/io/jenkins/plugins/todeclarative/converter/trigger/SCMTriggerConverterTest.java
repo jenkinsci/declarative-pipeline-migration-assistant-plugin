@@ -32,10 +32,10 @@ public class SCMTriggerConverterTest
         SCMTriggerConverter converter = j.jenkins
             .getExtensionList( SCMTriggerConverter.class ).get( 0 );
 
-        assertTrue(converter.canConvert( null, trigger ) );
+        assertTrue(converter.canConvert( trigger ) );
 
         ConverterResult result = new ConverterResult();
-        converter.convert( new ConverterRequest().job( p ), result, null, trigger );
+        converter.convert( new ConverterRequest().job( p ), result, trigger );
 
         List<ModelASTTrigger> triggers = result.getModelASTPipelineDef().getTriggers().getTriggers();
         assertEquals( 1, triggers.size() );

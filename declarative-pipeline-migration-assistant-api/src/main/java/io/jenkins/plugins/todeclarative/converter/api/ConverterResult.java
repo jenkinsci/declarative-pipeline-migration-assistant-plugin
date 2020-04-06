@@ -61,18 +61,13 @@ public class ConverterResult
         return convertedTypes;
     }
 
-    public void addConvertedType(String pluginName) {
-        convertedTypes.add(pluginName);
+    public void addConvertedType(String typeClassName) {
+        convertedTypes.add(typeClassName);
     }
 
     public List<Warning> getWarnings()
     {
         return warnings;
-    }
-
-    public void setWarnings( List<Warning> warnings )
-    {
-        this.warnings = warnings;
     }
 
     public void addWarning( Warning warning )

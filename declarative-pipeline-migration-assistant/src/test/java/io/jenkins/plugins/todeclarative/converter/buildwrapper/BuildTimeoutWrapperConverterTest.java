@@ -1,10 +1,13 @@
 package io.jenkins.plugins.todeclarative.converter.buildwrapper;
 
+import hudson.ExtensionList;
 import hudson.plugins.build_timeout.BuildTimeoutWrapper;
 import hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy;
 import hudson.plugins.build_timeout.operations.FailOperation;
+import io.jenkins.plugins.todeclarative.converter.api.BaseConverter;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOption;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOptions;
 import org.junit.Rule;
@@ -26,6 +29,8 @@ public class BuildTimeoutWrapperConverterTest
     public void simpletest()
         throws Exception
     {
+        ExtensionList<BaseConverter> allConverters = SingleTypedConverter.all();
+        ExtensionList<BuildTimeoutWrapperConverter> btwList = j.jenkins.getExtensionList(BuildTimeoutWrapperConverter.class);
         BuildTimeoutWrapperConverter converter =
             j.jenkins.getExtensionList( BuildTimeoutWrapperConverter.class ).get( 0 );
 

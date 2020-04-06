@@ -4,16 +4,14 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.model.BooleanParameterDefinition;
 import hudson.model.ChoiceParameterDefinition;
-import hudson.model.JobProperty;
-import hudson.model.JobPropertyDescriptor;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.StringParameterDefinition;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import io.jenkins.plugins.todeclarative.converter.api.Warning;
-import io.jenkins.plugins.todeclarative.converter.api.jobproperty.JobPropertyConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildParameter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildParameters;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTMethodArg;
@@ -23,31 +21,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Extension
-public class ParameterPropertyConverter
-    implements JobPropertyConverter
+public class ParameterPropertyConverter extends SingleTypedConverter<ParametersDefinitionProperty>
 {
     @Override
-    public void convert( ConverterRequest request, ConverterResult converterResult, //
-                         JobPropertyDescriptor jobPropertyDescriptor, //
-                         JobProperty jobProperty )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
-        ParametersDefinitionProperty parametersDefinitionProperty = (ParametersDefinitionProperty)jobProperty;
+        ParametersDefinitionProperty parametersDefinitionProperty = (ParametersDefinitionProperty) target;
         if(parametersDefinitionProperty.getParameterDefinitions().isEmpty()){
-            return;
+            return true;
         }
         // now in the Jenkinsfile as well
-        ModelASTPipelineDef model = converterResult.getModelASTPipelineDef();
+        ModelASTPipelineDef model = result.getModelASTPipelineDef();
         if(model.getParameters()==null){
             model.setParameters( new ModelASTBuildParameters( this ) );
         }
 
+        int numWarnings = result.getWarnings().size();
         parametersDefinitionProperty.getParameterDefinitions() //
             .forEach( parameterDefinition -> {
-                ModelASTBuildParameter parameter = build(parameterDefinition, converterResult);
+                ModelASTBuildParameter parameter = build(parameterDefinition, result);
                 if(parameter!=null){
-                    model.getParameters().getParameters().add(parameter);
+                    ModelASTUtils.addParameter(model, parameter);
                 }
             } );
+        if (result.getWarnings().size() > numWarnings)
+        {
+            return false;
+        }
+        return true;
     }
 
     protected ModelASTBuildParameter build( ParameterDefinition parameterDefinition, ConverterResult converterResult ){
@@ -85,18 +86,12 @@ public class ParameterPropertyConverter
         }
 
         converterResult.addWarning( new Warning( "Cannot convert property of type: " + parameterDefinition.getType(),
-                                                 getClass().getName() ) );
+                                                 parameterDefinition.getClass() ) );
         return null;
     }
 
     @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", justification = "Superclass method is @CheckForNull, but subclass impl never returns null")
     private boolean getDefaultBooleanParameterValue(BooleanParameterDefinition def) {
         return def.getDefaultParameterValue().value;
-    }
-
-    @Override
-    public boolean canConvert( JobPropertyDescriptor jobPropertyDescriptor, JobProperty jobProperty )
-    {
-        return jobProperty.getClass().isAssignableFrom( ParametersDefinitionProperty.class );
     }
 }

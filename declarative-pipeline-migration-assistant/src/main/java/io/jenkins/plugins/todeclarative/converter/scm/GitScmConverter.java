@@ -1,39 +1,34 @@
 package io.jenkins.plugins.todeclarative.converter.scm;
 
-import hudson.Extension;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.UserRemoteConfig;
-import hudson.scm.SCM;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
-import io.jenkins.plugins.todeclarative.converter.api.scm.ScmConverter;
+import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTNamedArgumentList;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStages;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 import org.jenkinsci.plugins.variant.OptionalExtension;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.addStage;
-
 @OptionalExtension(requirePlugins = { "git" })
-public class GitScmConverter implements ScmConverter
+public class GitScmConverter extends SingleTypedConverter<GitSCM>
 {
     @Override
-    public void convert( ConverterRequest request, ConverterResult converterResult, SCM scm )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
-        List<UserRemoteConfig> repoList = ( (GitSCM) scm ).getUserRemoteConfigs();
+        List<UserRemoteConfig> repoList = ( (GitSCM) target ).getUserRemoteConfigs();
         if(repoList.isEmpty()){
-            return;
+            return true;
         }
         ModelASTStage stage = new ModelASTStage( this );
         stage.setName( "Checkout Scm" );
@@ -76,12 +71,7 @@ public class GitScmConverter implements ScmConverter
         ModelASTBranch branch = new ModelASTBranch( this );
         branch.setSteps(steps);
         stage.setBranches( Arrays.asList( branch ) );
-        addStage(converterResult.getModelASTPipelineDef(), stage );
-    }
-
-    @Override
-    public boolean canConvert( SCM scm )
-    {
-        return scm instanceof GitSCM;
+        ModelASTUtils.addStage(result.getModelASTPipelineDef(), stage );
+        return true;
     }
 }

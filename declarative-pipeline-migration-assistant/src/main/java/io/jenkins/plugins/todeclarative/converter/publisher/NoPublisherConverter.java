@@ -5,19 +5,16 @@ import hudson.tasks.Publisher;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
-import io.jenkins.plugins.todeclarative.converter.api.publisher.PublisherConverter;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildCondition;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
-
-import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.addStep;
+import javax.annotation.Nonnull;
 
 @Extension
-public class NoPublisherConverter
-    implements PublisherConverter
+public class NoPublisherConverter extends SingleTypedConverter<Publisher>
 {
     @Override
-    public ModelASTStage convert( ConverterRequest request, ConverterResult result, Publisher publisher )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
 
         ModelASTBuildCondition buildCondition = ModelASTUtils.buildOrFindBuildCondition( result.getModelASTPipelineDef(), "always" );
@@ -29,15 +26,15 @@ public class NoPublisherConverter
                 return this.getName();
             }
         };
-        step.setName( "echo 'No converter for Publisher: " + publisher.getClass().getName() + "'" );
+        step.setName( "echo 'No converter for Publisher: " + target.getClass().getName() + "'" );
         step.setArgs( null );
-        addStep(buildCondition, step);
-        return null;
+        ModelASTUtils.addStep(buildCondition, step);
+        // not a real conversion, so return false
+        return false;
     }
 
     @Override
-    public boolean canConvert( Publisher publisher )
-    {
+    public boolean canConvert(@Nonnull Object object) {
         return false;
     }
 }

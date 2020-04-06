@@ -2,16 +2,14 @@ package io.jenkins.plugins.todeclarative.converter.publisher;
 
 import hudson.Extension;
 import hudson.tasks.Mailer;
-import hudson.tasks.Publisher;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
-import io.jenkins.plugins.todeclarative.converter.api.publisher.PublisherConverter;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildCondition;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTNamedArgumentList;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 
@@ -19,13 +17,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Extension
-public class MailerPublisherConverter
-    implements PublisherConverter
+public class MailerPublisherConverter extends SingleTypedConverter<Mailer>
 {
     @Override
-    public ModelASTStage convert( ConverterRequest request, ConverterResult result, Publisher publisher )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
-        Mailer mailer = (Mailer) publisher;
+        Mailer mailer = (Mailer) target;
         // FIXME must depends on Threshold
         // mailer.isNotifyEveryUnstableBuild()
 
@@ -43,7 +40,7 @@ public class MailerPublisherConverter
 
         ModelASTStep mail = new ModelASTStep( this );
         mail.setName( "mail" );
-        branch.getSteps().add( mail );
+        ModelASTUtils.addStep(buildCondition, mail);
 
         Map<ModelASTKey, ModelASTValue> args = new HashMap<>();
         { // to
@@ -65,12 +62,6 @@ public class MailerPublisherConverter
         mail.setArgs( stepArgs );
 
 
-        return null;
-    }
-
-    @Override
-    public boolean canConvert( Publisher publisher )
-    {
-        return publisher instanceof Mailer;
+        return true;
     }
 }

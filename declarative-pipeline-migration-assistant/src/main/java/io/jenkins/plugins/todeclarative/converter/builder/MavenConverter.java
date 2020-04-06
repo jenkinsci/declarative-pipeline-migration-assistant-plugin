@@ -3,13 +3,12 @@ package io.jenkins.plugins.todeclarative.converter.builder;
 import hudson.Extension;
 import hudson.model.FreeStyleProject;
 import hudson.model.JDK;
-import hudson.tasks.Builder;
 import hudson.tasks.Maven;
 import hudson.util.ArgumentListBuilder;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
-import io.jenkins.plugins.todeclarative.converter.api.builder.BuilderConverter;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import jenkins.model.Jenkins;
 import jenkins.mvn.FilePathGlobalSettingsProvider;
 import jenkins.mvn.FilePathSettingsProvider;
@@ -24,7 +23,6 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTSingleArgument
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
-
 import java.util.Arrays;
 import java.util.Map;
 
@@ -32,23 +30,20 @@ import java.util.Map;
 /**
  * This is a basic converter Maven converter to a simple sh command.
  */
-public class MavenConverter
-    implements BuilderConverter
+public class MavenConverter extends SingleTypedConverter<Maven>
 {
-
     public static final String MAVEN_NUMBER_KEY = ShellConverter.class.getName() + ".shell.number";
 
     @Override
-    public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, Builder builder )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
-
-        Maven maven = (Maven) builder;
+        Maven maven = (Maven) target;
         Maven.MavenInstallation mavenInstallation = maven.getMaven();
         if ( mavenInstallation != null )
         {
             ModelASTKey key = new ModelASTKey( this );
             key.setKey( "maven" );
-            ModelASTUtils.addTool( converterResult.getModelASTPipelineDef(),
+            ModelASTUtils.addTool( result.getModelASTPipelineDef(),
                                    key, ModelASTValue.fromConstant( mavenInstallation.getName(), this ) );
         }
 
@@ -59,7 +54,7 @@ public class MavenConverter
         {
             ModelASTKey key = new ModelASTKey( this );
             key.setKey( "jdk" );
-            ModelASTUtils.addTool( converterResult.getModelASTPipelineDef(),
+            ModelASTUtils.addTool( result.getModelASTPipelineDef(),
                                    key, ModelASTValue.fromConstant( jdk.getName(), this ) );
         }
 
@@ -134,13 +129,7 @@ public class MavenConverter
             environmentVariables.put( key, ModelASTValue.fromConstant( maven.jvmOptions, this ) );
         }
 
-        return stage;
-
-    }
-
-    @Override
-    public boolean canConvert( Builder builder )
-    {
-        return builder instanceof Maven;
+        ModelASTUtils.addStage(result.getModelASTPipelineDef(), stage);
+        return true;
     }
 }

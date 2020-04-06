@@ -1,44 +1,37 @@
 package io.jenkins.plugins.todeclarative.converter.jobproperty;
 
 import hudson.Extension;
-import hudson.model.JobProperty;
-import hudson.model.JobPropertyDescriptor;
 import hudson.tasks.LogRotator;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
+import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import io.jenkins.plugins.todeclarative.converter.api.Warning;
-import io.jenkins.plugins.todeclarative.converter.api.jobproperty.JobPropertyConverter;
 import jenkins.model.BuildDiscarder;
 import jenkins.model.BuildDiscarderProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTMethodArg;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOption;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.addOption;
 import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.buildKeyPairArg;
 
 @Extension
-public class BuildDiscarderPropertyConverter
-    implements JobPropertyConverter
+public class BuildDiscarderPropertyConverter extends SingleTypedConverter<BuildDiscarderProperty>
 {
     @Override
-    public void convert( ConverterRequest request, ConverterResult converterResult, //
-                         JobPropertyDescriptor jobPropertyDescriptor, //
-                         JobProperty jobProperty )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
-
-        BuildDiscarderProperty buildDiscarderProperty = (BuildDiscarderProperty) jobProperty;
+        BuildDiscarderProperty buildDiscarderProperty = (BuildDiscarderProperty) target;
 
         BuildDiscarder buildDiscarder = buildDiscarderProperty.getStrategy();
         if(!(buildDiscarder instanceof LogRotator )){
             // nothing to do
-            converterResult.addWarning( new Warning( "We cannot convert BuildDiscarder strategy " +
-                                                         (buildDiscarder == null ? "'null'" : buildDiscarder.getClass().getName()),
-                                                     getClass().getName() ) );
-            return;
+            result.addWarning( new Warning( "We cannot convert BuildDiscarder strategy " +
+                                            (buildDiscarder == null ? "'null'" : buildDiscarder.getClass().getName()),
+                                            getClass() ) );
+            return false;
         }
 
         LogRotator logRotator = (LogRotator) buildDiscarder;
@@ -66,15 +59,7 @@ public class BuildDiscarderPropertyConverter
         }
         logRotatorOption.setArgs( rotatorArgs );
 
-        addOption(converterResult.getModelASTPipelineDef(), option );
-    }
-
-
-
-
-    @Override
-    public boolean canConvert( JobPropertyDescriptor jobPropertyDescriptor, JobProperty jobProperty )
-    {
-        return jobProperty.getClass().isAssignableFrom( BuildDiscarderProperty.class );
+        ModelASTUtils.addOption(result.getModelASTPipelineDef(), option );
+        return true;
     }
 }

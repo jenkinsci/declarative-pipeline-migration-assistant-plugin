@@ -1,28 +1,26 @@
 package io.jenkins.plugins.todeclarative.converter.publisher;
 
-import hudson.tasks.Publisher;
 import hudson.tasks.test.AggregatedTestResultPublisher;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import io.jenkins.plugins.todeclarative.converter.api.Warning;
-import io.jenkins.plugins.todeclarative.converter.api.publisher.PublisherConverter;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.variant.OptionalExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @OptionalExtension(requirePlugins = { "junit" })
-public class AggregatedTestResultPublisherConverter implements PublisherConverter
+public class AggregatedTestResultPublisherConverter extends SingleTypedConverter<AggregatedTestResultPublisher>
 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger( AggregatedTestResultPublisherConverter.class.getName());
 
     @Override
-    public ModelASTStage convert( ConverterRequest request, ConverterResult result, Publisher publisher )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
-        result.addWarning( new Warning( "Cannot convert publisher:" + publisher.getClass(),
-                                        AggregatedTestResultPublisher.class.getName() ));
-        return null;
+        result.addWarning( new Warning( "Cannot convert publisher:" + target.getClass(),
+                                        AggregatedTestResultPublisher.class ));
+        return false;
 
 
 //        ModelASTBuildCondition buildCondition =
@@ -48,11 +46,5 @@ public class AggregatedTestResultPublisherConverter implements PublisherConverte
 //        step.setName( "step" );
 //
 //        return null;
-    }
-
-    @Override
-    public boolean canConvert( Publisher publisher )
-    {
-        return publisher instanceof AggregatedTestResultPublisher;
     }
 }

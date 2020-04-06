@@ -2,30 +2,26 @@ package io.jenkins.plugins.todeclarative.converter.trigger;
 
 import hudson.Extension;
 import hudson.model.Result;
-import hudson.triggers.Trigger;
-import hudson.triggers.TriggerDescriptor;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
-import io.jenkins.plugins.todeclarative.converter.api.trigger.TriggerConverter;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import jenkins.triggers.ReverseBuildTrigger;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKeyValueOrMethodCallPair;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTMethodArg;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTrigger;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @Extension
-public class ReverseBuildTriggerConverter implements TriggerConverter
+public class ReverseBuildTriggerConverter extends SingleTypedConverter<ReverseBuildTrigger>
 {
     @Override
-    public void convert( ConverterRequest request, ConverterResult converterResult, TriggerDescriptor triggerDescriptor,
-                         Trigger<?> trigger )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
-        ReverseBuildTrigger reverseBuildTrigger = (ReverseBuildTrigger) trigger;
+        ReverseBuildTrigger reverseBuildTrigger = (ReverseBuildTrigger) target;
 
         String upstreamProjects = reverseBuildTrigger.getUpstreamProjects();
         Result threshold = reverseBuildTrigger.getThreshold();
@@ -55,12 +51,7 @@ public class ReverseBuildTriggerConverter implements TriggerConverter
 
         modelASTTrigger.setArgs( args );
 
-        ModelASTUtils.addTrigger( converterResult.getModelASTPipelineDef(), modelASTTrigger );
-    }
-
-    @Override
-    public boolean canConvert( TriggerDescriptor triggerDescriptor, Trigger<?> trigger )
-    {
-        return trigger instanceof ReverseBuildTrigger;
+        ModelASTUtils.addTrigger( result.getModelASTPipelineDef(), modelASTTrigger );
+        return true;
     }
 }

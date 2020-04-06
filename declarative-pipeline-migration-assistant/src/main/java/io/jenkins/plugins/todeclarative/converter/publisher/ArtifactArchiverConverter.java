@@ -2,23 +2,19 @@ package io.jenkins.plugins.todeclarative.converter.publisher;
 
 import hudson.Extension;
 import hudson.tasks.ArtifactArchiver;
-import hudson.tasks.Publisher;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
-import io.jenkins.plugins.todeclarative.converter.api.publisher.PublisherConverter;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildCondition;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
 
-import static io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils.addStep;
-
 @Extension
-public class ArtifactArchiverConverter implements PublisherConverter {
+public class ArtifactArchiverConverter extends SingleTypedConverter<ArtifactArchiver> {
     @Override
-    public ModelASTStage convert( ConverterRequest request, ConverterResult result, Publisher publisher ) {
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target) {
 
-        ArtifactArchiver artifactArchiver = (ArtifactArchiver) publisher;
+        ArtifactArchiver artifactArchiver = (ArtifactArchiver) target;
         ModelASTBuildCondition buildCondition;
         if(artifactArchiver.isOnlyIfSuccessful()) {
             buildCondition = ModelASTUtils.buildOrFindBuildCondition( result.getModelASTPipelineDef(), "success" );
@@ -26,14 +22,9 @@ public class ArtifactArchiverConverter implements PublisherConverter {
             buildCondition = ModelASTUtils.buildOrFindBuildCondition( result.getModelASTPipelineDef(), "always" );
         }
 
-        ModelASTStep archiveArtifacts = buildGenericStep(publisher);
-        addStep(buildCondition, archiveArtifacts);
+        ModelASTStep archiveArtifacts = ModelASTUtils.buildGenericStep(artifactArchiver, this);
+        ModelASTUtils.addStep(buildCondition, archiveArtifacts);
 
-        return null;
-    }
-
-    @Override
-    public boolean canConvert( Publisher publisher ) {
-        return publisher instanceof ArtifactArchiver;
+        return true;
     }
 }

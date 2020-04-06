@@ -2,26 +2,22 @@ package io.jenkins.plugins.todeclarative.converter.trigger;
 
 import hudson.Extension;
 import hudson.triggers.TimerTrigger;
-import hudson.triggers.Trigger;
-import hudson.triggers.TriggerDescriptor;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
-import io.jenkins.plugins.todeclarative.converter.api.trigger.TriggerConverter;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTrigger;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 
 import java.util.Arrays;
 
 @Extension
-public class TimerTriggerConverter
-    implements TriggerConverter
+public class TimerTriggerConverter extends SingleTypedConverter<TimerTrigger>
 {
     @Override
-    public void convert( ConverterRequest request, ConverterResult converterResult, TriggerDescriptor triggerDescriptor,
-                         Trigger<?> trigger )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
-        TimerTrigger timerTrigger = (TimerTrigger) trigger;
+        TimerTrigger timerTrigger = (TimerTrigger) target;
 
         String cronValue = timerTrigger.getSpec();
 
@@ -29,12 +25,7 @@ public class TimerTriggerConverter
         modelASTTrigger.setName( "cron" );
         modelASTTrigger.setArgs( Arrays.asList(ModelASTValue.fromConstant( cronValue, this )) );
 
-        ModelASTUtils.addTrigger( converterResult.getModelASTPipelineDef(), modelASTTrigger );
-    }
-
-    @Override
-    public boolean canConvert( TriggerDescriptor triggerDescriptor, Trigger<?> trigger )
-    {
-        return trigger instanceof TimerTrigger;
+        ModelASTUtils.addTrigger( result.getModelASTPipelineDef(), modelASTTrigger );
+        return true;
     }
 }

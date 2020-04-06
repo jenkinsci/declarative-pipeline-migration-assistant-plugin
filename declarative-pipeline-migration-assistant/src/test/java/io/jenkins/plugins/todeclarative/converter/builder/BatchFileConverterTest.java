@@ -5,9 +5,12 @@ import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import org.hamcrest.CoreMatchers;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
+import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStages;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -25,9 +28,10 @@ public class BatchFileConverterTest
         BatchFile batchFile = new BatchFile( "cmd" );
         ConverterResult result = new ConverterResult();
         assertTrue( converter.canConvert( batchFile ) );
-        ModelASTStage stage = converter.convert( new ConverterRequest(), result, batchFile );
-        assertNotNull( stage );
-        String stageGroovy = stage.toGroovy();
+        assertTrue(converter.convert( new ConverterRequest(), result, batchFile ));
+        List<ModelASTStage> stages = result.getModelASTPipelineDef().getStages().getStages();
+        assertNotNull( stages );
+        String stageGroovy = stages.get(0).toGroovy();
         assertThat( stageGroovy, CoreMatchers.containsString( "bat 'cmd'" ) );
     }
 }

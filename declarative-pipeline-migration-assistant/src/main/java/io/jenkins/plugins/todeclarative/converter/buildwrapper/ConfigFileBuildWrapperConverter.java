@@ -1,13 +1,11 @@
 package io.jenkins.plugins.todeclarative.converter.buildwrapper;
 
-import hudson.tasks.BuildWrapper;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
-import io.jenkins.plugins.todeclarative.converter.api.buildwrapper.BuildWrapperConverter;
+import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import org.jenkinsci.plugins.configfiles.buildwrapper.ConfigFileBuildWrapper;
 import org.jenkinsci.plugins.configfiles.buildwrapper.ManagedFile;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTSingleArgument;
-import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTTreeStep;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTValue;
 import org.jenkinsci.plugins.variant.OptionalExtension;
@@ -15,24 +13,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @OptionalExtension(requirePlugins = { "config-file-provider" })
-public class ConfigFileBuildWrapperConverter
-    implements BuildWrapperConverter
+public class ConfigFileBuildWrapperConverter extends SingleTypedConverter<ConfigFileBuildWrapper>
 {
     private Logger LOGGER = LoggerFactory.getLogger( ConfigFileBuildWrapperConverter.class );
 
     @Override
-    public ModelASTStage convert( ConverterRequest request, ConverterResult converterResult, BuildWrapper wrapper )
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
     {
-        ConfigFileBuildWrapper configFileBuildWrapper = (ConfigFileBuildWrapper)wrapper;
+        ConfigFileBuildWrapper configFileBuildWrapper = (ConfigFileBuildWrapper) target;
         if(configFileBuildWrapper.getManagedFiles() == null || configFileBuildWrapper.getManagedFiles().isEmpty() )
         {
-            return null;
+            return true;
         }
-        converterResult.addWrappingTreeStep( () -> build( request, configFileBuildWrapper ) );
-        return null;
+        result.addWrappingTreeStep( () -> build( configFileBuildWrapper ) );
+        return true;
     }
 
-    private ModelASTTreeStep build(ConverterRequest request, ConfigFileBuildWrapper configFileBuildWrapper) {
+    private ModelASTTreeStep build(ConfigFileBuildWrapper configFileBuildWrapper) {
         ModelASTTreeStep configFileProvider = new ModelASTTreeStep( this );
 
         configFileProvider.setName( "configFileProvider" );
@@ -54,11 +51,5 @@ public class ConfigFileBuildWrapperConverter
 
         //}
         return configFileProvider;
-    }
-
-    @Override
-    public boolean canConvert( BuildWrapper wrapper )
-    {
-        return wrapper instanceof ConfigFileBuildWrapper;
     }
 }
