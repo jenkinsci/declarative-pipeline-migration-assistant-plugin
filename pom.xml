@@ -45,7 +45,7 @@
     <connection>scm:git:git://github.com/jenkinsci/declarative-pipeline-migration-assistant-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/declarative-pipeline-migration-assistant-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/declarative-pipeline-migration-assistant-plugin</url>
-    <tag>HEAD</tag>
+    <tag>${scmTag}</tag>
   </scm>
 
   <licenses>
