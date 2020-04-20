@@ -120,7 +120,7 @@ public class FreestyleToDeclarativeConverter extends SingleTypedConverter<FreeSt
                     matched = true;
                     if ( converter.convert(request, result, type) )
                     {
-                        result.addConvertedType(type.getClass().getName());
+                        result.addConvertedType(type.getClass());
                     } else
                     {
                         // TODO: log addition information for failed conversion?
