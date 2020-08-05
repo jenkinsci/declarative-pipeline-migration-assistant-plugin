@@ -38,7 +38,7 @@ If you want to add support for a specific plugin that is not currently supported
  
 #### Create your extension
 
-```
+```java
 @Extension
 public class ShellConverter extends SingleTypedConverter<Shell>
     @Override
@@ -60,7 +60,7 @@ public class ShellConverter extends SingleTypedConverter<Shell>
 
 The following is an example with comments to convert a Shell script freestyle step using the API.
 
-```
+```java
 @Extension
 public class ShellConverter extends SingleTypedConverter<Shell>
 {
@@ -99,7 +99,7 @@ public class ShellConverter extends SingleTypedConverter<Shell>
 The following is an example with comments to convert the ArtifactArchiver freestyle post build step using the API.
 This conversion modifies the model to add some build conditions.
 
-```
+```java
 @Extension
 public class ArtifactArchiverConverter extends SingleTypedConverter<ArtifactArchiver> {
     @Override
@@ -133,7 +133,7 @@ public class ArtifactArchiverConverter extends SingleTypedConverter<ArtifactArch
 The following is an example with comments to convert the Config File freestyle wrapper build using the API.
 This conversion uses a helper method to add a wrapper around all future build step conversions.
 
-```
+```java
 // This was to not have the config-file-provider plugin as a required dependency
 // But you can use (as your use your plugin) 
 @OptionalExtension(requirePlugins = { "config-file-provider" })
@@ -183,7 +183,7 @@ public class ConfigFileBuildWrapperConverter extends SingleTypedConverter<Config
 The following is an example with comments to convert the Git SCM freestyle stage using the API.
 This conversion adds a stage to the pipeline model.
 
-```
+```java
 @OptionalExtension(requirePlugins = { "git" })
 public class GitScmConverter extends SingleTypedConverter<GitSCM>
 {
@@ -242,7 +242,7 @@ public class GitScmConverter extends SingleTypedConverter<GitSCM>
 The following is an example with comments to convert the cron trigger using the API.
 This conversion modifies the pipeline mode to add a trigger property via a utility method.
 
-```
+```java
 @Extension
 public class TimerTriggerConverter extends SingleTypedConverter<TimerTrigger>
 {
