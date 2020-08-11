@@ -64,6 +64,7 @@ import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.ExtractResourceSCM;
@@ -492,7 +493,7 @@ public class FreestyleTest
     public void freestyle_conversion_maven_build_then_run_project()
         throws Exception
     {
-
+        Assume.assumeFalse(Functions.isWindows());
         Slave slave = j.createOnlineSlave();
         slave.setLabelString( "FOO_AGENT" );
 
