@@ -1,2 +1,2 @@
 _extends: .github
-tag-template: declarative-pipeline-migration-assistant-plugin-$NEXT_MINOR_VERSION
+tag-template: declarative-pipeline-migration-assistant-$NEXT_MINOR_VERSION
