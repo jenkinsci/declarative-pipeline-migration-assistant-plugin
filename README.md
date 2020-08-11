@@ -26,14 +26,12 @@ If you want to add support for a specific plugin that is not currently supported
 
 #### Add converter api dependency
 
-```
-
+```xml
     <dependency>
       <groupId>org.jenkins-ci.plugins.to-declarative</groupId>
       <artifactId>declarative-pipeline-migration-assistant-api</artifactId>
       <version></version>  
     </dependency>
-
 ``` 
  
 #### Create your extension
