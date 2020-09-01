@@ -21,7 +21,6 @@ import hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy;
 import hudson.plugins.build_timeout.operations.FailOperation;
 import hudson.security.ACL;
 import hudson.security.ACLContext;
-import hudson.security.AccessDeniedException2;
 import hudson.tasks.ArtifactArchiver;
 import hudson.tasks.BatchFile;
 import hudson.tasks.LogRotator;
@@ -48,8 +47,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 public class ToDeclarativeActionTest
@@ -189,8 +187,7 @@ public class ToDeclarativeActionTest
             a.doConvert();
             fail("Users without Job/Configure should not be able to convert jobs");
         } catch (Exception e) {
-            assertThat(e, instanceOf(AccessDeniedException2.class));
-            assertThat(e.getMessage(), containsString("Job/Configure"));
+            assertThat(e.getMessage(), is(hudson.security.Messages.AccessDeniedException2_MissingPermission("bob", "Job/Configure")));
         }
         try (ACLContext unused = ACL.as(User.getOrCreateByIdOrFullName("alice"))) {
             a.doConvert(); // No exception
