@@ -37,7 +37,6 @@
   <version>${revision}${changelist}</version>
   <packaging>pom</packaging>
   <name>Declarative Pipeline Migration Assistant</name>
-  <description>Declarative Pipeline Migration Assistant Plugin.</description>
 
   <url>https://github.com/jenkinsci/declarative-pipeline-migration-assistant-plugin</url>
 
