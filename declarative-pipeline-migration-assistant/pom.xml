@@ -4,10 +4,10 @@
   <parent>
     <groupId>org.jenkins-ci.plugins.to-declarative</groupId>
     <artifactId>declarative-pipeline-migration-assistant-parent</artifactId>
-    <version>${revision}${changelist}</version>
+    <version>1.5.0</version>
   </parent>
   <artifactId>declarative-pipeline-migration-assistant</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>1.5.0</version>
   <packaging>hpi</packaging>
   <name>Declarative Pipeline Migration Assistant</name>
   <description>Declarative Pipeline Migration Assistant Plugin.</description>
