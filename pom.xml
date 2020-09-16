@@ -34,7 +34,7 @@
 
   <groupId>org.jenkins-ci.plugins.to-declarative</groupId>
   <artifactId>declarative-pipeline-migration-assistant-parent</artifactId>
-  <version>1.5.0</version>
+  <version>${revision}${changelist}</version>
   <packaging>pom</packaging>
   <name>Declarative Pipeline Migration Assistant</name>
 
@@ -44,7 +44,7 @@
     <connection>scm:git:git://github.com/${gitHubRepo}.git</connection>
     <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
     <url>https://github.com/${gitHubRepo}</url>
-    <tag>declarative-pipeline-migration-assistant-1.5.0</tag>
+    <tag>${scmTag}</tag>
   </scm>
 
   <licenses>
@@ -55,7 +55,7 @@
   </licenses>
 
   <properties>
-    <revision>1.5.0</revision>
+    <revision>1.5.1</revision>
     <changelist>-SNAPSHOT</changelist>
     <gitHubRepo>jenkinsci/declarative-pipeline-migration-assistant-plugin</gitHubRepo>
     <java.level>8</java.level>
