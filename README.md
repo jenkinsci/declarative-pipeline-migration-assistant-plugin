@@ -1,4 +1,4 @@
-## Declarative Pipeline Migration Assistant 
+# Declarative Pipeline Migration Assistant 
 
 [![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/declarative-pipeline-migration-assistant)](https://plugins.jenkins.io/declarative-pipeline-migration-assistant)
 [![Changelog](https://img.shields.io/github/v/tag/jenkinsci/convert-to-declarative?label=changelog)](https://github.com/jenkinsci/declarative-pipeline-migration-assistant-plugin/releases)
