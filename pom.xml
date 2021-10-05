@@ -59,7 +59,7 @@
     <changelist>-SNAPSHOT</changelist>
     <gitHubRepo>jenkinsci/declarative-pipeline-migration-assistant-plugin</gitHubRepo>
     <java.level>8</java.level>
-    <jenkins.version>2.176.4</jenkins.version>
+    <jenkins.version>2.277.4</jenkins.version>
     <workflow.version>2.0</workflow.version>
     <jacoco.coverage.target>0.70</jacoco.coverage.target>
     <!-- For non-ci builds we'd like the build to still complete if jacoco metrics aren't met. -->
@@ -88,8 +88,8 @@
     <dependencies>
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
-        <artifactId>bom-2.176.x</artifactId>
-        <version>11</version>
+        <artifactId>bom-2.277.x</artifactId>
+        <version>966.v3857b7c82032</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -101,7 +101,7 @@
       <dependency>
         <groupId>org.jenkinsci.plugins</groupId>
         <artifactId>pipeline-model-api</artifactId>
-        <version>1.3.9</version>
+        <version>1.9.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
@@ -112,6 +112,31 @@
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>trilead-api</artifactId>
         <version>1.0.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jenkins-ci.plugins</groupId>
+        <artifactId>structs</artifactId>
+        <version>1.23</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jenkins-ci</groupId>
+        <artifactId>symbol-annotation</artifactId>
+        <version>1.23</version>
+      </dependency>
+      <dependency>
+        <groupId>io.jenkins.plugins</groupId>
+        <artifactId>snakeyaml-api</artifactId>
+        <version>1.29.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jenkins-ci.plugins.workflow</groupId>
+        <artifactId>workflow-step-api</artifactId>
+        <version>2.24</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jenkins-ci.plugins</groupId>
+        <artifactId>trilead-api</artifactId>
+        <version>1.0.13</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
