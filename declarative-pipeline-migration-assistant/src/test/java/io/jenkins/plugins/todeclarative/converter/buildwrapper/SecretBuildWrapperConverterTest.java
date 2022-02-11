@@ -2,6 +2,7 @@ package io.jenkins.plugins.todeclarative.converter.buildwrapper;
 
 
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -13,7 +14,6 @@ import org.jenkinsci.plugins.credentialsbinding.Binding;
 import org.jenkinsci.plugins.credentialsbinding.BindingDescriptor;
 import org.jenkinsci.plugins.credentialsbinding.impl.CertificateMultiBinding;
 import org.jenkinsci.plugins.credentialsbinding.impl.FileBinding;
-import org.jenkinsci.plugins.credentialsbinding.impl.Messages;
 import org.jenkinsci.plugins.credentialsbinding.impl.SSHUserPrivateKeyBinding;
 import org.jenkinsci.plugins.credentialsbinding.impl.SecretBuildWrapper;
 import org.jenkinsci.plugins.credentialsbinding.impl.StringBinding;
@@ -28,14 +28,15 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 public class SecretBuildWrapperConverterTest
 {
@@ -51,7 +52,7 @@ public class SecretBuildWrapperConverterTest
         ConverterResult result = new ConverterResult();
         UsernamePasswordMultiBinding binding = //
             new UsernamePasswordMultiBinding( "unameVar", "pwdVar", "credId" );
-        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper( Arrays.asList( binding ) );
+        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper(Collections.singletonList(binding));
         SecretBuildWrapperConverter converter = j.jenkins.getExtensionList( SecretBuildWrapperConverter.class ).get(0);
         converter.convert( null, result, secretBuildWrapper );
         assertEquals( 1, result.getWrappingTreeSteps().size() );
@@ -69,7 +70,7 @@ public class SecretBuildWrapperConverterTest
         ConverterResult result = new ConverterResult();
         UsernamePasswordBinding binding = //
             new UsernamePasswordBinding( "theVariable", "credId" );
-        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper( Arrays.asList( binding ) );
+        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper(Collections.singletonList(binding));
         SecretBuildWrapperConverter converter = j.jenkins.getExtensionList( SecretBuildWrapperConverter.class ).get(0);
         converter.convert( null, result, secretBuildWrapper );
         assertEquals( 1, result.getWrappingTreeSteps().size() );
@@ -86,7 +87,7 @@ public class SecretBuildWrapperConverterTest
         ConverterResult result = new ConverterResult();
         StringBinding binding = //
             new StringBinding( "theVariable", "credId" );
-        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper( Arrays.asList( binding ) );
+        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper(Collections.singletonList(binding));
         SecretBuildWrapperConverter converter = j.jenkins.getExtensionList( SecretBuildWrapperConverter.class ).get(0);
         converter.convert( null, result, secretBuildWrapper );
         assertEquals( 1, result.getWrappingTreeSteps().size() );
@@ -103,7 +104,7 @@ public class SecretBuildWrapperConverterTest
         ConverterResult result = new ConverterResult();
         FileBinding binding = //
             new FileBinding( "theVariable", "credId" );
-        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper( Arrays.asList( binding ) );
+        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper(Collections.singletonList(binding));
         SecretBuildWrapperConverter converter = j.jenkins.getExtensionList( SecretBuildWrapperConverter.class ).get(0);
         converter.convert( null, result, secretBuildWrapper );
         assertEquals( 1, result.getWrappingTreeSteps().size() );
@@ -120,7 +121,7 @@ public class SecretBuildWrapperConverterTest
         ConverterResult result = new ConverterResult();
         ZipFileBinding binding = //
             new ZipFileBinding( "theVariable", "credId" );
-        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper( Arrays.asList( binding ) );
+        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper(Collections.singletonList(binding));
         SecretBuildWrapperConverter converter = j.jenkins.getExtensionList( SecretBuildWrapperConverter.class ).get(0);
         converter.convert( null, result, secretBuildWrapper );
         assertEquals( 1, result.getWrappingTreeSteps().size() );
@@ -139,7 +140,7 @@ public class SecretBuildWrapperConverterTest
             new CertificateMultiBinding( "theVariable", "credId" );
         binding.setAliasVariable( "thealias" );
         binding.setPasswordVariable( "pwdVar" );
-        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper( Arrays.asList( binding ) );
+        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper(Collections.singletonList(binding));
         SecretBuildWrapperConverter converter = j.jenkins.getExtensionList( SecretBuildWrapperConverter.class ).get(0);
         converter.convert( null, result, secretBuildWrapper );
         assertEquals( 1, result.getWrappingTreeSteps().size() );
@@ -160,7 +161,7 @@ public class SecretBuildWrapperConverterTest
             new SSHUserPrivateKeyBinding( "theVariable", "credId" );
         binding.setPassphraseVariable( "thepassphrase" );
         binding.setUsernameVariable( "uidVar" );
-        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper( Arrays.asList( binding ) );
+        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper(Collections.singletonList(binding));
         SecretBuildWrapperConverter converter = j.jenkins.getExtensionList( SecretBuildWrapperConverter.class ).get(0);
         converter.convert( null, result, secretBuildWrapper );
         assertEquals( 1, result.getWrappingTreeSteps().size() );
@@ -179,7 +180,7 @@ public class SecretBuildWrapperConverterTest
         ConverterResult result = new ConverterResult();
         FakeBinding binding = //
             new FakeBinding( "theVariable", "credId" );
-        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper( Arrays.asList( binding ) );
+        SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper(Collections.singletonList(binding));
         SecretBuildWrapperConverter converter = j.jenkins.getExtensionList( SecretBuildWrapperConverter.class ).get(0);
         converter.convert( null, result, secretBuildWrapper );
         assertEquals( 1, result.getWrappingTreeSteps().size() );
@@ -200,7 +201,7 @@ public class SecretBuildWrapperConverterTest
             return StandardUsernamePasswordCredentials.class;
         }
 
-        public SingleEnvironment bindSingle( @Nonnull Run<?, ?> build, @Nullable FilePath workspace, @Nullable Launcher launcher, @Nonnull TaskListener listener) throws
+        public SingleEnvironment bindSingle(@NonNull Run<?, ?> build, @Nullable FilePath workspace, @Nullable Launcher launcher, @NonNull TaskListener listener) throws
             IOException, InterruptedException {
             return null;
         }

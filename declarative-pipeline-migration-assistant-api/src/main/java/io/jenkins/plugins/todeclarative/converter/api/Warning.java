@@ -1,6 +1,6 @@
 package io.jenkins.plugins.todeclarative.converter.api;
 
-import javax.annotation.CheckForNull;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 public class Warning
 {

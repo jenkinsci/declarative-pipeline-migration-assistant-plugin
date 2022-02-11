@@ -1,5 +1,7 @@
 package io.jenkins.plugins.todeclarative.actions;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.model.Action;
 import hudson.model.Describable;
@@ -15,9 +17,8 @@ import jenkins.model.Jenkins;
 import jenkins.model.TransientActionFactory;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
 
-import javax.annotation.CheckForNull;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class ToDeclarativeAction
@@ -110,9 +111,9 @@ public class ToDeclarativeAction
         extends TransientActionFactory<FreeStyleProject>
     {
         @Override
-        public Collection<ToDeclarativeAction> createFor( FreeStyleProject p )
+        public Collection<ToDeclarativeAction> createFor( @NonNull FreeStyleProject p )
         {
-            return Arrays.asList( new ToDeclarativeAction( p ) );
+            return Collections.singletonList(new ToDeclarativeAction(p));
         }
 
         @Override

@@ -1,8 +1,8 @@
 package io.jenkins.plugins.todeclarative.converter.api;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Functions;
 
-import javax.annotation.Nonnull;
 
 public abstract class SingleTypedConverter<T> extends BaseConverter {
     private final Class<T> type;
@@ -13,7 +13,7 @@ public abstract class SingleTypedConverter<T> extends BaseConverter {
     }
 
     @Override
-    public boolean canConvert(@Nonnull Object object) {
+    public boolean canConvert(@NonNull Object object) {
         return type.isInstance(object);
     }
 }
