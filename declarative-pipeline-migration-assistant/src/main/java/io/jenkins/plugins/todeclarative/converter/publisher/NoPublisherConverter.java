@@ -1,5 +1,6 @@
 package io.jenkins.plugins.todeclarative.converter.publisher;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.tasks.Publisher;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
@@ -8,7 +9,6 @@ import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
 import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBuildCondition;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
-import javax.annotation.Nonnull;
 
 @Extension
 public class NoPublisherConverter extends SingleTypedConverter<Publisher>
@@ -34,7 +34,7 @@ public class NoPublisherConverter extends SingleTypedConverter<Publisher>
     }
 
     @Override
-    public boolean canConvert(@Nonnull Object object) {
+    public boolean canConvert(@NonNull Object object) {
         return false;
     }
 }

@@ -28,7 +28,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.7</version>
+    <version>4.33</version>
     <relativePath />
   </parent>
 
@@ -89,7 +89,7 @@
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
         <artifactId>bom-2.277.x</artifactId>
-        <version>966.v3857b7c82032</version>
+        <version>984.vb5eaac999a7e</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -106,12 +106,7 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
-        <version>3.11</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>trilead-api</artifactId>
-        <version>1.0.4</version>
+        <version>3.12.0</version>
       </dependency>
       <dependency>
         <groupId>org.jenkins-ci.plugins</groupId>
@@ -137,6 +132,21 @@
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>trilead-api</artifactId>
         <version>1.0.13</version>
+      </dependency>
+      <dependency>
+        <groupId>com.atlassian.plugins</groupId>
+        <artifactId>atlassian-plugins-core</artifactId>
+        <version>4.0.0-m029</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jenkins-ci</groupId>
+        <artifactId>annotation-indexer</artifactId>
+        <version>1.13</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-utils</artifactId>
+        <version>3.1.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

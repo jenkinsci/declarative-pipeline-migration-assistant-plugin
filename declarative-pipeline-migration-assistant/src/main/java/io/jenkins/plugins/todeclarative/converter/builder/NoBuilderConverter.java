@@ -1,5 +1,6 @@
 package io.jenkins.plugins.todeclarative.converter.builder;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.tasks.Builder;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
@@ -9,8 +10,7 @@ import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStage;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTStep;
-import javax.annotation.Nonnull;
-import java.util.Arrays;
+import java.util.Collections;
 
 @Extension
 public class NoBuilderConverter extends SingleTypedConverter<Builder>
@@ -25,7 +25,7 @@ public class NoBuilderConverter extends SingleTypedConverter<Builder>
         int stageNumber = request.getAndIncrement( NO_BUILDER_NUMBER_KEY );
         stage.setName( "No Converter-" + stageNumber );
         ModelASTBranch branch = new ModelASTBranch( this );
-        stage.setBranches( Arrays.asList( branch ) );
+        stage.setBranches(Collections.singletonList(branch));
         ModelASTStep step = new ModelASTStep( this ){
             // need to override as per default () added at the end which doesn't work for echo..
             @Override
@@ -44,7 +44,7 @@ public class NoBuilderConverter extends SingleTypedConverter<Builder>
     }
 
     @Override
-    public boolean canConvert(@Nonnull Object object) {
+    public boolean canConvert(@NonNull Object object) {
         return false;
     }
 }

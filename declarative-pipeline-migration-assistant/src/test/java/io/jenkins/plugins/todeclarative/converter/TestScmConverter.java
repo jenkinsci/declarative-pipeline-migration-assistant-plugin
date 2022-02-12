@@ -38,9 +38,9 @@ public class TestScmConverter extends SingleTypedConverter<ExtractResourceSCM>
             ModelASTStep step = new ModelASTStep( this );
             ModelASTSingleArgument singleArgument = new ModelASTSingleArgument( this );
             // TODO escape shell command?? not sure as might be done when running it
-            singleArgument.setValue( ModelASTValue.fromConstant( "unzip " + filePath, this ) );
+            singleArgument.setValue( ModelASTValue.fromGString( "zipFile:'" + filePath + "'", this ) );
             step.setArgs( singleArgument );
-            step.setName( "sh" );
+            step.setName( "unzip" );
             steps.add( step );
 
             ModelASTBranch branch = new ModelASTBranch( this );
