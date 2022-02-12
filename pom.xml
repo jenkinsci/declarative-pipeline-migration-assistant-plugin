@@ -141,7 +141,7 @@
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-utils</artifactId>
-        <version>3.1.0</version>
+        <version>3.2.1</version>
       </dependency>
       <dependency>
         <groupId>com.infradna.tool</groupId>
@@ -157,6 +157,11 @@
         <groupId>org.jenkins-ci</groupId>
         <artifactId>annotation-indexer</artifactId>
         <version>1.15</version>
+      </dependency>
+      <dependency>
+        <groupId>io.atlassian.fugue</groupId>
+        <artifactId>fugue</artifactId>
+        <version>4.7.2</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
