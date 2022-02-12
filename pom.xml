@@ -101,7 +101,7 @@
       <dependency>
         <groupId>org.jenkinsci.plugins</groupId>
         <artifactId>pipeline-model-api</artifactId>
-        <version>1.9.2</version>
+        <version>2.2064.v5eef7d0982b_e</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
