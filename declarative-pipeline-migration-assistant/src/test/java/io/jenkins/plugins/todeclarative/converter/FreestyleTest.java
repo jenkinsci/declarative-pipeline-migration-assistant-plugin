@@ -493,7 +493,6 @@ public class FreestyleTest
     public void freestyle_conversion_maven_build_then_run_project()
         throws Exception
     {
-        Assume.assumeFalse(Functions.isWindows());
         Slave slave = j.createOnlineSlave();
         slave.setLabelString( "FOO_AGENT" );
 
