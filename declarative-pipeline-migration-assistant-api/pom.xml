@@ -4,10 +4,10 @@
   <parent>
     <groupId>org.jenkins-ci.plugins.to-declarative</groupId>
     <artifactId>declarative-pipeline-migration-assistant-parent</artifactId>
-    <version>${revision}${changelist}</version>
+    <version>1.5.2</version>
   </parent>
   <artifactId>declarative-pipeline-migration-assistant-api</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>1.5.2</version>
   <packaging>hpi</packaging>
   <name>Declarative Pipeline Migration Assistant API</name>
   <description>Declarative Pipeline Migration Assistant API (this plugin contains APIs used to convert Freestyle Jobs into Declarative Pipelines).</description>
