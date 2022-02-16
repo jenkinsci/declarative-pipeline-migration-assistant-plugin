@@ -89,7 +89,7 @@
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
         <artifactId>bom-2.289.x</artifactId>
-        <version>987.v4ade2e49fe70</version>
+        <version>1135.va_4eeca_ea_21c1</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -99,39 +99,14 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jenkinsci.plugins</groupId>
-        <artifactId>pipeline-model-api</artifactId>
-        <version>1.9.2</version>
-      </dependency>
-      <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>3.12.0</version>
       </dependency>
       <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>structs</artifactId>
-        <version>1.23</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jenkins-ci</groupId>
-        <artifactId>symbol-annotation</artifactId>
-        <version>1.23</version>
-      </dependency>
-      <dependency>
-        <groupId>io.jenkins.plugins</groupId>
-        <artifactId>snakeyaml-api</artifactId>
-        <version>1.29.1</version>
-      </dependency>
-      <dependency>
         <groupId>org.jenkins-ci.plugins.workflow</groupId>
         <artifactId>workflow-step-api</artifactId>
         <version>622.vb_8e7c15b_c95a_</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>trilead-api</artifactId>
-        <version>1.0.13</version>
       </dependency>
       <dependency>
         <groupId>com.atlassian.plugins</groupId>
@@ -141,22 +116,7 @@
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-utils</artifactId>
-        <version>3.2.1</version>
-      </dependency>
-      <dependency>
-        <groupId>com.infradna.tool</groupId>
-        <artifactId>bridge-method-annotation</artifactId>
-        <version>1.23</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>matrix-project</artifactId>
-        <version>1.20</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jenkins-ci</groupId>
-        <artifactId>annotation-indexer</artifactId>
-        <version>1.16</version>
+        <version>3.3.0</version>
       </dependency>
       <dependency>
         <groupId>io.atlassian.fugue</groupId>
