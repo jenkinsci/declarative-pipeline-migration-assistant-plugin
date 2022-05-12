@@ -96,8 +96,7 @@ public class FreestyleTest
         throws Exception
     {
         String nodeName = "FOO_AGENT";
-        Slave slave = j.createOnlineSlave();
-        slave.setLabelString( nodeName );
+        Slave slave = j.createSlave(nodeName, null);
 
         String projectName = Long.toString( System.currentTimeMillis() );
         FreeStyleProject p = j.createFreeStyleProject( projectName );
@@ -450,8 +449,7 @@ public class FreestyleTest
         throws Exception
     {
 
-        Slave slave = j.createOnlineSlave();
-        slave.setLabelString( "FOO_AGENT" );
+        Slave slave = j.createSlave("FOO_AGENT", null);
 
         String projectName = Long.toString( System.currentTimeMillis() );
         FreeStyleProject p = j.createFreeStyleProject( projectName );
@@ -494,8 +492,7 @@ public class FreestyleTest
         throws Exception
     {
         Assume.assumeFalse(Functions.isWindows());
-        Slave slave = j.createOnlineSlave();
-        slave.setLabelString( "FOO_AGENT" );
+        Slave slave = j.createSlave("FOO_AGENT", null);
 
         String projectName = Long.toString( System.currentTimeMillis() );
         FreeStyleProject p = j.createFreeStyleProject( projectName );
@@ -571,8 +568,7 @@ public class FreestyleTest
     public void get_warning()
         throws Exception
     {
-        Slave slave = j.createOnlineSlave();
-        slave.setLabelString( "FOO_AGENT" );
+        Slave slave = j.createSlave("FOO_AGENT", null);
 
         String projectName = Long.toString( System.currentTimeMillis() );
         FreeStyleProject p = j.createFreeStyleProject( projectName );

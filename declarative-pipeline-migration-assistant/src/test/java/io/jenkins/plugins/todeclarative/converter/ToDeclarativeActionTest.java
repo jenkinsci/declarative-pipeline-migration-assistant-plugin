@@ -59,8 +59,7 @@ public class ToDeclarativeActionTest
     @Test
     public void simpleActionRun() throws Exception
     {
-        Slave slave = j.createOnlineSlave();
-        slave.setLabelString( "FOO_AGENT" );
+        Slave slave = j.createSlave("FOO_AGENT", null);
 
         String projectName = Long.toString( System.currentTimeMillis() );
         FreeStyleProject p = j.createFreeStyleProject( projectName );

@@ -29,8 +29,7 @@ public class ToDeclarativeConverterListenerTest {
 
     @Test public void onConversion() throws Exception {
         String nodeName = "FOO_AGENT";
-        Slave slave = r.createOnlineSlave();
-        slave.setLabelString( nodeName );
+        Slave slave = r.createSlave(nodeName, null);
         String projectName = Long.toString( System.currentTimeMillis() );
         FreeStyleProject p = r.createFreeStyleProject( projectName );
         p.setAssignedLabel( Label.get( nodeName ) );
