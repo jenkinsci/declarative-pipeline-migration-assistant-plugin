@@ -69,7 +69,7 @@
     <dependency>
       <groupId>org.jenkinsci.plugins</groupId>
       <artifactId>pipeline-model-definition</artifactId>
-      <version>1.9.2</version>
+      <version>2.2081.v3919681ffc1e</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
