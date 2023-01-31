@@ -26,6 +26,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins.to-declarative</groupId>
       <artifactId>declarative-pipeline-migration-assistant-api</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
@@ -48,28 +49,12 @@
       <artifactId>credentials-binding</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.kohsuke</groupId>
-      <artifactId>access-modifier-annotation</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-net</groupId>
-      <artifactId>commons-net</artifactId>
-      <version>3.9.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-      <version>2.10.6</version>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>commons-lang3-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jenkinsci.plugins</groupId>
       <artifactId>pipeline-model-definition</artifactId>
-      <version>1.9.2</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -93,31 +78,28 @@
     <dependency>
       <groupId>com.coravy.hudson.plugins.github</groupId>
       <artifactId>github</artifactId>
-      <version>1.34.1</version>
+      <version>1.36.1</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.6wind.jenkins</groupId>
       <artifactId>lockable-resources</artifactId>
-      <version>2.14</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>build-timeout</artifactId>
-      <version>1.18</version>
+      <version>1.25</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>config-file-provider</artifactId>
-      <version>3.7.1</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>htmlpublisher</artifactId>
-      <version>1.29</version>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -150,7 +132,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>jira</artifactId>
-      <version>3.6.1</version>
+      <version>3.8</version>
       <scope>test</scope>
     </dependency>
     <dependency>
