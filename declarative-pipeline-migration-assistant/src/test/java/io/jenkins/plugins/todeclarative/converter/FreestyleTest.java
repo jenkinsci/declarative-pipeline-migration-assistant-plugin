@@ -21,6 +21,7 @@ import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Result;
 import hudson.model.Slave;
 import hudson.model.StringParameterDefinition;
+import hudson.plugins.ansicolor.AnsiColorBuildWrapper;
 import hudson.plugins.build_timeout.BuildTimeoutWrapper;
 import hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy;
 import hudson.plugins.build_timeout.impl.NoActivityTimeOutStrategy;
@@ -134,6 +135,12 @@ public class FreestyleTest
                                                                                    new FailOperation() ), "FOO" );
             p.getBuildWrappersList().add( buildTimeoutWrapper );
         }
+
+        {
+            AnsiColorBuildWrapper ansiColorBuildWrapper = new AnsiColorBuildWrapper("vga");
+            p.getBuildWrappersList().add(ansiColorBuildWrapper);
+        }
+
 
         {
             List<ParameterDefinition> parametersDefinitions = new ArrayList<>();
