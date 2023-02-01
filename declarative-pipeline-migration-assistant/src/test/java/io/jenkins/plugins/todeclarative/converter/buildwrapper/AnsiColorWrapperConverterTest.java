@@ -1,8 +1,6 @@
 package io.jenkins.plugins.todeclarative.converter.buildwrapper;
 
-import hudson.plugins.build_timeout.BuildTimeoutWrapper;
-import hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy;
-import hudson.plugins.build_timeout.operations.FailOperation;
+import hudson.plugins.ansicolor.AnsiColorBuildWrapper;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOption;
@@ -11,13 +9,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import java.util.Collections;
-
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class BuildTimeoutWrapperConverterTest
+public class AnsiColorWrapperConverterTest
 {
     @Rule
     public JenkinsRule j = new JenkinsRule();
@@ -26,20 +22,17 @@ public class BuildTimeoutWrapperConverterTest
     public void simpletest()
         throws Exception
     {
-        BuildTimeoutWrapperConverter converter =
-            j.jenkins.getExtensionList( BuildTimeoutWrapperConverter.class ).get( 0 );
+        AnsiColorWrapperConverter converter =
+            j.jenkins.getExtensionList( AnsiColorWrapperConverter.class ).get( 0 );
 
-        BuildTimeoutWrapper wrapper = new BuildTimeoutWrapper( new AbsoluteTimeOutStrategy( "180" ),
-                                                               Collections.singletonList( new FailOperation() ),
-                                                               "FOO" );
+        AnsiColorBuildWrapper wrapper = new AnsiColorBuildWrapper( "beer" );
         ConverterResult result = new ConverterResult();
         converter.convert( new ConverterRequest(), result, wrapper );
         ModelASTOptions options = result.getModelASTPipelineDef().getOptions();
         assertEquals( 1, options.getOptions().size() );
         ModelASTOption option = options.getOptions().get( 0 );
-        assertEquals( "timeout", option.getName() );
+        assertEquals( "ansiColor", option.getName() );
         String groovy = option.toGroovy();
-        assertThat( groovy, containsString( "time: 180" ) );
-        assertThat( groovy, containsString( "unit: 'MINUTES'" ) );
+        assertThat( groovy, containsString( "'beer'" ) );
     }
 }
