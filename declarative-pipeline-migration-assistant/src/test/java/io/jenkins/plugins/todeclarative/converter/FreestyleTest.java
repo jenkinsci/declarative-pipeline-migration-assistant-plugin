@@ -269,8 +269,9 @@ public class FreestyleTest
         assertThat( groovy, containsString( "customWorkspace \"" + f.getAbsolutePath() + "\"" ));
 
         assertThat( groovy, containsString( "lock" ) );
-        assertThat( groovy, containsString( "resource: 'beer'" ) );
-        assertThat( groovy, containsString( "label: 'labelName'" ) );
+        assertThat( groovy, containsString( "resource: 'beer'"));
+        assertThat( groovy, containsString( "label: 'labelName'"));
+        assertThat( groovy, containsString( "ansiColor('vga')"));
 
     }
 
@@ -358,6 +359,11 @@ public class FreestyleTest
                                                                                Collections.singletonList(
                                                                                    new FailOperation() ), "FOO" );
             p.getBuildWrappersList().add( buildTimeoutWrapper );
+        }
+
+        {
+            AnsiColorBuildWrapper ansiColorBuildWrapper = new AnsiColorBuildWrapper("vga");
+            p.getBuildWrappersList().add(ansiColorBuildWrapper);
         }
 
         {
