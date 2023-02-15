@@ -4,9 +4,9 @@
     <artifactId>git-changelist-maven-extension</artifactId>
     <version>1.4</version>
   </extension>
-  <extension>
+  <!--extension>
     <groupId>org.apache.maven.extensions</groupId>
     <artifactId>maven-build-cache-extension</artifactId>
     <version>1.0.0</version>
-  </extension>
+  </extension-->
 </extensions>
