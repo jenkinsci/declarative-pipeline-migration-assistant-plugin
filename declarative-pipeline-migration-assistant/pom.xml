@@ -78,7 +78,7 @@
     <dependency>
       <groupId>com.coravy.hudson.plugins.github</groupId>
       <artifactId>github</artifactId>
-      <version>1.37.0</version>
+      <version>1.37.1</version>
       <optional>true</optional>
     </dependency>
     <dependency>
