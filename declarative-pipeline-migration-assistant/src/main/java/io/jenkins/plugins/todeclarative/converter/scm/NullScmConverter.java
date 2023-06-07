@@ -4,10 +4,11 @@ import hudson.Extension;
 import hudson.scm.NullSCM;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
+import io.jenkins.plugins.todeclarative.converter.api.NoPublisherConverter;
 import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 
 /**
- * Unlike {@link io.jenkins.plugins.todeclarative.converter.publisher.NoPublisherConverter}, this converter is valid
+ * Unlike {@link NoPublisherConverter}, this converter is valid
  * and not used for reporting warnings.
  */
 @Extension

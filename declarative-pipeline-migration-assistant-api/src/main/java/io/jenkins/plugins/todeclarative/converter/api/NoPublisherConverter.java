@@ -1,4 +1,4 @@
-package io.jenkins.plugins.todeclarative.converter.publisher;
+package io.jenkins.plugins.todeclarative.converter.api;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
