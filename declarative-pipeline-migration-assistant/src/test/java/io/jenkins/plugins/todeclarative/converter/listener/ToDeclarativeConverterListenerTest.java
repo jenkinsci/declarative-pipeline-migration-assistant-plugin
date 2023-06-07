@@ -2,6 +2,7 @@ package io.jenkins.plugins.todeclarative.converter.listener;
 
 import hudson.Extension;
 import hudson.ExtensionList;
+import hudson.model.AbstractProject;
 import hudson.model.BooleanParameterDefinition;
 import hudson.model.FreeStyleProject;
 import hudson.model.Label;
@@ -57,9 +58,11 @@ public class ToDeclarativeConverterListenerTest {
         ConverterResult result = null;
 
         @Override
-        public void onConversion(FreeStyleProject job, ConverterResult conversionResult) {
+        public void onConversion(AbstractProject<?,?> job, ConverterResult conversionResult) {
             fired = true;
-            this.job = job;
+            if (job instanceof FreeStyleProject) {
+                this.job = (FreeStyleProject)job;
+            }
             result = conversionResult;
         }
     }
