@@ -55,7 +55,7 @@
   </licenses>
 
   <properties>
-    <revision>1.5.7</revision>
+    <revision>1.6.0</revision>
     <changelist>-SNAPSHOT</changelist>
     <gitHubRepo>jenkinsci/declarative-pipeline-migration-assistant-plugin</gitHubRepo>
     <jenkins.version>2.361.4</jenkins.version>
