@@ -1,15 +1,13 @@
 package io.jenkins.plugins.todeclarative.converter.api;
 
 import hudson.model.Job;
-
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Contains data needed for converting a {@link Job} to a declarative pipeline
  */
-public class ConverterRequest
-{
+public class ConverterRequest {
     private Job job;
 
     private boolean createNewProject;
@@ -21,23 +19,19 @@ public class ConverterRequest
      */
     private Map<String, Object> context = new HashMap<>();
 
-    public ConverterRequest()
-    {
-        //no op
+    public ConverterRequest() {
+        // no op
     }
 
-    public Job getJob()
-    {
+    public Job getJob() {
         return job;
     }
 
-    public void setJob( Job job )
-    {
+    public void setJob(Job job) {
         this.job = job;
     }
 
-    public ConverterRequest job( Job job )
-    {
+    public ConverterRequest job(Job job) {
         this.job = job;
         return this;
     }
@@ -60,15 +54,12 @@ public class ConverterRequest
      * @param key the counter key
      * @return retrieve the counter value and add 1
      */
-    public int getAndIncrement( String key )
-    {
-        if ( !context.containsKey( key ) )
-        {
-            context.put( key, 0 );
+    public int getAndIncrement(String key) {
+        if (!context.containsKey(key)) {
+            context.put(key, 0);
         }
-        int value = (int) context.get( key );
-        context.put( key, value + 1 );
+        int value = (int) context.get(key);
+        context.put(key, value + 1);
         return value;
     }
-
 }

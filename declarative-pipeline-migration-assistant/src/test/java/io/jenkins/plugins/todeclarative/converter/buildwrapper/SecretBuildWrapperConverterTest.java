@@ -1,7 +1,11 @@
 package io.jenkins.plugins.todeclarative.converter.buildwrapper;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import hudson.Extension;
 import hudson.FilePath;
@@ -9,6 +13,8 @@ import hudson.Launcher;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
+import java.io.IOException;
+import java.util.Collections;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.credentialsbinding.Binding;
 import org.jenkinsci.plugins.credentialsbinding.BindingDescriptor;
@@ -28,172 +34,158 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
+public class SecretBuildWrapperConverterTest {
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-
-public class SecretBuildWrapperConverterTest
-{
-
-    private static final Logger LOGGER = LoggerFactory.getLogger( SecretBuildWrapperConverterTest.class );
+    private static final Logger LOGGER = LoggerFactory.getLogger(SecretBuildWrapperConverterTest.class);
 
     @Rule
     public JenkinsRule j = new JenkinsRule();
 
     @Test
-    public void usernamePassword()
-    {
+    public void usernamePassword() {
         ConverterResult result = new ConverterResult();
         UsernamePasswordMultiBinding binding = //
-            new UsernamePasswordMultiBinding( "unameVar", "pwdVar", "credId" );
+                new UsernamePasswordMultiBinding("unameVar", "pwdVar", "credId");
         SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper(Collections.singletonList(binding));
-        SecretBuildWrapperConverter converter = j.jenkins.getExtensionList( SecretBuildWrapperConverter.class ).get(0);
-        converter.convert( null, result, secretBuildWrapper );
-        assertEquals( 1, result.getWrappingTreeSteps().size() );
-        ModelASTTreeStep tree = result.getWrappingTreeSteps().get( 0 ).get();
+        SecretBuildWrapperConverter converter =
+                j.jenkins.getExtensionList(SecretBuildWrapperConverter.class).get(0);
+        converter.convert(null, result, secretBuildWrapper);
+        assertEquals(1, result.getWrappingTreeSteps().size());
+        ModelASTTreeStep tree = result.getWrappingTreeSteps().get(0).get();
         String groovy = tree.toGroovy();
-        assertThat( groovy, containsString( "usernamePassword(" ) );
-        assertThat( groovy, containsString( "usernameVariable: 'unameVar'" ) );
-        assertThat( groovy, containsString( "passwordVariable: 'pwdVar'" ) );
-        assertThat( groovy, containsString( "credentialsId: 'credId'" ) );
+        assertThat(groovy, containsString("usernamePassword("));
+        assertThat(groovy, containsString("usernameVariable: 'unameVar'"));
+        assertThat(groovy, containsString("passwordVariable: 'pwdVar'"));
+        assertThat(groovy, containsString("credentialsId: 'credId'"));
     }
 
     @Test
-    public void usernameColonPassword()
-    {
+    public void usernameColonPassword() {
         ConverterResult result = new ConverterResult();
         UsernamePasswordBinding binding = //
-            new UsernamePasswordBinding( "theVariable", "credId" );
+                new UsernamePasswordBinding("theVariable", "credId");
         SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper(Collections.singletonList(binding));
-        SecretBuildWrapperConverter converter = j.jenkins.getExtensionList( SecretBuildWrapperConverter.class ).get(0);
-        converter.convert( null, result, secretBuildWrapper );
-        assertEquals( 1, result.getWrappingTreeSteps().size() );
-        ModelASTTreeStep tree = result.getWrappingTreeSteps().get( 0 ).get();
+        SecretBuildWrapperConverter converter =
+                j.jenkins.getExtensionList(SecretBuildWrapperConverter.class).get(0);
+        converter.convert(null, result, secretBuildWrapper);
+        assertEquals(1, result.getWrappingTreeSteps().size());
+        ModelASTTreeStep tree = result.getWrappingTreeSteps().get(0).get();
         String groovy = tree.toGroovy();
-        assertThat( groovy, containsString( "usernameColonPassword(" ) );
-        assertThat( groovy, containsString( "variable: 'theVariable'" ) );
-        assertThat( groovy, containsString( "credentialsId: 'credId'" ) );
+        assertThat(groovy, containsString("usernameColonPassword("));
+        assertThat(groovy, containsString("variable: 'theVariable'"));
+        assertThat(groovy, containsString("credentialsId: 'credId'"));
     }
 
     @Test
-    public void string()
-    {
+    public void string() {
         ConverterResult result = new ConverterResult();
         StringBinding binding = //
-            new StringBinding( "theVariable", "credId" );
+                new StringBinding("theVariable", "credId");
         SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper(Collections.singletonList(binding));
-        SecretBuildWrapperConverter converter = j.jenkins.getExtensionList( SecretBuildWrapperConverter.class ).get(0);
-        converter.convert( null, result, secretBuildWrapper );
-        assertEquals( 1, result.getWrappingTreeSteps().size() );
-        ModelASTTreeStep tree = result.getWrappingTreeSteps().get( 0 ).get();
+        SecretBuildWrapperConverter converter =
+                j.jenkins.getExtensionList(SecretBuildWrapperConverter.class).get(0);
+        converter.convert(null, result, secretBuildWrapper);
+        assertEquals(1, result.getWrappingTreeSteps().size());
+        ModelASTTreeStep tree = result.getWrappingTreeSteps().get(0).get();
         String groovy = tree.toGroovy();
-        assertThat( groovy, containsString( "string(" ) );
-        assertThat( groovy, containsString( "variable: 'theVariable'" ) );
-        assertThat( groovy, containsString( "credentialsId: 'credId'" ) );
+        assertThat(groovy, containsString("string("));
+        assertThat(groovy, containsString("variable: 'theVariable'"));
+        assertThat(groovy, containsString("credentialsId: 'credId'"));
     }
 
     @Test
-    public void file()
-    {
+    public void file() {
         ConverterResult result = new ConverterResult();
         FileBinding binding = //
-            new FileBinding( "theVariable", "credId" );
+                new FileBinding("theVariable", "credId");
         SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper(Collections.singletonList(binding));
-        SecretBuildWrapperConverter converter = j.jenkins.getExtensionList( SecretBuildWrapperConverter.class ).get(0);
-        converter.convert( null, result, secretBuildWrapper );
-        assertEquals( 1, result.getWrappingTreeSteps().size() );
-        ModelASTTreeStep tree = result.getWrappingTreeSteps().get( 0 ).get();
+        SecretBuildWrapperConverter converter =
+                j.jenkins.getExtensionList(SecretBuildWrapperConverter.class).get(0);
+        converter.convert(null, result, secretBuildWrapper);
+        assertEquals(1, result.getWrappingTreeSteps().size());
+        ModelASTTreeStep tree = result.getWrappingTreeSteps().get(0).get();
         String groovy = tree.toGroovy();
-        assertThat( groovy, containsString( "file(" ) );
-        assertThat( groovy, containsString( "variable: 'theVariable'" ) );
-        assertThat( groovy, containsString( "credentialsId: 'credId'" ) );
+        assertThat(groovy, containsString("file("));
+        assertThat(groovy, containsString("variable: 'theVariable'"));
+        assertThat(groovy, containsString("credentialsId: 'credId'"));
     }
 
     @Test
-    public void zip()
-    {
+    public void zip() {
         ConverterResult result = new ConverterResult();
         ZipFileBinding binding = //
-            new ZipFileBinding( "theVariable", "credId" );
+                new ZipFileBinding("theVariable", "credId");
         SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper(Collections.singletonList(binding));
-        SecretBuildWrapperConverter converter = j.jenkins.getExtensionList( SecretBuildWrapperConverter.class ).get(0);
-        converter.convert( null, result, secretBuildWrapper );
-        assertEquals( 1, result.getWrappingTreeSteps().size() );
-        ModelASTTreeStep tree = result.getWrappingTreeSteps().get( 0 ).get();
+        SecretBuildWrapperConverter converter =
+                j.jenkins.getExtensionList(SecretBuildWrapperConverter.class).get(0);
+        converter.convert(null, result, secretBuildWrapper);
+        assertEquals(1, result.getWrappingTreeSteps().size());
+        ModelASTTreeStep tree = result.getWrappingTreeSteps().get(0).get();
         String groovy = tree.toGroovy();
-        assertThat( groovy, containsString( "zip(" ) );
-        assertThat( groovy, containsString( "variable: 'theVariable'" ) );
-        assertThat( groovy, containsString( "credentialsId: 'credId'" ) );
+        assertThat(groovy, containsString("zip("));
+        assertThat(groovy, containsString("variable: 'theVariable'"));
+        assertThat(groovy, containsString("credentialsId: 'credId'"));
     }
 
     @Test
-    public void certificate()
-    {
+    public void certificate() {
         ConverterResult result = new ConverterResult();
         CertificateMultiBinding binding = //
-            new CertificateMultiBinding( "theVariable", "credId" );
-        binding.setAliasVariable( "thealias" );
-        binding.setPasswordVariable( "pwdVar" );
+                new CertificateMultiBinding("theVariable", "credId");
+        binding.setAliasVariable("thealias");
+        binding.setPasswordVariable("pwdVar");
         SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper(Collections.singletonList(binding));
-        SecretBuildWrapperConverter converter = j.jenkins.getExtensionList( SecretBuildWrapperConverter.class ).get(0);
-        converter.convert( null, result, secretBuildWrapper );
-        assertEquals( 1, result.getWrappingTreeSteps().size() );
-        ModelASTTreeStep tree = result.getWrappingTreeSteps().get( 0 ).get();
+        SecretBuildWrapperConverter converter =
+                j.jenkins.getExtensionList(SecretBuildWrapperConverter.class).get(0);
+        converter.convert(null, result, secretBuildWrapper);
+        assertEquals(1, result.getWrappingTreeSteps().size());
+        ModelASTTreeStep tree = result.getWrappingTreeSteps().get(0).get();
         String groovy = tree.toGroovy();
-        assertThat( groovy, containsString( "certificate(" ) );
-        assertThat( groovy, containsString( "keystoreVariable: 'theVariable'" ) );
-        assertThat( groovy, containsString( "credentialsId: 'credId'" ) );
-        assertThat( groovy, containsString( "aliasVariable: 'thealias'" ) );
-        assertThat( groovy, containsString( "passwordVariable: 'pwdVar'" ) );
+        assertThat(groovy, containsString("certificate("));
+        assertThat(groovy, containsString("keystoreVariable: 'theVariable'"));
+        assertThat(groovy, containsString("credentialsId: 'credId'"));
+        assertThat(groovy, containsString("aliasVariable: 'thealias'"));
+        assertThat(groovy, containsString("passwordVariable: 'pwdVar'"));
     }
 
     @Test
-    public void sshuserprivatekey()
-    {
+    public void sshuserprivatekey() {
         ConverterResult result = new ConverterResult();
         SSHUserPrivateKeyBinding binding = //
-            new SSHUserPrivateKeyBinding( "theVariable", "credId" );
-        binding.setPassphraseVariable( "thepassphrase" );
-        binding.setUsernameVariable( "uidVar" );
+                new SSHUserPrivateKeyBinding("theVariable", "credId");
+        binding.setPassphraseVariable("thepassphrase");
+        binding.setUsernameVariable("uidVar");
         SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper(Collections.singletonList(binding));
-        SecretBuildWrapperConverter converter = j.jenkins.getExtensionList( SecretBuildWrapperConverter.class ).get(0);
-        converter.convert( null, result, secretBuildWrapper );
-        assertEquals( 1, result.getWrappingTreeSteps().size() );
-        ModelASTTreeStep tree = result.getWrappingTreeSteps().get( 0 ).get();
+        SecretBuildWrapperConverter converter =
+                j.jenkins.getExtensionList(SecretBuildWrapperConverter.class).get(0);
+        converter.convert(null, result, secretBuildWrapper);
+        assertEquals(1, result.getWrappingTreeSteps().size());
+        ModelASTTreeStep tree = result.getWrappingTreeSteps().get(0).get();
         String groovy = tree.toGroovy();
-        assertThat( groovy, containsString( "sshUserPrivateKey(" ) );
-        assertThat( groovy, containsString( "keyFileVariable: 'theVariable'" ) );
-        assertThat( groovy, containsString( "credentialsId: 'credId'" ) );
-        assertThat( groovy, containsString( "usernameVariable: 'uidVar'" ) );
-        assertThat( groovy, containsString( "passphraseVariable: 'thepassphrase'" ) );
+        assertThat(groovy, containsString("sshUserPrivateKey("));
+        assertThat(groovy, containsString("keyFileVariable: 'theVariable'"));
+        assertThat(groovy, containsString("credentialsId: 'credId'"));
+        assertThat(groovy, containsString("usernameVariable: 'uidVar'"));
+        assertThat(groovy, containsString("passphraseVariable: 'thepassphrase'"));
     }
 
     @Test
-    public void fakegeneratewarning()
-    {
+    public void fakegeneratewarning() {
         ConverterResult result = new ConverterResult();
         FakeBinding binding = //
-            new FakeBinding( "theVariable", "credId" );
+                new FakeBinding("theVariable", "credId");
         SecretBuildWrapper secretBuildWrapper = new SecretBuildWrapper(Collections.singletonList(binding));
-        SecretBuildWrapperConverter converter = j.jenkins.getExtensionList( SecretBuildWrapperConverter.class ).get(0);
-        converter.convert( null, result, secretBuildWrapper );
-        assertEquals( 1, result.getWrappingTreeSteps().size() );
-        ModelASTTreeStep tree = result.getWrappingTreeSteps().get( 0 ).get();
-        assertEquals( 1, result.getWarnings().size() );
+        SecretBuildWrapperConverter converter =
+                j.jenkins.getExtensionList(SecretBuildWrapperConverter.class).get(0);
+        converter.convert(null, result, secretBuildWrapper);
+        assertEquals(1, result.getWrappingTreeSteps().size());
+        ModelASTTreeStep tree = result.getWrappingTreeSteps().get(0).get();
+        assertEquals(1, result.getWarnings().size());
     }
 
-
-    public static class FakeBinding
-        extends Binding<StandardUsernamePasswordCredentials>
-    {
+    public static class FakeBinding extends Binding<StandardUsernamePasswordCredentials> {
         @DataBoundConstructor
-        public FakeBinding( String variable, String credentialsId) {
+        public FakeBinding(String variable, String credentialsId) {
             super(variable, credentialsId);
         }
 
@@ -201,17 +193,19 @@ public class SecretBuildWrapperConverterTest
             return StandardUsernamePasswordCredentials.class;
         }
 
-        public SingleEnvironment bindSingle(@NonNull Run<?, ?> build, @Nullable FilePath workspace, @Nullable Launcher launcher, @NonNull TaskListener listener) throws
-            IOException, InterruptedException {
+        public SingleEnvironment bindSingle(
+                @NonNull Run<?, ?> build,
+                @Nullable FilePath workspace,
+                @Nullable Launcher launcher,
+                @NonNull TaskListener listener)
+                throws IOException, InterruptedException {
             return null;
         }
 
         @Symbol({"fakeBinding"})
         @Extension
-        public static class DescriptorImpl extends BindingDescriptor<StandardUsernamePasswordCredentials>
-        {
-            public DescriptorImpl() {
-            }
+        public static class DescriptorImpl extends BindingDescriptor<StandardUsernamePasswordCredentials> {
+            public DescriptorImpl() {}
 
             protected Class<StandardUsernamePasswordCredentials> type() {
                 return StandardUsernamePasswordCredentials.class;

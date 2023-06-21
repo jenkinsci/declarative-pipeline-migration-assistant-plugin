@@ -16,10 +16,10 @@ public class ArtifactArchiverConverter extends SingleTypedConverter<ArtifactArch
 
         ArtifactArchiver artifactArchiver = (ArtifactArchiver) target;
         ModelASTBuildCondition buildCondition;
-        if(artifactArchiver.isOnlyIfSuccessful()) {
-            buildCondition = ModelASTUtils.buildOrFindBuildCondition( result.getModelASTPipelineDef(), "success" );
+        if (artifactArchiver.isOnlyIfSuccessful()) {
+            buildCondition = ModelASTUtils.buildOrFindBuildCondition(result.getModelASTPipelineDef(), "success");
         } else {
-            buildCondition = ModelASTUtils.buildOrFindBuildCondition( result.getModelASTPipelineDef(), "always" );
+            buildCondition = ModelASTUtils.buildOrFindBuildCondition(result.getModelASTPipelineDef(), "always");
         }
 
         ModelASTStep archiveArtifacts = ModelASTUtils.buildGenericStep(artifactArchiver, this);

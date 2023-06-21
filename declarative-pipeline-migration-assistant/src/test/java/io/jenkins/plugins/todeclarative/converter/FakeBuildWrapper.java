@@ -5,14 +5,11 @@ import hudson.model.AbstractProject;
 import hudson.tasks.BuildWrapper;
 import hudson.tasks.BuildWrapperDescriptor;
 
-public class FakeBuildWrapper extends BuildWrapper
-{
+public class FakeBuildWrapper extends BuildWrapper {
     @Extension
-    public static class DescriptorImpl extends BuildWrapperDescriptor
-    {
+    public static class DescriptorImpl extends BuildWrapperDescriptor {
         @Override
-        public boolean isApplicable( AbstractProject<?, ?> item )
-        {
+        public boolean isApplicable(AbstractProject<?, ?> item) {
             return false;
         }
     }

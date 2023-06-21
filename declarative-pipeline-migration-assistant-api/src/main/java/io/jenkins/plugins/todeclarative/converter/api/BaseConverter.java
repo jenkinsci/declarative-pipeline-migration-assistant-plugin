@@ -8,7 +8,8 @@ public abstract class BaseConverter implements ExtensionPoint {
 
     public abstract boolean canConvert(@NonNull Object object);
 
-    public abstract boolean convert(ConverterRequest request, ConverterResult result, Object target) throws ConverterException;
+    public abstract boolean convert(ConverterRequest request, ConverterResult result, Object target)
+            throws ConverterException;
 
     public static ExtensionList<BaseConverter> all() {
         return ExtensionList.lookup(BaseConverter.class);
