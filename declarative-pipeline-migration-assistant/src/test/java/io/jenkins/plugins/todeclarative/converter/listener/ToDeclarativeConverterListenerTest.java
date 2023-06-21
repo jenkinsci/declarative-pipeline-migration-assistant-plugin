@@ -1,5 +1,9 @@
 package io.jenkins.plugins.todeclarative.converter.listener;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
 import hudson.Extension;
 import hudson.ExtensionList;
 import hudson.model.AbstractProject;
@@ -12,36 +16,37 @@ import hudson.model.Slave;
 import hudson.tasks.Shell;
 import io.jenkins.plugins.todeclarative.actions.ToDeclarativeAction;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
-import io.jenkins.plugins.todeclarative.converter.freestyle.FreestyleToDeclarativeConverter;
 import io.jenkins.plugins.todeclarative.converter.api.ToDeclarativeConverterListener;
+import io.jenkins.plugins.todeclarative.converter.freestyle.FreestyleToDeclarativeConverter;
+import java.util.ArrayList;
+import java.util.List;
 import jenkins.model.Jenkins;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class ToDeclarativeConverterListenerTest {
-    @Rule public JenkinsRule r = new JenkinsRule();
+    @Rule
+    public JenkinsRule r = new JenkinsRule();
 
-    @Test public void onConversion() throws Exception {
+    @Test
+    public void onConversion() throws Exception {
         String nodeName = "FOO_AGENT";
         Slave slave = r.createSlave(nodeName, null);
-        String projectName = Long.toString( System.currentTimeMillis() );
-        FreeStyleProject p = r.createFreeStyleProject( projectName );
-        p.setAssignedLabel( Label.get( nodeName ) );
+        String projectName = Long.toString(System.currentTimeMillis());
+        FreeStyleProject p = r.createFreeStyleProject(projectName);
+        p.setAssignedLabel(Label.get(nodeName));
         List<ParameterDefinition> parametersDefinitions = new ArrayList<>();
-        parametersDefinitions.add( new BooleanParameterDefinition( "nameboolean", true, "boolean description" ) );
-        ParametersDefinitionProperty parametersDefinitionProperty = new ParametersDefinitionProperty( parametersDefinitions );
-        p.addProperty( parametersDefinitionProperty );
-        p.getBuildersList().add( new Shell( "pwd" ) );
+        parametersDefinitions.add(new BooleanParameterDefinition("nameboolean", true, "boolean description"));
+        ParametersDefinitionProperty parametersDefinitionProperty =
+                new ParametersDefinitionProperty(parametersDefinitions);
+        p.addProperty(parametersDefinitionProperty);
+        p.getBuildersList().add(new Shell("pwd"));
 
-        FreestyleToDeclarativeConverter converter = Jenkins.get().getExtensionList(FreestyleToDeclarativeConverter.class).get(0);
-        assertTrue( converter.canConvert( p ) );
+        FreestyleToDeclarativeConverter converter = Jenkins.get()
+                .getExtensionList(FreestyleToDeclarativeConverter.class)
+                .get(0);
+        assertTrue(converter.canConvert(p));
         ToDeclarativeAction action = new ToDeclarativeAction(p);
         String jenkinsfile = action.doConvert();
         TestListenerTo instance = ExtensionList.lookupSingleton(TestListenerTo.class);
@@ -58,10 +63,10 @@ public class ToDeclarativeConverterListenerTest {
         ConverterResult result = null;
 
         @Override
-        public void onConversion(AbstractProject<?,?> job, ConverterResult conversionResult) {
+        public void onConversion(AbstractProject<?, ?> job, ConverterResult conversionResult) {
             fired = true;
             if (job instanceof FreeStyleProject) {
-                this.job = (FreeStyleProject)job;
+                this.job = (FreeStyleProject) job;
             }
             result = conversionResult;
         }

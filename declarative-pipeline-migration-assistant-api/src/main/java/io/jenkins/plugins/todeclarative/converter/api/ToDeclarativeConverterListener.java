@@ -12,10 +12,11 @@ public abstract class ToDeclarativeConverterListener implements ExtensionPoint {
     /**
      * Called when a freestyle job has been converted to a declarative pipeline
      */
-    public void onConversion(AbstractProject<?,?> job, ConverterResult conversionResult) {
-    }
+    public void onConversion(AbstractProject<?, ?> job, ConverterResult conversionResult) {}
 
-    public static void fire(AbstractProject<?,?> job, ConverterResult conversionResult) {
-        ExtensionList.lookup(ToDeclarativeConverterListener.class).forEach(listener -> {listener.onConversion(job, conversionResult);});
+    public static void fire(AbstractProject<?, ?> job, ConverterResult conversionResult) {
+        ExtensionList.lookup(ToDeclarativeConverterListener.class).forEach(listener -> {
+            listener.onConversion(job, conversionResult);
+        });
     }
 }

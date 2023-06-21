@@ -12,11 +12,9 @@ import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
  * and not used for reporting warnings.
  */
 @Extension
-public class NullScmConverter extends SingleTypedConverter<NullSCM>
-{
+public class NullScmConverter extends SingleTypedConverter<NullSCM> {
     @Override
-    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
-    {
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target) {
         // nothing here
         // just no more warning
         return true;

@@ -10,20 +10,17 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Job;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
+import io.jenkins.plugins.todeclarative.converter.api.ToDeclarativeConverterListener;
 import io.jenkins.plugins.todeclarative.converter.api.Warning;
 import io.jenkins.plugins.todeclarative.converter.freestyle.FreestyleToDeclarativeConverter;
-import io.jenkins.plugins.todeclarative.converter.api.ToDeclarativeConverterListener;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import jenkins.model.Jenkins;
 import jenkins.model.TransientActionFactory;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTPipelineDef;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-public class ToDeclarativeAction
-    implements Action, Describable<ToDeclarativeAction>
-{
+public class ToDeclarativeAction implements Action, Describable<ToDeclarativeAction> {
 
     private FreeStyleProject job;
 
@@ -33,102 +30,83 @@ public class ToDeclarativeAction
 
     private Exception error;
 
-    public ToDeclarativeAction( FreeStyleProject job )
-    {
+    public ToDeclarativeAction(FreeStyleProject job) {
         this.job = job;
     }
 
-    public String doConvert()
-        throws Exception
-    {
+    public String doConvert() throws Exception {
         job.checkPermission(Job.CONFIGURE);
-        try
-        {
-            FreestyleToDeclarativeConverter converter = Jenkins.get().getExtensionList( FreestyleToDeclarativeConverter.class ).get( 0 );
-            ConverterRequest converterRequest = new ConverterRequest().job( job );
-            ConverterResult converterResult = new ConverterResult().modelASTPipelineDef( new ModelASTPipelineDef( null ) );
-            converter.convert( converterRequest, converterResult, job );
+        try {
+            FreestyleToDeclarativeConverter converter = Jenkins.get()
+                    .getExtensionList(FreestyleToDeclarativeConverter.class)
+                    .get(0);
+            ConverterRequest converterRequest = new ConverterRequest().job(job);
+            ConverterResult converterResult = new ConverterResult().modelASTPipelineDef(new ModelASTPipelineDef(null));
+            converter.convert(converterRequest, converterResult, job);
             this.jenkinsFile = converterResult.getModelASTPipelineDef().toPrettyGroovy();
             this.warnings = converterResult.getWarnings();
             ToDeclarativeConverterListener.fire(job, converterResult);
             return jenkinsFile;
-        } catch ( Exception e )
-        {
+        } catch (Exception e) {
             this.error = e;
         }
         return null;
     }
 
-    public Exception getError()
-    {
+    public Exception getError() {
         return error;
     }
 
-    public List<Warning> getWarnings()
-    {
+    public List<Warning> getWarnings() {
         return warnings;
     }
 
     @CheckForNull
     @Override
-    public String getIconFileName()
-    {
+    public String getIconFileName() {
         return "new-document.png";
     }
 
     @CheckForNull
     @Override
-    public String getDisplayName()
-    {
+    public String getDisplayName() {
         return "To Declarative";
     }
 
     @CheckForNull
     @Override
-    public String getUrlName()
-    {
+    public String getUrlName() {
         return "todeclarative";
     }
 
-    public String getJenkinsFile()
-    {
+    public String getJenkinsFile() {
         return jenkinsFile;
     }
 
-    public void setJenkinsFile( String jenkinsFile )
-    {
+    public void setJenkinsFile(String jenkinsFile) {
         this.jenkinsFile = jenkinsFile;
     }
 
     @Override
-    public Descriptor<ToDeclarativeAction> getDescriptor()
-    {
-        return Jenkins.get().getDescriptorOrDie( getClass() );
+    public Descriptor<ToDeclarativeAction> getDescriptor() {
+        return Jenkins.get().getDescriptorOrDie(getClass());
     }
 
     @Extension
-    public static class ActionInjector
-        extends TransientActionFactory<FreeStyleProject>
-    {
+    public static class ActionInjector extends TransientActionFactory<FreeStyleProject> {
         @Override
-        public Collection<ToDeclarativeAction> createFor( @NonNull FreeStyleProject p )
-        {
+        public Collection<ToDeclarativeAction> createFor(@NonNull FreeStyleProject p) {
             return Collections.singletonList(new ToDeclarativeAction(p));
         }
 
         @Override
-        public Class type()
-        {
+        public Class type() {
             return FreeStyleProject.class;
         }
     }
 
-
     @Extension
-    public static final class ToDeclarativeActionDescriptor
-        extends Descriptor<ToDeclarativeAction>
-    {
+    public static final class ToDeclarativeActionDescriptor extends Descriptor<ToDeclarativeAction> {
         // no op
     }
-
 }

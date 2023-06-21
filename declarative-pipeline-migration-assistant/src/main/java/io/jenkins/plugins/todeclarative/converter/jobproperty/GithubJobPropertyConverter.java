@@ -8,18 +8,16 @@ import org.jenkinsci.plugins.variant.OptionalExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@OptionalExtension(requirePlugins = { "github" })
-public class GithubJobPropertyConverter extends SingleTypedConverter<GithubProjectProperty>
-{
+@OptionalExtension(requirePlugins = {"github"})
+public class GithubJobPropertyConverter extends SingleTypedConverter<GithubProjectProperty> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger( GithubJobPropertyConverter.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(GithubJobPropertyConverter.class.getName());
 
     @Override
-    public boolean convert(ConverterRequest request, ConverterResult result, Object target)
-    {
-//            if(request.isCreateProject()) {
-//                converterResult.getJob().addProperty( jobProperty );
-//            }
+    public boolean convert(ConverterRequest request, ConverterResult result, Object target) {
+        //            if(request.isCreateProject()) {
+        //                converterResult.getJob().addProperty( jobProperty );
+        //            }
         // nothing as we do not create project
         return true;
     }
