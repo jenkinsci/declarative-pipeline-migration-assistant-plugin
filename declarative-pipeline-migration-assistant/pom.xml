@@ -38,7 +38,7 @@
     </dependency>
     <!--
     remove when merge of https://github.com/jenkinsci/build-blocker-plugin/pull/19
-    remove snapshot repository as well  
+    remove snapshot repository as well
     -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
