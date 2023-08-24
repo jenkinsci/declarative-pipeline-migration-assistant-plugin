@@ -38,12 +38,11 @@
     </dependency>
     <!--
     remove when merge of https://github.com/jenkinsci/build-blocker-plugin/pull/19
-    remove snapshot repository as well
     -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>build-blocker-plugin</artifactId>
-      <version>1.7.9-20230810.030611-1</version>
+      <version>1.7.8</version>
       <optional>true</optional>
     </dependency>
     <dependency>
