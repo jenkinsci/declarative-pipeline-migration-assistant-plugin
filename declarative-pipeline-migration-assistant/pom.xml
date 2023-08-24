@@ -36,6 +36,15 @@
       <version>1.0.2</version>
       <optional>true</optional>
     </dependency>
+    <!--
+    remove when merge of https://github.com/jenkinsci/build-blocker-plugin/pull/19
+    -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>build-blocker-plugin</artifactId>
+      <version>1.7.8</version>
+      <optional>true</optional>
+    </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>build-timeout</artifactId>
@@ -168,6 +177,19 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>jenkins.snapshots</id>
+      <url>https://repo.jenkins-ci.org/snapshots/</url>
+    </repository>
+  </repositories>
   <build>
     <resources>
       <resource>
