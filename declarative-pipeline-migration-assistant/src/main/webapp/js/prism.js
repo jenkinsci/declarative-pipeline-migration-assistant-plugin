@@ -1101,7 +1101,7 @@ Prism.hooks.add('wrap', function(env) {
 		var hash = location.hash.slice(1);
 
 		// Remove pre-existing temporary lines
-		document.querySelector('.temporary.line-highlight').forEach(function (line) {
+		document.querySelectorAll('.temporary.line-highlight').forEach(function (line) {
 			line.parentNode.removeChild(line);
 		});
 
