@@ -1101,7 +1101,7 @@ Prism.hooks.add('wrap', function(env) {
 		var hash = location.hash.slice(1);
 
 		// Remove pre-existing temporary lines
-		$$('.temporary.line-highlight').forEach(function (line) {
+		document.querySelector('.temporary.line-highlight').forEach(function (line) {
 			line.parentNode.removeChild(line);
 		});
 
@@ -1146,7 +1146,7 @@ Prism.hooks.add('wrap', function(env) {
 		 * tags change the content of the <code> tag.
 		 */
 		var num = 0;
-		$$('.line-highlight', pre).forEach(function (line) {
+		document.querySelectorAll('.line-highlight', pre).forEach(function (line) {
 			num += line.textContent.length;
 			line.parentNode.removeChild(line);
 		});
@@ -1181,7 +1181,7 @@ Prism.hooks.add('wrap', function(env) {
 	window.addEventListener('hashchange', applyHash);
 	window.addEventListener('resize', function () {
 		var actions = [];
-		$$('pre[data-line]').forEach(function (pre) {
+		document.querySelectorAll('pre[data-line]').forEach(function (pre) {
 			actions.push(highlightLines(pre));
 		});
 		actions.forEach(callFunction);

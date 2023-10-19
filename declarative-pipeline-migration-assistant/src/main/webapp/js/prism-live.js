@@ -130,7 +130,7 @@ var _ = Prism.Live = class PrismLive {
 						var snippetExpanded = this.expandSnippet(selector);
 
 						if (snippetExpanded) {
-							requestAnimationFrame(() => $.fire(this.textarea, "input"));
+							requestAnimationFrame(() => Event.fire(this.textarea, "input"));
 						}
 						else {
 							this.insert(this.indent);
@@ -744,7 +744,7 @@ $.ready().then(() => {
 	_.supportsExecCommand = !!t.value;
 	t.remove();
 
-	$$(":not(.prism-live) > textarea.prism-live").forEach(textarea => {
+	document.querySelectorAll(":not(.prism-live) > textarea.prism-live").forEach(textarea => {
 		if (!_.all.get(textarea)) {
 			new _(textarea);
 		}
