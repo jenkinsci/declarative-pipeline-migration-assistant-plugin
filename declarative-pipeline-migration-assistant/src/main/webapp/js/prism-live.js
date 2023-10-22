@@ -130,7 +130,7 @@ var _ = Prism.Live = class PrismLive {
 						var snippetExpanded = this.expandSnippet(selector);
 
 						if (snippetExpanded) {
-							requestAnimationFrame(() => Event.fire(this.textarea, "input"));
+							requestAnimationFrame(() => this.textarea.dispatchEvent(new Event("input")));
 						}
 						else {
 							this.insert(this.indent);
