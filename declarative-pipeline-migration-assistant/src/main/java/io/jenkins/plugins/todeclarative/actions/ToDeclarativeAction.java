@@ -8,6 +8,7 @@ import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
 import hudson.model.Job;
+import io.jenkins.plugins.prism.PrismConfiguration;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterRequest;
 import io.jenkins.plugins.todeclarative.converter.api.ConverterResult;
 import io.jenkins.plugins.todeclarative.converter.api.ToDeclarativeConverterListener;
@@ -108,5 +109,8 @@ public class ToDeclarativeAction implements Action, Describable<ToDeclarativeAct
     @Extension
     public static final class ToDeclarativeActionDescriptor extends Descriptor<ToDeclarativeAction> {
         // no op
+        public PrismConfiguration getPrismConfiguration() {
+            return PrismConfiguration.getInstance();
+        }
     }
 }
