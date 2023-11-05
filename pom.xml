@@ -174,44 +174,5 @@
         </plugin>
       </plugins>
     </pluginManagement>
-    <plugins>
-      <plugin>
-        <groupId>com.diffplug.spotless</groupId>
-        <artifactId>spotless-maven-plugin</artifactId>
-        <configuration>
-          <java>
-            <palantirJavaFormat />
-            <removeUnusedImports />
-          </java>
-          <pom>
-            <includes>
-              <include>pom.xml</include>
-            </includes>
-            <sortPom>
-              <nrOfIndentSpace>2</nrOfIndentSpace>
-              <!-- default see https://github.com/Ekryd/sortpom/wiki/PredefinedSortOrderProfiles -->
-              <predefinedSortOrder>recommended_2008_06</predefinedSortOrder>
-              <!-- Sort properties -->
-              <sortProperties>true</sortProperties>
-              <!-- Sort modules -->
-              <sortModules>true</sortModules>
-              <!-- Sort plugin executions -->
-              <sortExecutions>true</sortExecutions>
-            </sortPom>
-          </pom>
-          <upToDateChecking>
-            <enabled>true</enabled>
-          </upToDateChecking>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-            <phase>validate</phase>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
   </build>
 </project>
