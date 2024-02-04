@@ -23,7 +23,7 @@ public class JUnitResultArchiverConverterTest {
 
         JUnitResultArchiver publisher = new JUnitResultArchiver("**/**.xml");
         publisher.setHealthScaleFactor(2);
-        publisher.setKeepLongStdio(true);
+        publisher.setStdioRetention("ALL");
         p.getPublishersList().add(publisher);
 
         JUnitResultArchiverConverter converter =
@@ -38,7 +38,7 @@ public class JUnitResultArchiverConverterTest {
         // step($class: 'JUnitResultArchiver', healthScaleFactor: 2.0, keepLongStdio: true, testResults: '**/**.xml')
         assertThat(groovy, containsString("$class: 'JUnitResultArchiver'"));
         assertThat(groovy, containsString("healthScaleFactor: 2.0"));
-        assertThat(groovy, containsString("keepLongStdio: true"));
+        assertThat(groovy, containsString("stdioRetention: 'ALL'"));
         assertThat(groovy, containsString("testResults: '**/**.xml'"));
     }
 }
