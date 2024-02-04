@@ -76,9 +76,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>junit</artifactId>
-      <!-- TODO: Remove explicit version once BOM is bumped to a version that
-           pulls this in automatically -->
-      <version>1259.v65ffcef24a_88</version>
       <optional>true</optional>
     </dependency>
     <dependency>
