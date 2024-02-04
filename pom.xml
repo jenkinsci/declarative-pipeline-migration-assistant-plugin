@@ -79,14 +79,6 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-
-      <!-- TODO: Remove explicit version once BOM is bumped to a version that
-           pulls this in automatically -->
-      <dependency>
-        <groupId>io.jenkins-ci.plugins</groupId>
-        <artifactId>junit</artifactId>
-        <version>1259.v65ffcef24a_88</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
