@@ -1,14 +1,11 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core">
 	<link rel="stylesheet" type="text/css" href="${rootURL}/plugin/declarative-pipeline-migration-assistant/css/todeclarative.css"/>
-	<link rel="stylesheet" type="text/css" href="${rootURL}/plugin/declarative-pipeline-migration-assistant/css/prism.css" />
-	<script language="javascript" type="text/javascript" src="${rootURL}/plugin/declarative-pipeline-migration-assistant/js/clipboard.min.js"></script>
-	<script language="javascript" type="text/javascript" src="${rootURL}/plugin/declarative-pipeline-migration-assistant/js/prism.js"></script>
 	<script language="javascript" type="text/javascript"
 					src="${rootURL}/plugin/declarative-pipeline-migration-assistant/js/declarative-pipeline-migration-assistant.js"></script>
-	<script language="javascript" type="text/javascript" src="${rootURL}/plugin/declarative-pipeline-migration-assistant/js/bliss.shy.min.js"></script>
-	<script language="javascript" type="text/javascript" src="${rootURL}/plugin/declarative-pipeline-migration-assistant/js/prism-live.js"></script>
-	<script language="javascript" type="text/javascript" src="${rootURL}/plugin/declarative-pipeline-migration-assistant/js/prism-live-javascript.js"></script>
+	<script language="javascript" type="text/javascript"
+			src="${rootURL}/plugin/declarative-pipeline-migration-assistant/js/prism-toolbar.js"></script>
+
 </j:jelly>
 
 

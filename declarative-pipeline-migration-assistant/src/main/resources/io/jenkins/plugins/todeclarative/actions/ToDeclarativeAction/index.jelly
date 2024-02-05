@@ -1,7 +1,8 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
-         xmlns:m="/io/jenkins/plugins/todeclarative/tags">
+         xmlns:m="/io/jenkins/plugins/todeclarative/tags" xmlns:p="/prism">
   <l:layout>
+    <p:prism configuration="${it.prismConfiguration}"/>
     <m:import/>
     <l:main-panel>
       <div class="converter-panel">
@@ -72,7 +73,7 @@
             </div>
           </div>
           <pre class="line-numbers">
-            <textarea readonly="true" class="prism-live language-js" style="--min-height: 350px;display: none" id="jenkinsfile-content">${Jenkinsfile}</textarea>
+            <code class="prism-live language-groovy" id="jenkinsfile-content">${Jenkinsfile}</code>
           </pre>
         </j:if>
 
