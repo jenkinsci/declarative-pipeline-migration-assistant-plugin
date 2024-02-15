@@ -16,9 +16,11 @@ public class ConverterResult {
 
     private List<Supplier<ModelASTTreeStep>> wrappingTreeSteps = new ArrayList<>();
 
-    private List<Class> convertedTypes = new ArrayList<>();
+    private List<Class<?>> convertedTypes = new ArrayList<>();
 
     private List<Warning> warnings = new ArrayList<>();
+
+    private List<Info> infos = new ArrayList<>();
 
     public ConverterResult() {
         // no op
@@ -49,11 +51,11 @@ public class ConverterResult {
         return wrappingTreeSteps;
     }
 
-    public List<Class> getConvertedTypes() {
+    public List<Class<?>> getConvertedTypes() {
         return convertedTypes;
     }
 
-    public void addConvertedType(Class typeClass) {
+    public void addConvertedType(Class<?> typeClass) {
         convertedTypes.add(typeClass);
     }
 
@@ -63,5 +65,13 @@ public class ConverterResult {
 
     public void addWarning(Warning warning) {
         this.warnings.add(warning);
+    }
+
+    public List<Info> getInfos() {
+        return infos;
+    }
+
+    public void addInfo(Info info) {
+        this.infos.add(info);
     }
 }
