@@ -87,7 +87,7 @@
       <artifactId>junit</artifactId>
       <!-- TODO: Remove explicit version once BOM is bumped to a version that
            pulls this in automatically -->
-      <version>1259.v65ffcef24a_88</version>
+      <version>1265.v65b_14fa_f12f0</version>
       <optional>true</optional>
     </dependency>
     <dependency>
