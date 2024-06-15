@@ -34,7 +34,7 @@
 
   <groupId>org.jenkins-ci.plugins.to-declarative</groupId>
   <artifactId>declarative-pipeline-migration-assistant-parent</artifactId>
-  <version>1.6.4</version>
+  <version>${revision}${changelist}</version>
   <packaging>pom</packaging>
   <name>Declarative Pipeline Migration Assistant</name>
 
@@ -55,7 +55,7 @@
   <scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false" child.scm.url.inherit.append.path="false">
     <connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
     <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
-    <tag>declarative-pipeline-migration-assistant-1.6.4</tag>
+    <tag>${scmTag}</tag>
     <url>https://github.com/${gitHubRepo}</url>
   </scm>
 
@@ -66,7 +66,7 @@
     <!-- For non-ci builds we'd like the build to still complete if jacoco metrics aren't met. -->
     <jacoco.haltOnFailure>false</jacoco.haltOnFailure>
     <jenkins.version>2.401.3</jenkins.version>
-    <revision>1.6.4</revision>
+    <revision>1.6.5</revision>
     <spotless.check.skip>false</spotless.check.skip>
   </properties>
 
