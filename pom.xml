@@ -65,7 +65,9 @@
     <jacoco.coverage.target>0.70</jacoco.coverage.target>
     <!-- For non-ci builds we'd like the build to still complete if jacoco metrics aren't met. -->
     <jacoco.haltOnFailure>false</jacoco.haltOnFailure>
-    <jenkins.version>2.401.3</jenkins.version>
+    <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
+    <jenkins.baseline>2.401</jenkins.baseline>
+    <jenkins.version>${jenkins.baseline}.3</jenkins.version>
     <revision>1.6.5</revision>
     <spotless.check.skip>false</spotless.check.skip>
   </properties>
@@ -74,7 +76,7 @@
     <dependencies>
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
-        <artifactId>bom-2.401.x</artifactId>
+        <artifactId>bom-${jenkins.baseline}.x</artifactId>
         <version>2745.vc7b_fe4c876fa_</version>
         <type>pom</type>
         <scope>import</scope>
