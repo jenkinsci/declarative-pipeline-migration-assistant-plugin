@@ -34,7 +34,7 @@
 
   <groupId>org.jenkins-ci.plugins.to-declarative</groupId>
   <artifactId>declarative-pipeline-migration-assistant-parent</artifactId>
-  <version>${changelist}</version>
+  <version>${revision}${changelist}</version>
   <packaging>pom</packaging>
   <name>Declarative Pipeline Migration Assistant</name>
 
@@ -60,7 +60,7 @@
   </scm>
 
   <properties>
-    <changelist>999999-SNAPSHOT</changelist>
+    <changelist>-SNAPSHOT</changelist>
     <gitHubRepo>jenkinsci/declarative-pipeline-migration-assistant-plugin</gitHubRepo>
     <jacoco.coverage.target>0.70</jacoco.coverage.target>
     <!-- For non-ci builds we'd like the build to still complete if jacoco metrics aren't met. -->
