@@ -31,7 +31,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>prism-api</artifactId>
-      <version>1.29.0-8</version>
     </dependency>
     <dependency>
       <groupId>org.6wind.jenkins</groupId>
@@ -55,7 +54,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>build-timeout</artifactId>
-      <version>1.32</version>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -85,9 +83,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>junit</artifactId>
-      <!-- TODO: Remove explicit version once BOM is bumped to a version that
-           pulls this in automatically -->
-      <version>1265.v65b_14fa_f12f0</version>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -106,7 +101,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>subversion</artifactId>
-      <version>1256.vee91953217b_6</version>
       <optional>true</optional>
     </dependency>
     <dependency>
