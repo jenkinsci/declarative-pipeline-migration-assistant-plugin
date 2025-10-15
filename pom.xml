@@ -34,7 +34,7 @@
 
   <groupId>org.jenkins-ci.plugins.to-declarative</groupId>
   <artifactId>declarative-pipeline-migration-assistant-parent</artifactId>
-  <version>1.6.6</version>
+  <version>${revision}${changelist}</version>
   <packaging>pom</packaging>
   <name>Declarative Pipeline Migration Assistant</name>
 
@@ -68,7 +68,7 @@
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.baseline>2.479</jenkins.baseline>
     <jenkins.version>${jenkins.baseline}.1</jenkins.version>
-    <revision>1.6.6</revision>
+    <revision>1.6.7</revision>
     <spotless.check.skip>false</spotless.check.skip>
   </properties>
 
