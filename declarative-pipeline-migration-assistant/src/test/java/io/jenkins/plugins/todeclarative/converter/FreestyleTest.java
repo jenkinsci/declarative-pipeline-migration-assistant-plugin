@@ -303,8 +303,7 @@ public class FreestyleTest {
             FileUtils.deleteDirectory(f);
         }
         Files.createDirectories(f.toPath());
-        String workspace =
-                Functions.isWindows() ? f.getAbsolutePath().replace("\\", "\\\\") : f.getAbsolutePath();
+        String workspace = Functions.isWindows() ? f.getAbsolutePath().replace("\\", "\\\\") : f.getAbsolutePath();
         p.setCustomWorkspace(workspace);
 
         p.addProperty(new BuildDiscarderProperty(new NoOpBuildDiscarder()));
@@ -613,20 +612,19 @@ public class FreestyleTest {
         assertEquals(
                 1,
                 converterResult.getWarnings().stream() //
-                        .filter(warning -> Objects.equals(warning.getTypeName(),FakeBuilder.class.getName())) //
+                        .filter(warning -> Objects.equals(warning.getTypeName(), FakeBuilder.class.getName())) //
                         .count());
 
         assertEquals(
                 1,
                 converterResult.getWarnings().stream() //
-                        .filter(warning ->
-                                Objects.equals(warning.getTypeName(),FakeBuildWrapper.class.getName())) //
+                        .filter(warning -> Objects.equals(warning.getTypeName(), FakeBuildWrapper.class.getName())) //
                         .count());
 
         assertEquals(
                 1,
                 converterResult.getWarnings().stream() //
-                        .filter(warning -> Objects.equals(warning.getTypeName(),FakeRecorder.class.getName())) //
+                        .filter(warning -> Objects.equals(warning.getTypeName(), FakeRecorder.class.getName())) //
                         .count());
 
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();

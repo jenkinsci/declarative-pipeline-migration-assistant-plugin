@@ -48,8 +48,7 @@ public class MavenConverter extends SingleTypedConverter<Maven> {
         FreeStyleProject freeStyleProject = (FreeStyleProject) request.getJob();
         JDK jdk = freeStyleProject.getJDK();
         // default jdk may have configured automatically but we don't want that
-        if (jdk != null
-                && !(Jenkins.get().getJDKs().size() == 1 && "default".equalsIgnoreCase(jdk.getName()))) {
+        if (jdk != null && !(Jenkins.get().getJDKs().size() == 1 && "default".equalsIgnoreCase(jdk.getName()))) {
             ModelASTKey key = new ModelASTKey(this);
             key.setKey("jdk");
             ModelASTUtils.addTool(
