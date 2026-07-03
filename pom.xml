@@ -70,6 +70,7 @@
     <jenkins.version>${jenkins.baseline}.1</jenkins.version>
     <revision>1.6.7</revision>
     <spotless.check.skip>false</spotless.check.skip>
+    <ban-commons-lang-2.skip>false</ban-commons-lang-2.skip>
   </properties>
 
   <dependencyManagement>

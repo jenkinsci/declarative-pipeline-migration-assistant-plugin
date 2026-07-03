@@ -56,13 +56,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import jenkins.model.BuildDiscarder;
 import jenkins.model.BuildDiscarderProperty;
 import jenkins.model.Jenkins;
 import jenkins.triggers.ReverseBuildTrigger;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.hamcrest.CoreMatchers;
 import org.jenkins.plugins.lockableresources.RequiredResourcesProperty;
 import org.jenkinsci.lib.configprovider.ConfigProvider;
@@ -304,7 +304,7 @@ public class FreestyleTest {
         }
         Files.createDirectories(f.toPath());
         String workspace =
-                Functions.isWindows() ? StringUtils.replace(f.getAbsolutePath(), "\\", "\\\\") : f.getAbsolutePath();
+                Functions.isWindows() ? f.getAbsolutePath().replace("\\", "\\\\") : f.getAbsolutePath();
         p.setCustomWorkspace(workspace);
 
         p.addProperty(new BuildDiscarderProperty(new NoOpBuildDiscarder()));
@@ -613,20 +613,20 @@ public class FreestyleTest {
         assertEquals(
                 1,
                 converterResult.getWarnings().stream() //
-                        .filter(warning -> StringUtils.equals(warning.getTypeName(), FakeBuilder.class.getName())) //
+                        .filter(warning -> Objects.equals(warning.getTypeName(),FakeBuilder.class.getName())) //
                         .count());
 
         assertEquals(
                 1,
                 converterResult.getWarnings().stream() //
                         .filter(warning ->
-                                StringUtils.equals(warning.getTypeName(), FakeBuildWrapper.class.getName())) //
+                                Objects.equals(warning.getTypeName(),FakeBuildWrapper.class.getName())) //
                         .count());
 
         assertEquals(
                 1,
                 converterResult.getWarnings().stream() //
-                        .filter(warning -> StringUtils.equals(warning.getTypeName(), FakeRecorder.class.getName())) //
+                        .filter(warning -> Objects.equals(warning.getTypeName(),FakeRecorder.class.getName())) //
                         .count());
 
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();

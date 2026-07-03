@@ -14,7 +14,6 @@ import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import io.jenkins.plugins.todeclarative.converter.api.Warning;
 import java.util.Arrays;
 import java.util.Map;
-import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTAgent;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTKey;
 
@@ -45,7 +44,7 @@ public class FreestyleToDeclarativeConverter extends SingleTypedConverter<FreeSt
 
             String customWorkspace = freeStyleProject.getCustomWorkspace();
 
-            if (StringUtils.isBlank(label) && StringUtils.isBlank(customWorkspace)) {
+            if ((label == null || label.isBlank()) && (customWorkspace == null || customWorkspace.isBlank())) {
                 ModelASTKey agentKey = new ModelASTKey(this);
                 agentKey.setKey("any");
                 agent.setAgentType(agentKey);
@@ -55,12 +54,12 @@ public class FreestyleToDeclarativeConverter extends SingleTypedConverter<FreeSt
                     @Override
                     public String toGroovy() {
                         StringBuilder groovy = new StringBuilder("{\n node { \n");
-                        if (StringUtils.isNotBlank(label)) {
+                        if (label != null && !label.isBlank()) {
                             groovy.append("    label '" + label + "'\n");
                         } else {
                             groovy.append("    label ''\n");
                         }
-                        if (StringUtils.isNotBlank(customWorkspace)) {
+                        if (customWorkspace != null && !customWorkspace.isBlank()) {
                             groovy.append("    customWorkspace \"" + customWorkspace + "\"\n");
                         }
                         groovy.append("    } \n}");

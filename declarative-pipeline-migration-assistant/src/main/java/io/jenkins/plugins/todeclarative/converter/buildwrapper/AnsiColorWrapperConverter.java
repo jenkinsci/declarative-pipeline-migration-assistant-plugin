@@ -7,7 +7,6 @@ import io.jenkins.plugins.todeclarative.converter.api.ModelASTUtils;
 import io.jenkins.plugins.todeclarative.converter.api.SingleTypedConverter;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTMethodArg;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOption;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTOptions;
@@ -26,7 +25,7 @@ public class AnsiColorWrapperConverter extends SingleTypedConverter<AnsiColorBui
         AnsiColorBuildWrapper wrapper = (AnsiColorBuildWrapper) target;
         String colorMapName = wrapper.getColorMapName();
 
-        if (StringUtils.isEmpty(colorMapName)) {
+        if (colorMapName.isEmpty()) {
             return false;
         }
 
