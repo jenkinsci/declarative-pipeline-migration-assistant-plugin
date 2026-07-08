@@ -612,7 +612,7 @@ public class FreestyleTest {
         assertEquals(
                 1,
                 converterResult.getWarnings().stream() //
-                        .filter(warning -> Objects.equals(warning.getTypeName(), FakeBuilder.class.getName())) //
+                        .filter(warning -> FakeBuilder.class.getName().equals(warning.getTypeName())) //
                         .count());
 
         assertEquals(
