@@ -56,7 +56,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import jenkins.model.BuildDiscarder;
 import jenkins.model.BuildDiscarderProperty;
 import jenkins.model.Jenkins;
@@ -618,13 +617,13 @@ public class FreestyleTest {
         assertEquals(
                 1,
                 converterResult.getWarnings().stream() //
-                        .filter(warning -> Objects.equals(warning.getTypeName(), FakeBuildWrapper.class.getName())) //
+                        .filter(warning -> FakeBuildWrapper.class.getName().equals(warning.getTypeName())) //
                         .count());
 
         assertEquals(
                 1,
                 converterResult.getWarnings().stream() //
-                        .filter(warning -> Objects.equals(warning.getTypeName(), FakeRecorder.class.getName())) //
+                        .filter(warning -> FakeRecorder.class.getName().equals(warning.getTypeName())) //
                         .count());
 
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();
