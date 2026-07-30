@@ -1,2 +1,2 @@
-_extends: .github
+_extends: github:jenkinsci/.github:/.github/release-drafter.yml
 tag-template: declarative-pipeline-migration-assistant-$NEXT_MINOR_VERSION
