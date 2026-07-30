@@ -62,7 +62,6 @@ import jenkins.model.Jenkins;
 import jenkins.triggers.ReverseBuildTrigger;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.hamcrest.CoreMatchers;
 import org.jenkins.plugins.lockableresources.RequiredResourcesProperty;
 import org.jenkinsci.lib.configprovider.ConfigProvider;
@@ -303,8 +302,7 @@ public class FreestyleTest {
             FileUtils.deleteDirectory(f);
         }
         Files.createDirectories(f.toPath());
-        String workspace =
-                Functions.isWindows() ? StringUtils.replace(f.getAbsolutePath(), "\\", "\\\\") : f.getAbsolutePath();
+        String workspace = Functions.isWindows() ? f.getAbsolutePath().replace("\\", "\\\\") : f.getAbsolutePath();
         p.setCustomWorkspace(workspace);
 
         p.addProperty(new BuildDiscarderProperty(new NoOpBuildDiscarder()));
@@ -613,20 +611,19 @@ public class FreestyleTest {
         assertEquals(
                 1,
                 converterResult.getWarnings().stream() //
-                        .filter(warning -> StringUtils.equals(warning.getTypeName(), FakeBuilder.class.getName())) //
+                        .filter(warning -> FakeBuilder.class.getName().equals(warning.getTypeName())) //
                         .count());
 
         assertEquals(
                 1,
                 converterResult.getWarnings().stream() //
-                        .filter(warning ->
-                                StringUtils.equals(warning.getTypeName(), FakeBuildWrapper.class.getName())) //
+                        .filter(warning -> FakeBuildWrapper.class.getName().equals(warning.getTypeName())) //
                         .count());
 
         assertEquals(
                 1,
                 converterResult.getWarnings().stream() //
-                        .filter(warning -> StringUtils.equals(warning.getTypeName(), FakeRecorder.class.getName())) //
+                        .filter(warning -> FakeRecorder.class.getName().equals(warning.getTypeName())) //
                         .count());
 
         String groovy = converterResult.getModelASTPipelineDef().toPrettyGroovy();

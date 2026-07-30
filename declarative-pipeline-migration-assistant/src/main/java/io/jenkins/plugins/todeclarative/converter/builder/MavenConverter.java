@@ -16,7 +16,6 @@ import jenkins.mvn.FilePathGlobalSettingsProvider;
 import jenkins.mvn.FilePathSettingsProvider;
 import jenkins.mvn.GlobalSettingsProvider;
 import jenkins.mvn.SettingsProvider;
-import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTBranch;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTEnvironment;
 import org.jenkinsci.plugins.pipeline.modeldefinition.ast.ModelASTEnvironmentValue;
@@ -49,8 +48,7 @@ public class MavenConverter extends SingleTypedConverter<Maven> {
         FreeStyleProject freeStyleProject = (FreeStyleProject) request.getJob();
         JDK jdk = freeStyleProject.getJDK();
         // default jdk may have configured automatically but we don't want that
-        if (jdk != null
-                && !(Jenkins.get().getJDKs().size() == 1 && StringUtils.equalsIgnoreCase("default", jdk.getName()))) {
+        if (jdk != null && !(Jenkins.get().getJDKs().size() == 1 && "default".equalsIgnoreCase(jdk.getName()))) {
             ModelASTKey key = new ModelASTKey(this);
             key.setKey("jdk");
             ModelASTUtils.addTool(
@@ -68,16 +66,19 @@ public class MavenConverter extends SingleTypedConverter<Maven> {
 
         ArgumentListBuilder args = new ArgumentListBuilder();
         args.add("mvn");
-        Arrays.asList(StringUtils.split(maven.getTargets())).stream().forEach(s -> args.add(s));
+        String targets = maven.getTargets();
+        if (targets != null && !targets.isBlank()) {
+            Arrays.stream(targets.trim().split("\\s+")).forEach(args::add);
+        }
         if (maven.usePrivateRepository) {
             args.add("-Dmaven.repo.local=.repository");
         }
 
-        if (StringUtils.isNotBlank(maven.pom)) {
+        if (maven.pom != null && !maven.pom.isBlank()) {
             args.add("-f", maven.pom);
         }
 
-        if (StringUtils.isNotBlank(maven.properties)) {
+        if (maven.properties != null && !maven.properties.isBlank()) {
             args.add(maven.properties);
         }
 
@@ -85,7 +86,7 @@ public class MavenConverter extends SingleTypedConverter<Maven> {
             SettingsProvider settingsProvider = maven.getSettings();
             if (settingsProvider instanceof FilePathSettingsProvider) {
                 String settingsPath = ((FilePathSettingsProvider) settingsProvider).getPath();
-                if (StringUtils.isNotBlank(settingsPath)) {
+                if (settingsPath != null && !settingsPath.isBlank()) {
                     args.add("-s", settingsPath);
                 }
             }
@@ -95,7 +96,7 @@ public class MavenConverter extends SingleTypedConverter<Maven> {
             GlobalSettingsProvider globalSettingsProvider = maven.getGlobalSettings();
             if (globalSettingsProvider instanceof FilePathGlobalSettingsProvider) {
                 String settingsPath = ((FilePathGlobalSettingsProvider) globalSettingsProvider).getPath();
-                if (StringUtils.isNotBlank(settingsPath)) {
+                if (settingsPath != null && !settingsPath.isBlank()) {
                     args.add("-gs", settingsPath);
                 }
             }
@@ -107,7 +108,7 @@ public class MavenConverter extends SingleTypedConverter<Maven> {
         step.setArgs(singleArgument);
         step.setName("sh");
 
-        if (StringUtils.isNotBlank(maven.jvmOptions)) {
+        if (maven.jvmOptions != null && !maven.jvmOptions.isBlank()) {
             ModelASTEnvironment environment = stage.getEnvironment();
             if (environment == null) {
                 environment = new ModelASTEnvironment(this);
