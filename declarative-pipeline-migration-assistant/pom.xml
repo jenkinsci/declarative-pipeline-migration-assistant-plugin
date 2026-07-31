@@ -48,7 +48,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>build-blocker-plugin</artifactId>
-      <version>166.vc82fc20b_a_ed6</version>
+      <version>175.vc57a_d7dff5b_4</version>
       <optional>true</optional>
     </dependency>
     <dependency>
